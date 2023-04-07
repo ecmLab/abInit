@@ -1,0 +1,48 @@
+&Control
+	calculation = 'relax'
+	prefix = 'c7f15'
+/
+&System
+	ibrav = 1
+	A = 20
+	nat = 22
+	ntyp = 2
+	ecutwfc = 49
+	ecutrho = 316
+	occupations='smearing'
+	smearing='gauss'
+	degauss=0.005d0
+/
+
+&Electrons
+/
+&Ions
+/
+ATOMIC_SPECIES
+	C 12.01 C.pbe-n-kjpaw_psl.1.0.0.UPF
+	F 18.99 F.pbe-n-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS angstrom
+C	13.2999	2.6643	4
+C	11.9742	2.6643	4
+C	10.6485	2.6643	4
+C	9.3128	2.6643	4
+C	7.9871	2.6643	4
+C	6.6614	2.6643	4
+C	5.3257	2.6643	4
+F	4	2.6643	4
+F	5.3257	1.3386	4
+F	5.3257	4	4
+F	6.6614	1.3386	4
+F	6.6614	4	4
+F	7.9871	1.3386	4
+F	7.9871	4	4
+F	9.3128	1.3386	4
+F	9.3128	4	4
+F	10.6485	1.3386	4
+F	10.6485	4	4
+F	11.9742	1.3386	4
+F	11.9742	4	4
+F	13.9677	1.518	4
+F	13.9677	3.8206	4
+K_POINTS gamma
+
