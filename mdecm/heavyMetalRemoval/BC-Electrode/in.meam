@@ -1,0 +1,290 @@
+ # ***************** Initialization *********************
+ units            real
+ dimension        3
+ boundary         p p p
+ atom_style       full
+ read_data        data_3000w.data
+ #read_restart     waterinfo-NPT.restart
+ #variable natoms equal "count(all)"
+
+
+group c      type 1
+group cl     type 2
+group cr     type 3
+group cu     type 4
+group hw     type 5
+group na     type 6
+group ni     type 7
+group o      type 8
+group ow     type 9
+group s      type 10
+group zn     type 11
+group water  type 5 9
+group ions   type 2 3 4 6 7 10 11
+group cb     type 1 8
+group solution union water ions
+
+
+ # Defining the saltwater reservoir which force is applied
+ # region      box_dim block  INF INF INF INF -3.00000 65.000 units box
+ # group saltwater_atoms region box_dim
+ # group totalsaltwater_atoms  union saltwater_atoms
+
+
+  # Defining the positions of all four carbon planes
+   #variable zpiston1 equal 100
+  # variable zlayer1 equal 0.000
+  # variable zlayer2 equal 10.0
+  # variable zlayer3 equal 55.0
+   #variable zpiston2 equal 133
+
+# Defining the water region recieving force
+ #variable zmin equal ${zpiston1}
+  #variable zmax equal ${zpiston2}
+   #region  waterzone  block INF INF INF INF ${zmin} ${zmax} units box
+    #group water_bulk region waterzone
+     #group totalwater  union water_bulk
+
+set            type 1 charge 0.1
+set            type 2 charge -1 
+set            type 3 charge 2
+set            type 4 charge 1
+set            type 5 charge 0.4238
+set            type 6 charge 1 
+set            type 7 charge 2 # # O 
+set            type 8 charge -0.599830  # OW
+set            type 9 charge -0.8476 
+set            type 10 charge -2 
+set            type 11 charge 2
+
+
+
+pair_style     lj/cut/coul/long 12.0 
+
+pair_coeff 1 1    0.00000 0.00000 # 0.10485 3.43100 #c
+pair_coeff 2 2    0.11780 4.41720 #cl
+pair_coeff 3 3    0.01500 2.69319 #cr
+pair_coeff 4 4    0.00500 3.11369 #cu
+pair_coeff 5 5    0.00000 0.00000 #hw
+pair_coeff 6 6    0.00277 3.33000 #na
+pair_coeff 7 7    0.02000 3.91000 #ni
+pair_coeff 8 8    0.00000 0.00000 #0.06000 3.50000 #o
+pair_coeff 9 9    0.15530 3.16600 #ow
+pair_coeff 10 10  0.27400 4.03500 #s
+pair_coeff 11 11  0.01250 1.96000 #zn
+
+#pair_modify     mix arithmetic
+
+
+pair_coeff 1 2 0.1111 3.9241
+pair_coeff 1 3 0.0397 3.0621
+pair_coeff 1 4 0.0229 3.2723
+pair_coeff 1 5 0.0000 1.7155
+pair_coeff 1 6 0.0170 3.3805
+pair_coeff 1 7 0.0458 3.6705
+pair_coeff 1 8 0.0793 3.4655
+pair_coeff 1 9 0.1276 3.2985
+pair_coeff 1 10 0.1695 3.7330
+pair_coeff 1 11 0.0362 2.6955
+
+pair_coeff 2 3 0.0420 3.5552
+pair_coeff 2 4 0.0243 3.7654
+pair_coeff 2 5 0.0000 2.2086
+pair_coeff 2 6 0.0181 3.8736
+pair_coeff 2 7 0.0485 4.1636
+pair_coeff 2 8 0.0841 3.9586
+pair_coeff 2 9 0.1353 3.7916
+pair_coeff 2 10 0.1797 4.2261
+pair_coeff 2 11 0.0384 3.1886
+
+pair_coeff 3 4 0.0087 2.9034
+pair_coeff 3 5 0.0000 1.3466
+pair_coeff 3 6 0.0064 3.0116
+pair_coeff 3 7 0.0173 3.3016
+pair_coeff 3 8 0.0300 3.0966
+pair_coeff 3 9 0.0483 2.9296
+pair_coeff 3 10 0.0641 3.3641
+pair_coeff 3 11 0.0137 2.3266
+
+pair_coeff 4 5 0.0000 1.5568
+pair_coeff 4 6 0.0037 3.2218
+pair_coeff 4 7 0.0100 3.5118
+pair_coeff 4 8 0.0173 3.3068
+pair_coeff 4 9 0.0279 3.1398
+pair_coeff 4 10 0.0370 3.5743
+pair_coeff 4 11 0.0079 2.5368
+
+pair_coeff 5 6 0.0000 1.6650
+pair_coeff 5 7 0.0000 1.9550
+pair_coeff 5 8 0.0000 1.7500
+pair_coeff 5 9 0.0000 1.5830
+pair_coeff 5 10 0.0000 2.0175
+pair_coeff 5 11 0.0000 0.9800
+
+pair_coeff 6 7 0.0074 3.6200
+pair_coeff 6 8 0.0129 3.4150
+pair_coeff 6 9 0.0207 3.2480
+pair_coeff 6 10 0.0275 3.6825
+pair_coeff 6 11 0.0059 2.6450
+
+pair_coeff 7 8 0.0346 3.7050
+pair_coeff 7 9 0.0557 3.5380
+pair_coeff 7 10 0.0740 3.9725
+pair_coeff 7 11 0.0158 2.9350
+
+pair_coeff 8 9 0.0965 3.3330
+pair_coeff 8 10 0.1282 3.7675
+pair_coeff 8 11 0.0274 2.7300
+
+pair_coeff 9 10 0.2063 3.6005
+pair_coeff 9 11 0.0441 2.5630
+
+pair_coeff 10 11 0.0585 2.9975
+
+
+
+ #pair_coeff     * * tersoff SiC_1994.tersoff NULL NULL C
+
+bond_style     hybrid harmonic zero 
+bond_coeff     1*2 zero 
+bond_coeff     3 harmonic 350 0.980 
+
+ 
+angle_style    hybrid harmonic zero
+angle_coeff    1*3 zero
+angle_coeff    4 harmonic 37.95 109.47
+
+
+
+ #fix             1 bilayer rigid/nvt group 2 layer1 layer2 temp 298.0 298.0 50.0 reinit no
+ #fix             1 bilayer rigid/npt group 2 layer1 layer2  temp 300.0 300.0 100.0 iso 0.0 0.0 10.0
+ # fix             force_zero fp setforce  0.0 0.0 0.0
+ # fix             vel_zero fp move linear 0.0 0.0 0.0 units lattice
+ #fix             force_zero_piston piston_2 setforce  0.0 0.0 0.0
+ #fix             vel_zero_piston piston_2 move linear 0.0 0.0 0.0 units lattice
+
+ #fix             tmp_rescle waterNacl temp/rescale 1 298.0 298.0 1.02 1.0
+
+ velocity        solution create 298.0 34387 rot yes dist gaussian # for water
+
+ kspace_style    ewald 1.0e-6
+
+ thermo   100
+ thermo_style    custom step temp etotal press
+ thermo_modify   norm no flush yes
+ 
+
+ minimize 1.0e-4 1.0e-6 100 1000
+ # *************** Setting ******************************
+ #timestep        0.1
+ #fix fxlan waterNacl langevin 298.0 298.0 1000.0 48279
+ #fix fxnve waterNacl nve   # <-- needed by fix langevin (see lammps documentation)
+ #thermo          100
+ #run 50000
+
+ #unfix fxlan
+ #unfix fxnve
+
+ #unfix force_zero
+ #unfix vel_zero
+
+ neighbor        5.0 bin
+ #neigh_modify    delay 0 every 10 check yes
+ neigh_modify  delay 0 every 10 check yes page 500000 one 50000
+ #neigh_modify exclude type 1 6
+
+ #reset_timestep  0
+
+ #delete_atoms    overlap 0.1 all all
+
+ compute         teatom all  temp
+ compute         peatom all  pe/atom
+ compute         keatom all  ke/atom
+
+
+# Defining spring force compute for bilayer
+ #compute force_gg bilayer reduce sum fx fy fz
+ #variable   Lx equal 62.0
+ #variable   Ly equal 75.0
+ #variable press_gg1 equal c_force_gg[1]
+ #variable press_gg2 equal c_force_gg[2]
+ #variable press_gg3 equal c_force_gg[3]
+ #variable press_vector equal (c_force_gg[1]*c_force_gg[1]+c_force_gg[2]*c_force_gg[2]+c_force_gg[3]*c_force_gg[3])
+ #variable totalpress equal sqrt(v_press_vector)/(v_Lx*v_Ly)
+
+
+ # Defining force compute between watersalt and graphenepore
+#  compute force_gg totalsaltwater_atoms group/group bilayer
+ #  variable   Lx equal 62.0
+ #  variable   Ly equal 75.0
+ #  variable press_gg equal c_force_gg/(v_Lx*v_Ly)
+
+#fix watersalt_force totalsaltwater_atoms addforce 0.0 0.0 0.0268 # P=100 MPa
+# fix spce_model  water shake 0.0001 20 0 b 1 a 1
+ #fix npt_ensemble waterNacl npt temp 298.0 298.0 100.0 iso 1.0 1.0 1000.0
+ #fix  e_field waterNacl efield 0.0 0.0 0.1
+#fix force_applied waterNacl addforce 0.0 0.0 -0.0024 # p=256mpa totalwater
+#fix zrest  bilayer spring/self 10.0 z
+#fix graphenelayerforce bilayer setforce 0.0 0.0 v_totalpress
+#fix graphenelayervel bilayer move linear 0.0 0.0 0.0 units lattice
+#fix nvt_ensemble solution nvt temp 298.0 298.0 500.0
+
+
+fix spce_model  water shake 0.0001 20 0 b 1 a 1
+fix npt_ensemble solution npt temp 298.0 298.0 100.0 iso 1.0 1.0 1000.0
+#fix force_applied saltwater_atoms addforce 0.0 0.0 -0.00032
+#fix  e_field solution efield -0.05 0.0 0.0
+#fix nvt_ensemble solution nvt temp 298.0 298.0 500.0
+
+  # thermo          100
+
+  # Defining spring force compute for bilayer
+  # compute force_gg bilayer reduce sum fx fy fz
+  # variable   Lx equal 62.0
+  # variable   Ly equal 75.0
+  # variable press_gg1 equal c_force_gg[1]
+  # variable press_gg2 equal c_force_gg[2]
+  # variable press_gg3 equal c_force_gg[3]
+  # variable press_vector equal (c_force_gg[1]*c_force_gg[1]+c_force_gg[2]*c_force_gg[2]+c_force_gg[3]*c_force_gg[3])
+ #  variable totalpress equal sqrt(v_press_vector)/(v_Lx*v_Ly)
+
+# Counting the number of waters and ions in the feed region
+ #region feedzone block INF INF INF INF ${zlayer1} ${zlayer3} units box
+ #variable num_feed_waters equal "count(ow,feedzone)"
+ #variable num_feed_cr equal "count(cr,feedzone)"
+ #variable num_feed_cu equal "count(cu,feedzone)"
+ #variable num_feed_pb equal "count(pb,feedzone)"
+ #variable num_feed_sb equal "count(sb,feedzone)"
+ #variable num_feed_zn equal "count(zn,feedzone)"
+ #variable num_feed_ag equal "count(ag,feedzone)"
+ #variable num_feed_ni equal "count(ni,feedzone)"
+
+
+ thermo   100
+ thermo_style    custom step temp etotal press #v_num_feed_waters v_num_feed_ag v_num_feed_cr v_num_feed_cu v_num_feed_pb v_num_feed_sb v_num_feed_ni v_num_feed_zn 
+ thermo_modify   norm no flush yes
+
+
+
+ variable  end equal 1000000
+
+ dump          pos all custom ${end} pos_filename id element type q x y z
+ dump_modify   pos format line "%5d %5s %d %13.10f %17.12f %17.12f %17.12f"
+ dump_modify   pos sort id
+ dump_modify   pos element  C Cl Cr Cu HW Na Ni O OW S Zn
+
+ dump          vel all custom ${end} vel_filename id element vx vy vz
+ dump_modify   vel format line "%5d %5s %18.15f %18.15f %18.15f"
+ dump_modify   vel sort id
+ dump_modify   vel element  C Cl Cr Cu HW Na Ni O OW S Zn
+
+
+ dump         trj all custom 500 trj-4pores-NPT.dat id element type x y z vx vy vz fx fy fz
+ dump_modify  trj sort id
+ dump_modify     trj element  C Cl Cr Cu HW Na Ni O OW S Zn
+
+
+ write_restart   waterinfo-NPT.restart
+
+ timestep       2.0
+ run         100000
