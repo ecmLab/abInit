@@ -6,7 +6,7 @@
 
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
-#SBATCH --mail-user=slack:@maseme
+#SBATCH --mail-user=slack:@qhteme
 #SBATCH --mail-type=ALL
 
 # Processors:
@@ -31,7 +31,8 @@
 #SBATCH --time=0-12:00:00
 
 #spack load vasp@6.3.2 /vpzm2zw
-spack load vasp /4qy7axx
+#spack load vasp /4qy7axx
+spack load vasp@6.3.2/iriumba
 ## Commands to run:
 ##ulimit -s unlimited
 ##export I_MPI_ADJUST_REDUCE=3
