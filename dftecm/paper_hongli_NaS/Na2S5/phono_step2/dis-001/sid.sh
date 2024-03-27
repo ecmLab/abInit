@@ -6,7 +6,7 @@
 
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
-#SBATCH --mail-user=slack:@qhteme
+#SBATCH --mail-user=slack:@maseme
 #SBATCH --mail-type=ALL
 
 # Processors:
