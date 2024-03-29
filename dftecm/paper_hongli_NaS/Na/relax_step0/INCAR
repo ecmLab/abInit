@@ -1,0 +1,24 @@
+ISTART = 0
+ICHARG = 2
+######################
+#LSUBROT = .FALSE.
+PREC   = Accurate
+ISIF   = 3
+IBRION = 2
+EDIFF  = 0.000000001
+EDIFFG = -0.0005
+NSW    = 200
+NELM   = 200 # OFTEN MANY STEPS ARE REQUIRED
+ENCUT  = 520
+#######################
+ISMEAR = -5 #gAUSSIAN SMEARING
+SIGMA  = 0.05 # TINY SMEARING WIDTH TO SAFELY BREAK SYM 
+ISPIN  = 2  #ALLOW FOR SPIN POLARIZATION
+#######################
+ISYM   = 1    #SYMMETRY
+LWAVE  = False
+LCHARG = False
+MAGMOM = 6*0.6
+LASPH  = True
+LORBIT = 11
+LREAL  = Auto
