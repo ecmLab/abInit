@@ -1,0 +1,281 @@
+    # -- Default styles (for solo "SPCE" water) --
+     units        real
+     atom_style   full
+     dimension 3
+     boundary p p p
+
+
+read_data GO-Multilayer-Li-Cu-Whole-C-O-H.data
+# read_restart waterinfo.restart
+
+group c4    type 1
+group cu    type 2
+group cx    type 3
+group cy    type 4
+group cz    type 5
+group cl    type 6
+group Hk    type 7
+group HW    type 8
+group li    type 9
+group OE    type 10
+group OJ    type 11
+group OK    type 12
+group OL    type 13
+group ow    type 14
+group water type 8 14
+group sol   type 2 6 8 9 14
+
+
+
+set            type 1 charge 0.15
+set            type 2 charge 2
+set            type 3 charge 0.02735
+set            type 4 charge 0.15
+set            type 5 charge 0.15
+set            type 6 charge -1
+set            type 7 charge 0.435
+set            type 8 charge 0.4238
+set            type 9 charge 1
+set            type 10 charge -0.585
+set            type 11 charge -0.2800
+set            type 12 charge -0.2800
+set            type 13 charge -0.585
+set            type 14 charge -0.847600
+
+
+# Defining the saltwater reservoir which force is applied
+  region      box_dim block  INF INF INF INF 15.00000 45.000 units box
+  group saltwater_atoms region box_dim
+  group totalsaltwater_atoms  union saltwater_atoms
+
+
+  # Defining the positions of all four carbon planes
+   #variable zpiston1 equal 100
+   variable zlayer1 equal 12.
+   variable zlayer2 equal -12.
+   variable zlayer3 equal 12.0
+   #variable zpis   ton2 equal 133
+
+# Defining the water region recieving force
+ #variable zmin equal ${zpiston1}
+  #variable zmax equal ${zpiston2}
+   #region  waterzone  block INF INF INF INF ${zmin} ${zmax} units box
+    #group water_bulk region waterzone
+     #group totalwater  union water_bulk
+
+
+
+pair_style lj/cut/coul/long 11.0 11.0
+special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
+pair_modify tail yes
+kspace_style ewald 1e-8
+
+
+pair_coeff 1 1    0.0700 3.55000  # C4-C4
+pair_coeff 2 2    0.0427 2.06600 # Cu-Cu
+pair_coeff 3 3    0.0700 3.55000  # CX-CX
+pair_coeff 4 4    0.0660 3.50000  # CY-CY
+pair_coeff 5 5    0.0660 3.50000  # CZ-CZ
+pair_coeff 6 6    0.1178 4.41720  # Cl-Cl
+pair_coeff 7 7    0.0460 0.40000 #HK-HK
+pair_coeff 8 8    0.0000 0.00000 #HW-HW
+pair_coeff 9 9    0.00274 2.2415 #li-li
+pair_coeff 10 10  0.1700 3.00000  #OE-OE
+pair_coeff 11 11  0.1400 2.90000  #OJ-OJ
+pair_coeff 12 12  0.1400 2.90000  #OK-OK
+pair_coeff 13 13  0.1700 3.00000 #ol-ol
+pair_coeff 14 14  0.15550 3.1600  #ow-ow
+
+
+pair_modify   mix  arithmetic
+
+
+bond_style     harmonic 
+
+bond_coeff     1 469 1.4 # C4-CY
+bond_coeff     2 450 1.364 # C4-OJ
+bond_coeff     3 320 1.41 # C4-OK
+bond_coeff     4 469 1.4 # CX-CX
+bond_coeff     5 317 1.51 # CX-CY
+bond_coeff     6 469 1.4 # CX-CZ
+bond_coeff     7 469 1.4 # CY-CY
+bond_coeff     8 469 1.4 # CY-CZ
+bond_coeff     9 450 1.364 # CY-OE
+bond_coeff     10 320 1.41 # CY-OL
+bond_coeff     11 469 1.4 # CZ-CZ
+bond_coeff     12 450 1.364 # CZ-OE
+bond_coeff     13 553 0.945 # HK-OK
+bond_coeff     14 553 0.945  # HK-OL
+bond_coeff     15 529.5810  1.0 # ow-hw
+
+
+#bond_coeff     1 350 1.530 # cx-cx
+#bond_coeff     2 350 1.420 # cx-ol
+#bond_coeff     3 350 0.980 # hk-ol
+#bond_coeff     4 529.5810  1.0 # ow-hw
+
+
+angle_style    harmonic
+
+angle_coeff    1 63 120    # 1  C4-CY-CX
+angle_coeff    2 40 109.5  # 2  C4-CY-CY
+angle_coeff    3 40 109.5  # 3  C4-CY-CZ
+angle_coeff    4 35 113 # 4  C4-OK-HK
+angle_coeff    5 63 120  # 5  CX-CX-CX
+angle_coeff    6 63 120  # 6  CX-CX-CY
+angle_coeff    7 63 120  # 7  CX-CX-CZ
+angle_coeff    8 70 120  # 8  CX-CY-CX
+angle_coeff    9 63 120  # 9  CX-CY-CY
+angle_coeff    10 40 109.5 # 10  CX-CY-CZ
+angle_coeff    11 50 109.5 # 11  CX-CY-OE
+angle_coeff    12 50 109.5 # 12  CX-CY-OL
+angle_coeff    13 63 120 # 13  CX-CZ-CX
+angle_coeff    14 70 120 # 14  CX-CZ-CY
+angle_coeff    15 63 120 # 15  CX-CZ-CZ
+angle_coeff    16 50 109.5 # 16  CX-CZ-OE
+angle_coeff    17 70 120   # 17  CY-C4-OJ
+angle_coeff    18 70 120   # 18  CY-C4-OK
+angle_coeff    19 40 109.5 # 19 CY-CX-CY
+angle_coeff    20 40 109.5 # 20  CY-CX-CZ
+angle_coeff    21 58.35 112.7 # 21  CY-CY-CY
+angle_coeff    22 63 120 # 22  CY-CY-CZ
+angle_coeff    23 50 109.5 # 23  CY-CY-OE
+angle_coeff    24 50 109.5 # 24  CY-CY-OL
+angle_coeff    25 63 120 # 25  CY-CZ-CY
+angle_coeff    26 40 109.5 # 26  CY-CZ-CZ
+angle_coeff    27 50 109.5 # 27  CY-CZ-OE
+angle_coeff    28 50 109.5 # 28  CY-OE-CZ
+angle_coeff    29 35 113 # 29  CY-OL-HK
+angle_coeff    30 40 109.5 # 30  CZ-CX-CZ
+angle_coeff    31 40 109.5 # 31  CZ-CY-CZ
+angle_coeff    32 50 109.5 # 32  CZ-CY-OE
+angle_coeff    33 50 109.5 # 33  CZ-CY-OL
+angle_coeff    34 70 120 # 34  CZ-CZ-CZ
+angle_coeff    35 50 109.5 # 35  CZ-CZ-OE
+angle_coeff    36 37.95 109.4700 # 36  HW-OW-HW
+angle_coeff    37 60 109.5 # 37  OJ-C4-OK
+
+
+#angle_coeff    1 50  109.471 # CX-CX-CX
+#angle_coeff    2 50 104.510  # CX-CX-OL 
+#angle_coeff    3 50 90.000  #CX-OL-HK
+#angle_coeff    4 37.95 109.4700  # HW-OW-HW
+#angle_coeff    5 50 109.471 # OL-CX-OL
+
+
+
+ #info coeffs out log
+
+#thermo 100
+thermo_style custom ebond eangle edihed eimp epair evdwl ecoul elong etail pe press
+#thermo_modify   norm no flush yes
+
+ minimize 1.0e-4 1.0e-6 1000 100000
+
+ # *************** Setting ******************************
+ #timestep        0.1
+ #fix fxlan  sol langevin 298.0 298.0 1000.0 48279
+ #fix fxnve  sol nve   # <-- needed by fix langevin (see lammps documentation)
+ #thermo          100
+ #run 1000
+
+ #unfix fxlan
+ #unfix fxnve
+
+
+ neighbor        3.00 bin
+ #neigh_modify    delay 0 every 10 check yes
+ neigh_modify  delay 0 every 1 check yes page 500000 one 50000
+
+
+ reset_timestep  0
+
+
+ compute         teatom all  temp
+ compute         peatom all  pe/atom
+ compute         keatom all  ke/atom
+
+
+# Defining spring force compute for bilayer
+ #compute force_gg bilayer reduce sum fx fy fz
+ #variable   Lx equal 62.0
+ #variable   Ly equal 75.0
+ #variable press_gg1 equal c_force_gg[1]
+ #variable press_gg2 equal c_force_gg[2]
+ #variable press_gg3 equal c_force_gg[3]
+ #variable press_vector equal (c_force_gg[1]*c_force_gg[1]+c_force_gg[2]*c_force_gg[2]+c_force_gg[3]*c_force_gg[3])
+ #variable totalpress equal sqrt(v_press_vector)/(v_Lx*v_Ly)
+
+
+ # Defining force compute between watersalt and graphenepore
+#  compute force_gg totalsaltwater_atoms group/group bilayer
+ #  variable   Lx equal 62.0
+ #  variable   Ly equal 75.0
+ #  variable press_gg equal c_force_gg/(v_Lx*v_Ly)
+
+#fix watersalt_force totalsaltwater_atoms addforce 0.0 0.0 0.0268 # P=100 MPa
+ fix spce_model  water shake 0.0001 20 0 b 1 a 1
+ #fix npt_ensemble all npt temp 298.0 298.0 100.0 iso 1.0 1.0 1000.0
+ fix  e_field sol efield 0.0 0.0 0.15
+#fix force_applied waterNacl addforce 0.0 0.0 -0.0024 # p=256mpa totalwater
+#fix zrest  bilayer spring/self 10.0 z
+#fix graphenelayerforce bilayer setforce 0.0 0.0 v_totalpress
+#fix graphenelayervel bilayer move linear 0.0 0.0 0.0 units lattice
+ fix nvt_ensemble sol nvt temp 298.0 298.0 500.0
+
+
+  # Defining spring force compute for bilayer
+  # compute force_gg bilayer reduce sum fx fy fz
+  # variable   Lx equal 62.0
+  # variable   Ly equal 75.0
+  # variable press_gg1 equal c_force_gg[1]
+  # variable press_gg2 equal c_force_gg[2]
+  # variable press_gg3 equal c_force_gg[3]
+  # variable press_vector equal (c_force_gg[1]*c_force_gg[1]+c_force_gg[2]*c_force_gg[2]+c_force_gg[3]*c_force_gg[3])
+ #  variable totalpress equal sqrt(v_press_vector)/(v_Lx*v_Ly)
+
+ # Counting the number of waters and ions in the feed region
+ region feedzone block INF INF INF INF ${zlayer2} ${zlayer1} units box
+ variable num_feed_waters equal "count(ow,feedzone)"
+ variable num_feed_li equal "count(li,feedzone)"
+ #variable num_feed_ni equal "count(ni,feedzone)"
+ #variable num_feed_co equal "count(co,feedzone)"
+ #variable num_feed_mn equal "count(mn,feedzone)"
+ variable num_feed_cu equal "count(cu,feedzone)"
+ #variable num_feed_na equal "count(na,feedzone)"
+
+#  compute myRDF sol-crown rdf 50 9 7 cutoff 10.0
+ #fix myfix sol-crown ave/time 50 1 50 c_myRDF[*] file tmp_Co.rdf mode vector
+
+ #compute myRD_1 sol-crown rdf 50 9 8 cutoff 10.0
+ #fix myfix_1 sol-crown ave/time 50 1 50 c_myRDF[*] file tmp_Li.rdf mode vector
+
+
+ thermo   500
+ thermo_style    custom step temp etotal press v_num_feed_waters v_num_feed_li v_num_feed_cu #v_num_feed_mn v_num_feed_ni v_num_feed_cu
+ thermo_modify   norm no flush yes
+
+
+ variable  end equal 100000
+
+ dump          pos all custom ${end} pos_filename id element type q x y z
+ dump_modify   pos format line "%5d %5s %d %13.10f %17.12f %17.12f %17.12f"
+ dump_modify   pos sort id
+ dump_modify   pos element C4 Cu CX CY CZ Cl HK HW Li OE OJ OK OL OW
+
+
+ dump          vel all custom ${end} vel_filename id element vx vy vz
+ dump_modify   vel format line "%5d %5s %18.15f %18.15f %18.15f"
+ dump_modify   vel sort id
+ dump_modify   vel element C4 Cu CX CY CZ Cl HK HW Li OE OJ OK OL OW
+
+
+ dump         trj all custom 500 trj_Mixed-GO_only-LiCu.dat id element type x y z vx vy vz fx fy fz
+ dump_modify  trj sort id
+ dump_modify     trj element C4 Cu CX CY CZ Cl HK HW Li OE OJ OK OL OW
+
+ #write_data combined.lmp
+ write_restart   waterinfo.restart
+
+ timestep       2.0
+ run         500000
