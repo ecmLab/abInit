@@ -56,27 +56,14 @@ def precompute_reciprocal_space_and_kernel(N, stiffness_tensor):
                                 )
     return q_grid, B
 
-# Compute strain field using dimensionless strain tensors
-def compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3):
-    N = lattice_spins.shape[0]
-    strain_field = np.zeros((N, N, N, 3, 3))
-    for x in range(N):
-        for y in range(N):
-            for z in range(N):
-                spin = lattice_spins[x, y, z]
-                if spin == 1:
-                    strain_field[x, y, z] = epsilon_1
-                elif spin == 2:
-                    strain_field[x, y, z] = epsilon_2
-                elif spin == 3:
-                    strain_field[x, y, z] = epsilon_3
-    return strain_field
+# Compute strain field for a single lattice site update
+def update_strain_field(strain_field, x, y, z, spin, epsilon_tensors):
+    strain_field[x, y, z] = epsilon_tensors[spin - 1]
 
 # Compute elastic energy
-def compute_elastic_energy(lattice_spins, q_grid, B, strain_ft, rank, size):
-    N = lattice_spins.shape[0]
+def compute_elastic_energy(q_grid, B, strain_ft, rank, size):
+    N = strain_ft.shape[0]
     local_energy = 0
-    # Parallelize over wavevectors
     for qx_idx in range(rank, N, size):  # Divide work among ranks
         for qy_idx in range(N):
             for qz_idx in range(N):
@@ -93,37 +80,31 @@ def compute_elastic_energy(lattice_spins, q_grid, B, strain_ft, rank, size):
     return local_energy
 
 # Monte Carlo step with MPI
-def monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_ft, epsilon_1, epsilon_2, epsilon_3, rank, size):
+def monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_field, epsilon_tensors, rank, size):
     N = lattice_spins.shape[0]
     x, y, z = np.random.randint(0, N, size=3)
     current_spin = lattice_spins[x, y, z]
     proposed_spin = random.choice([s for s in [1, 2, 3] if s != current_spin])
 
     # Compute new energy
-    lattice_spins[x, y, z] = proposed_spin
-    new_strain_field = compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3)
-    strain_ft_new = np.fft.fftn(new_strain_field, axes=(0, 1, 2))
-    E_new = compute_elastic_energy(lattice_spins, q_grid, B, strain_ft_new, rank, size)
+    update_strain_field(strain_field, x, y, z, proposed_spin, epsilon_tensors)
+    strain_ft_new = np.fft.fftn(strain_field, axes=(0, 1, 2))
+    E_new = compute_elastic_energy(q_grid, B, strain_ft_new, rank, size)
 
     # Revert to original state
-    lattice_spins[x, y, z] = current_spin
-    original_strain_field = compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3)
-    strain_ft_original = np.fft.fftn(original_strain_field, axes=(0, 1, 2))
-    E_old = compute_elastic_energy(lattice_spins, q_grid, B, strain_ft_original, rank, size)
+    update_strain_field(strain_field, x, y, z, current_spin, epsilon_tensors)
+    strain_ft_original = np.fft.fftn(strain_field, axes=(0, 1, 2))
+    E_old = compute_elastic_energy(q_grid, B, strain_ft_original, rank, size)
 
     # Calculate energy difference
     delta_E = E_new - E_old
-    # Metropolis acceptance criterion
-    if delta_E / temperature > 700:
-       prob = 0
-    else:
-       prob = np.exp(-delta_E / temperature)
+    prob = np.exp(-delta_E / temperature) if delta_E / temperature <= 700 else 0
 
     if delta_E <= 0 or random.random() < prob:
         lattice_spins[x, y, z] = proposed_spin
-        strain_ft[:] = strain_ft_new
-        return True
-    return False
+        update_strain_field(strain_field, x, y, z, proposed_spin, epsilon_tensors)
+        return 1
+    return 0
 
 # Main simulation
 def main():
@@ -131,33 +112,35 @@ def main():
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    lattice_size = 32
+    lattice_size = 16
     lattice_spins = np.random.choice([1, 2, 3], size=(lattice_size, lattice_size, lattice_size))
     epsilon_a = 0.1
     gamma_0 = 0.4
     anisoPar = 1
     temperature = 0.20
-    num_steps = 4000
+    num_steps = 100
 
     epsilon_1, epsilon_2, epsilon_3 = define_dimensionless_strains(epsilon_a, gamma_0)
     stiffness_tensor = precompute_stiffness_tensor(anisoPar)
     q_grid, B = precompute_reciprocal_space_and_kernel(lattice_size, stiffness_tensor)
-    strain_field = compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3)
-    strain_ft = np.fft.fftn(strain_field, axes=(0, 1, 2))
+    strain_field = np.zeros((lattice_size, lattice_size, lattice_size, 3, 3))
+    epsilon_tensors = [epsilon_1, epsilon_2, epsilon_3]
 
     for step in range(1, num_steps + 1):
         accepted_moves = 0
         for _ in range(lattice_spins.size // size):
-            if monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_ft, epsilon_1, epsilon_2, epsilon_3, rank, size):
-                accepted_moves += 1
+            accepted_moves += monte_carlo_step(
+                lattice_spins, temperature, q_grid, B, strain_field, epsilon_tensors, rank, size
+            )
 
         total_accepted_moves = comm.reduce(accepted_moves, op=MPI.SUM, root=0)
         if rank == 0:
-           print(f"Timestep {step}: Accepted moves = {total_accepted_moves}")
+            print(f"Timestep {step}: Accepted moves = {total_accepted_moves}")
 
     # Save final lattice configuration
-    np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
-    print("Simulation complete. Final spins saved to 'final_spins.txt'.")
+    if rank == 0:
+        np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
+        print("Simulation complete. Final spins saved to 'final_spins.txt'.")
 
 if __name__ == "__main__":
     main()
