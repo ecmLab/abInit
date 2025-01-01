@@ -16,6 +16,10 @@ lattice bcc 2.0           # Define a body-centered cubic (bcc) lattice with latt
 region box block 0 10 0 10 0 10  # Create a cubic simulation box from (0,0,0) to (10,10,10)
 create_box 3 box          # Create a simulation box with 3 atom types (fix applied here)
 create_atoms 1 box        # Fill the box with atoms of type 1
+# Set masses for each atom type
+mass 1 1.0  # Set mass for type 1
+mass 2 1.0  # Set mass for type 2
+mass 3 1.0  # Set mass for type 3
 
 # -------------------------
 # 3. Assign Spin States (Orientation Variants)
@@ -30,29 +34,30 @@ group variant3 type 3                         # Define group for atoms of type 3
 # -------------------------
 # 4. Define Interactions
 # -------------------------
-pair_style lj/cut 2.5     # Use a Lennard-Jones potential with a cutoff distance of 2.5
-pair_coeff * * 0.1 1.0 2.5 # Define interaction strength (epsilon=0.1) and size (sigma=1.0) for all pairs
-# Note: This is a placeholder. Replace it with a potential that accurately describes elastic interactions.
+# pair_style lj/cut 2.5     # Use a Lennard-Jones potential with a cutoff distance of 2.5
+# pair_coeff * * 0.1 1.0 2.5 # Define interaction strength (epsilon=0.1) and size (sigma=1.0) for all pairs
+pair_style harmonic
+pair_coeff * * 100.0 2.0  # Interaction strength (100.0) and equilibrium distance (2.0)
 
 # -------------------------
 # 5. Energy Calculation and Output
 # -------------------------
 compute energy all pe/atom         # Compute potential energy for each atom
 variable total_energy equal pe     # Define a variable to track total potential energy
-
 # Define what is output during the simulation
 thermo 100                         # Output thermodynamic data every 100 steps
-thermo_style custom step atoms temp v_total_energy # Custom output includes step, atom count, temperature, and energy
+thermo_style custom step atoms temp pe v_total_energy # Include potential energy (pe) in output
 
 # -------------------------
 # 6. Monte Carlo Moves (Spin State Updates)
 # -------------------------
-fix mc_update all atom/swap 100 12345 0.1 3.0
-# The `atom/swap` fix randomly changes atom types to simulate Monte Carlo spin flips:
-# - Interval: Perform swaps every 100 steps
-# - Seed: Random seed for reproducibility (12345)
-# - Probability: 0.1 (probability of attempting a swap per atom)
-# - Range: Allow swapping between up to 3 atom types
+fix swap1 all atom/swap 1 1 12345 300.0 types 1 2
+fix swap2 all atom/swap 1 1 67890 300.0 types 2 3
+# Swap 50 pairs of atoms every 100 timesteps
+# Random seed ensures reproducibility:
+#  - First fix swaps between types 1 and 2
+#  - Second fix swaps between types 2 and 3
+# Scaling temperature for Monte Carlo acceptance: 300.0 K
 
 # -------------------------
 # 7. Simulation Execution

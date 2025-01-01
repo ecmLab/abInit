@@ -1,0 +1,29 @@
+# LAMMPS Input File for Initializing Lattice
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+
+# Define lattice and simulation box
+lattice sc 2.0  # Use a simple cubic (SC) lattice with lattice constant = 2.0
+region box block 0 10 0 10 0 10  # Ensure the region matches the desired atom count
+create_box 3 box
+create_atoms 1 box
+
+# Assign masses for each atom type
+mass 1 1.0
+mass 2 1.0
+mass 3 1.0
+
+# Assign random spin states (orientation variants)
+group variant1 type 1
+set group variant1 type/fraction 2 0.33 12345
+group variant2 type 2
+set group variant2 type/fraction 3 0.33 67890
+
+# Output configuration
+dump 1 all custom 1 init_config.dump id type x y z
+dump_modify 1 sort id
+
+run 0
+
