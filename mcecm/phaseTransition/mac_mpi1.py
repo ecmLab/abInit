@@ -113,13 +113,14 @@ def monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_ft, epsilon_1
 
     # Calculate energy difference
     delta_E = E_new - E_old
+    max_exp_arg = 700
     # Metropolis acceptance criterion
-#    if delta_E / temperature > 700:
-#       prob = 0
-#    else:
-    prob = np.exp(-delta_E / temperature)
+    if delta_E > 0:
+       prob = np.exp(-np.clip(delta_E / temperature, None, max_exp_arg))
+    else:
+       prob = 1.0
 
-    if delta_E <= 0 or random.random() < prob:
+    if random.random() < prob:
         lattice_spins[x, y, z] = proposed_spin
         strain_ft[:] = strain_ft_new
         return True
