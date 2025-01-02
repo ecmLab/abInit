@@ -98,9 +98,14 @@ def monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_field, epsilo
 
     # Calculate energy difference
     delta_E = E_new - E_old
-    prob = np.exp(-delta_E / temperature) if delta_E / temperature <= 700 else 0
+    max_exp_arg = 700
+    # Metropolis acceptance criterion
+    if delta_E > 0:
+       prob = np.exp(-np.clip(delta_E / temperature, None, max_exp_arg))
+    else:
+       prob = 1.0
 
-    if delta_E <= 0 or random.random() < prob:
+    if random.random() < prob:
         lattice_spins[x, y, z] = proposed_spin
         update_strain_field(strain_field, x, y, z, proposed_spin, epsilon_tensors)
         return 1
@@ -112,7 +117,7 @@ def main():
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    lattice_size = 10
+    lattice_size = 32
     lattice_spins = np.random.choice([1, 2, 3], size=(lattice_size, lattice_size, lattice_size))
     epsilon_a = 0.1
     gamma_0 = 0.4
@@ -134,7 +139,7 @@ def main():
         if terminate_flag:  # Check if termination flag is set
            break
 
-        for _ in range(lattice_spins.size // size):
+        for _ in range(lattice_spins.size // lattice_size):
             accepted_moves += monte_carlo_step(
                 lattice_spins, temperature, q_grid, B, strain_field, epsilon_tensors, rank, size
             )
