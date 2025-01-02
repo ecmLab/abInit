@@ -56,6 +56,7 @@ def precompute_reciprocal_space_and_kernel(N, stiffness_tensor):
                                 )
     return q_grid, B
 
+
 # Compute strain field using dimensionless strain tensors
 def compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3):
     N = lattice_spins.shape[0]
@@ -131,7 +132,7 @@ def main():
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    lattice_size = 32
+    lattice_size = 10
     lattice_spins = np.random.choice([1, 2, 3], size=(lattice_size, lattice_size, lattice_size))
     epsilon_a = 0.1
     gamma_0 = 0.4
@@ -161,4 +162,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

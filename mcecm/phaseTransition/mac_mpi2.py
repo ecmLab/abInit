@@ -112,13 +112,13 @@ def main():
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    lattice_size = 16
+    lattice_size = 10
     lattice_spins = np.random.choice([1, 2, 3], size=(lattice_size, lattice_size, lattice_size))
     epsilon_a = 0.1
     gamma_0 = 0.4
     anisoPar = 1
     temperature = 0.20
-    num_steps = 100
+    num_steps = 4000
 
     epsilon_1, epsilon_2, epsilon_3 = define_dimensionless_strains(epsilon_a, gamma_0)
     stiffness_tensor = precompute_stiffness_tensor(anisoPar)
@@ -126,21 +126,37 @@ def main():
     strain_field = np.zeros((lattice_size, lattice_size, lattice_size, 3, 3))
     epsilon_tensors = [epsilon_1, epsilon_2, epsilon_3]
 
+    zero_move_steps = 0  # Track successive steps with zero accepted moves
+    terminate_flag = False  # Termination flag shared across all ranks
     for step in range(1, num_steps + 1):
         accepted_moves = 0
+
+        if terminate_flag:  # Check if termination flag is set
+           break
+
         for _ in range(lattice_spins.size // size):
             accepted_moves += monte_carlo_step(
                 lattice_spins, temperature, q_grid, B, strain_field, epsilon_tensors, rank, size
             )
 
         total_accepted_moves = comm.reduce(accepted_moves, op=MPI.SUM, root=0)
+        total_accepted_moves = int(total_accepted_moves or 0)
         if rank == 0:
-            print(f"Timestep {step}: Accepted moves = {total_accepted_moves}")
-
-    # Save final lattice configuration
-    if rank == 0:
-        np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
-        print("Simulation complete. Final spins saved to 'final_spins.txt'.")
+           print(f"Timestep {step}: Accepted moves = {total_accepted_moves}")
+           
+           if total_accepted_moves <= 1:
+                zero_move_steps += 1
+           else:
+                zero_move_steps = 0
+           if zero_move_steps >= 5:
+                print("Termination criteria met: Zero accepted moves for five successive steps.")
+       # Save final lattice configuration
+                np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
+                print("Simulation complete. Final spins saved to 'final_spins.txt'.")
+                terminate_flag = True
+       
+       # Broadcast termination flag to all ranks
+        terminate_flag = comm.bcast(terminate_flag, root=0)
 
 if __name__ == "__main__":
     main()
