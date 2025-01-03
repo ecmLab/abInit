@@ -172,7 +172,7 @@ def main():
               print("Termination criteria met: Zero accepted moves for five successive steps.")
        # Save final lattice configuration
               np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
-              print("Simulation complete. Final spins saved to 'final_spins.txt'.")
+              print("Simulation complete. Final spins saved to 'T020.txt'.")
               terminate_flag = True
 
       # Broadcast termination flag to all ranks
