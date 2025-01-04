@@ -117,7 +117,7 @@ def main():
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    lattice_size = 10
+    lattice_size = 16
     lattice_spins = np.random.choice([1, 2, 3], size=(lattice_size, lattice_size, lattice_size))
     epsilon_a = 0.1
     gamma_0 = 0.4
@@ -134,11 +134,17 @@ def main():
     zero_move_steps = 0  # Track successive steps with zero accepted moves
     terminate_flag = False  # Termination flag shared across all ranks
 
+    prev_energy = None
+    dErel = 0
+    dErel_tolerance = 1e-3
+    stable_steps = 0
+    max_stable_steps = 5
+
     for step in range(1, num_steps + 1):
         accepted_moves = 0
 
-        if terminate_flag:  # Check if termination flag is set
-           break
+        if terminate_flag:
+            break
 
         for _ in range(lattice_spins.size // size):
             accepted_moves += monte_carlo_step(
@@ -146,28 +152,27 @@ def main():
             )
 
         total_accepted_moves = comm.reduce(accepted_moves, op=MPI.SUM, root=0)
-        total_accepted_moves = int(total_accepted_moves or 0)
+        local_energy = compute_elastic_energy(q_grid, B, np.fft.fftn(strain_field, axes=(0, 1, 2)), rank, size)
+        total_energy = comm.reduce(local_energy, op=MPI.SUM, root=0)
 
         if rank == 0:
-        # Check energy stabilization
-           print(f"Timestep {step}: Accepted Moves = {accepted_moves}")
-           
-           if total_accepted_moves <= 1:
-                zero_move_steps += 1
-           else:
-                zero_move_steps = 0
- 
-            # Terminate if energy is stable or zero moves persist
-           if zero_move_steps >= 5:
-              print("Termination criteria met: Zero accepted moves for five successive steps.")
-       # Save final lattice configuration
-              np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
-              print("Simulation complete. Final spins saved to 'final_spins.txt'.")
-              terminate_flag = True
-       
-       # Broadcast termination flag to all ranks
+            if prev_energy is not None:
+                dErel = abs(total_energy - prev_energy) / abs(prev_energy)
+                if dErel < dErel_tolerance:
+                    stable_steps += 1
+                else:
+                    stable_steps = 0
+            prev_energy = total_energy
+
+            print(f"Timestep {step}: dErel = {dErel}, Accepted Moves = {total_accepted_moves}")
+
+            if stable_steps >= max_stable_steps or (total_accepted_moves == 0 and zero_move_steps >= 5):
+                print("Termination criteria met.")
+                terminate_flag = True
+                np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
+                break
+
         terminate_flag = comm.bcast(terminate_flag, root=0)
 
 if __name__ == "__main__":
     main()
-
