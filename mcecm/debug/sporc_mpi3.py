@@ -56,14 +56,27 @@ def precompute_reciprocal_space_and_kernel(N, stiffness_tensor):
                                 )
     return q_grid, B
 
-# Compute strain field for a single lattice site update
-def update_strain_field(strain_field, x, y, z, spin, epsilon_tensors):
-    strain_field[x, y, z] = epsilon_tensors[spin - 1]
+# Compute strain field using dimensionless strain tensors
+def compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3):
+    N = lattice_spins.shape[0]
+    strain_field = np.zeros((N, N, N, 3, 3))
+    for x in range(N):
+        for y in range(N):
+            for z in range(N):
+                spin = lattice_spins[x, y, z]
+                if spin == 1:
+                    strain_field[x, y, z] = epsilon_1
+                elif spin == 2:
+                    strain_field[x, y, z] = epsilon_2
+                elif spin == 3:
+                    strain_field[x, y, z] = epsilon_3
+    return strain_field
 
 # Compute elastic energy
-def compute_elastic_energy(q_grid, B, strain_ft, rank, size):
-    N = strain_ft.shape[0]
+def compute_elastic_energy(lattice_spins, q_grid, B, strain_ft, rank, size):
+    N = lattice_spins.shape[0]
     local_energy = 0
+    # Parallelize over wavevectors
     for qx_idx in range(rank, N, size):  # Divide work among ranks
         for qy_idx in range(N):
             for qz_idx in range(N):
@@ -80,21 +93,23 @@ def compute_elastic_energy(q_grid, B, strain_ft, rank, size):
     return local_energy
 
 # Monte Carlo step with MPI
-def monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_field, epsilon_tensors, rank, size):
+def monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_ft, epsilon_1, epsilon_2, epsilon_3, rank, size):
     N = lattice_spins.shape[0]
     x, y, z = np.random.randint(0, N, size=3)
     current_spin = lattice_spins[x, y, z]
     proposed_spin = random.choice([s for s in [1, 2, 3] if s != current_spin])
 
     # Compute new energy
-    update_strain_field(strain_field, x, y, z, proposed_spin, epsilon_tensors)
-    strain_ft_new = np.fft.fftn(strain_field, axes=(0, 1, 2))
-    E_new = compute_elastic_energy(q_grid, B, strain_ft_new, rank, size)
+    lattice_spins[x, y, z] = proposed_spin
+    new_strain_field = compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3)
+    strain_ft_new = np.fft.fftn(new_strain_field, axes=(0, 1, 2))
+    E_new = compute_elastic_energy(lattice_spins, q_grid, B, strain_ft_new, rank, size)
 
     # Revert to original state
-    update_strain_field(strain_field, x, y, z, current_spin, epsilon_tensors)
-    strain_ft_original = np.fft.fftn(strain_field, axes=(0, 1, 2))
-    E_old = compute_elastic_energy(q_grid, B, strain_ft_original, rank, size)
+    lattice_spins[x, y, z] = current_spin
+    original_strain_field = compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3)
+    strain_ft_original = np.fft.fftn(original_strain_field, axes=(0, 1, 2))
+    E_old = compute_elastic_energy(lattice_spins, q_grid, B, strain_ft_original, rank, size)
 
     # Calculate energy difference
     delta_E = E_new - E_old
@@ -107,9 +122,9 @@ def monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_field, epsilo
 
     if random.random() < prob:
         lattice_spins[x, y, z] = proposed_spin
-        update_strain_field(strain_field, x, y, z, proposed_spin, epsilon_tensors)
-        return 1
-    return 0
+        strain_ft[:] = strain_ft_new
+        return True
+    return False
 
 # Main simulation
 def main():
@@ -122,47 +137,78 @@ def main():
     epsilon_a = 0.1
     gamma_0 = 0.4
     anisoPar = 1
-    temperature = 0.20
+    temperature = 1.0
     num_steps = 4000
 
     epsilon_1, epsilon_2, epsilon_3 = define_dimensionless_strains(epsilon_a, gamma_0)
     stiffness_tensor = precompute_stiffness_tensor(anisoPar)
     q_grid, B = precompute_reciprocal_space_and_kernel(lattice_size, stiffness_tensor)
-    strain_field = np.zeros((lattice_size, lattice_size, lattice_size, 3, 3))
-    epsilon_tensors = [epsilon_1, epsilon_2, epsilon_3]
+    strain_field = compute_strain_field(lattice_spins, epsilon_1, epsilon_2, epsilon_3)
+    strain_ft = np.fft.fftn(strain_field, axes=(0, 1, 2))
 
     zero_move_steps = 0  # Track successive steps with zero accepted moves
     terminate_flag = False  # Termination flag shared across all ranks
+    
+      # Initialize variables for energy stabilization
+    prev_energy = None
+    dErel_tolerance = 1e-10 # Define the energy cutoff threshold
+    stable_steps = 0  # Track successive steps with stable energy
+    max_stable_steps = 50  # Number of steps to check for stability
+    energy_log_file = open("total_energy.txt", "w")
+
     for step in range(1, num_steps + 1):
         accepted_moves = 0
 
         if terminate_flag:  # Check if termination flag is set
-           break
+            break
 
-        for _ in range(lattice_spins.size // lattice_size):
-            accepted_moves += monte_carlo_step(
-                lattice_spins, temperature, q_grid, B, strain_field, epsilon_tensors, rank, size
-            )
+        for _ in range(lattice_spins.size // size):
+            if monte_carlo_step(lattice_spins, temperature, q_grid, B, strain_ft, epsilon_1, epsilon_2, epsilon_3, rank, size):
+                accepted_moves += 1
 
-        total_accepted_moves = comm.reduce(accepted_moves, op=MPI.SUM, root=0)
-        total_accepted_moves = int(total_accepted_moves or 0)
+        # Calculate total energy (reduction step)
+        local_energy = compute_elastic_energy(lattice_spins, q_grid, B, strain_ft, rank, size)
+        total_energy = comm.reduce(local_energy, op=MPI.SUM, root=0)
+
         if rank == 0:
-           print(f"Timestep {step}: Accepted moves = {total_accepted_moves}")
-           
-           if total_accepted_moves <= 1:
+            energy_log_file.write(f"Step {step}: Total Energy = {total_energy}\n")
+
+            # Check energy stabilization
+            dErel = 0
+            if prev_energy is not None:
+                dErel = abs(total_energy - prev_energy)/prev_energy
+                if dErel < dErel_tolerance:
+                    stable_steps += 1
+                    print(f"Energy stable for {stable_steps} steps. Change = {dErel}")
+                else:
+                    stable_steps = 0
+            prev_energy = total_energy
+
+            print(f"Timestep {step}: totE={total_energy}, dErel = {dErel}, Accepted Moves = {accepted_moves}")
+
+            # Check termination due to zero moves
+            if accepted_moves <= 0:
                 zero_move_steps += 1
-           else:
+                print(f"Zero accepted moves for {zero_move_steps} successive steps.")
+            else:
                 zero_move_steps = 0
-           if zero_move_steps >= 5:
-                print("Termination criteria met: Zero accepted moves for five successive steps.")
-       # Save final lattice configuration
-                np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
-                print("Simulation complete. Final spins saved to 'T020_1.txt'.")
+
+            # Terminate if energy is stable or zero moves persist
+            if stable_steps >= max_stable_steps:
+                print("Termination criteria met: Energy stabilized.")
                 terminate_flag = True
-       
-       # Broadcast termination flag to all ranks
+            elif zero_move_steps >= max_stable_steps:
+                print("Termination criteria met: Zero accepted moves for five successive steps.")
+                terminate_flag = True
+
+            if terminate_flag:
+                np.savetxt("final_spins.txt", lattice_spins.reshape(-1), fmt='%d')
+                print("Simulation complete. Final spins saved to 'final_spins.txt'.")
+
+        # Broadcast termination flag to all ranks
         terminate_flag = comm.bcast(terminate_flag, root=0)
+        if terminate_flag:
+            break
 
 if __name__ == "__main__":
     main()
-
