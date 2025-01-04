@@ -17,4 +17,4 @@
 ## Commands to run:
 #spack load lammps@20230208 /cuxhkce
 #mpirun --mca btl ^sm -n 4 python mc_mpi.py
-mpirun -n 32 python sporc_mpi3.py
+mpirun -n 32 python sporc_mpi5.py
