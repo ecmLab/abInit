@@ -44,7 +44,7 @@ def plot_3d_lattice_from_file(file_path, lattice_size, title, filename=None):
     plt.show()
 
 # Example usage
-file_path = "final_spins_max_step.txt"  # Path to the file with the final spin configuration
+file_path = "maxStep_spins.txt"  # Path to the file with the final spin configuration
 lattice_size = 12  # Replace with the actual size of your lattice
 plot_3d_lattice_from_file(file_path, lattice_size, title='3D Lattice Configuration', filename='lattice_3d.png')
 
