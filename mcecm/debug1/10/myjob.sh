@@ -10,7 +10,7 @@
 #SBATCH --ntasks-per-node=32
 #
 # Wall clock limit:
-#SBATCH --time=15:00:00
+#SBATCH --time=20:00:00
 #SBATCH --mem=50g
 
 
