@@ -154,20 +154,20 @@ def main():
     epsilon_a = 0.0
     gamma_0 = 0.4
     anisoPar = 1
-    num_steps = 3000
+    num_steps = 2200
     lattice_size = 32
 
     epsilon_1, epsilon_2, epsilon_3 = define_dimensionless_strains(epsilon_a, gamma_0)
     stiffness_tensor = precompute_stiffness_tensor(anisoPar)
     q_grid, B = precompute_reciprocal_space_and_kernel(lattice_size, stiffness_tensor)
 
-    for temp_index, temperature in enumerate(np.linspace(0.39, 0.40, 2)):
+    for temp_index, temperature in enumerate(np.linspace(0.394, 0.395, 2)):
 
         terminate_flag = False
         zero_move_steps = 0
         max_stable_steps = 20
-        energy_file = open(f"total_energy_T{temperature:.2f}.txt", "w")
-        macro_strain_file = open(f"macro_strain_T{temperature:.2f}.txt", "w")
+        energy_file = open(f"total_energy_T{temperature:.3f}.txt", "w")
+        macro_strain_file = open(f"macro_strain_T{temperature:.3f}.txt", "w")
 
 # Broadcast the lattice spins to all ranks
         if rank == 0:
@@ -228,9 +228,12 @@ def main():
 
                 if zero_move_steps >= max_stable_steps:
                     terminate_flag = True
-                    np.savetxt(f"final_spins_T{temperature:.2f}.txt", lattice_spins.reshape(-1), fmt='%d')
-                    print(f"Simulation complete for T={temperature:.2f}. Final spins saved.")
+                    np.savetxt(f"spins_T{temperature:.3f}_opt.txt", lattice_spins.reshape(-1), fmt='%d')
+                    print(f"Simulation complete for T={temperature:.3f}. Final spins saved.")
 
+                if step > 2000 and step % 20 == 0:
+                    np.savetxt(f"spins_T{temperature:.3f}_{step}.txt", lattice_spins.reshape(-1), fmt='%d')
+            
             terminate_flag = comm.bcast(terminate_flag, root=0)
             if terminate_flag:
                 break
@@ -238,9 +241,9 @@ def main():
         energy_file.close()
         macro_strain_file.close()
    # Save the spins at the maximum step if stabilization is not reached
-        if not terminate_flag and rank == 0:
-           print("Maximum steps reached without stabilization. Saving spins.")
-           np.savetxt(f"maxStep_spins_T{temperature:.2f}.txt", lattice_spins.reshape(-1), fmt='%d')
+#        if not terminate_flag and rank == 0:
+#           print("Maximum steps reached without stabilization. Saving spins.")
+#           np.savetxt(f"maxStep_spins_T{temperature:.2f}.txt", lattice_spins.reshape(-1), fmt='%d')
 
 if __name__ == "__main__":
     main()
