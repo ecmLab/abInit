@@ -161,7 +161,7 @@ def main():
     stiffness_tensor = precompute_stiffness_tensor(anisoPar)
     q_grid, B = precompute_reciprocal_space_and_kernel(lattice_size, stiffness_tensor)
 
-    for temp_index, temperature in enumerate(np.linspace(0.398, 0.399, 2)):
+    for temp_index, temperature in enumerate(np.linspace(0.36, 0.365, 2)):
 
         terminate_flag = False
         zero_move_steps = 0
