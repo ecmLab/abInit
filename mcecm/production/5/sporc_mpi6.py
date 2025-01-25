@@ -154,7 +154,7 @@ def main():
     epsilon_a = 0.0
     gamma_0 = 0.4
     anisoPar = 1
-    num_steps = 2200
+    num_steps = 2000
     lattice_size = 32
 
     epsilon_1, epsilon_2, epsilon_3 = define_dimensionless_strains(epsilon_a, gamma_0)
@@ -166,12 +166,13 @@ def main():
         terminate_flag = False
         zero_move_steps = 0
         max_stable_steps = 20
-        energy_file = open(f"total_energy_T{temperature:.3f}.txt", "w")
-        macro_strain_file = open(f"macro_strain_T{temperature:.3f}.txt", "w")
+        energy_file = open(f"total_energy_T{temperature:.3f}_1.txt", "w")
+        macro_strain_file = open(f"macro_strain_T{temperature:.3f}_1.txt", "w")
 
 # Broadcast the lattice spins to all ranks
         if rank == 0:
-            lattice_spins = np.random.choice([1, 2, 3], size=(lattice_size, lattice_size, lattice_size))
+#            lattice_spins = np.random.choice([1, 2, 3], size=(lattice_size, lattice_size, lattice_size))
+            lattice_spins = np.loadtxt("spins_T0.370_2200.txt", dtype=int).reshape((lattice_size, lattice_size, lattice_size))
         else:
             lattice_spins = None
         lattice_spins = comm.bcast(lattice_spins, root=0)
@@ -203,7 +204,7 @@ def main():
         current_energy = comm.reduce(local_energy, op=MPI.SUM, root=0)
         current_energy = comm.bcast(current_energy, root=0)
 
-        for step in range(1, num_steps + 1):
+        for step in range(2201, num_steps + 2202):
             accepted_moves = 0
             prev_energy = current_energy
 ## MC step
@@ -231,7 +232,8 @@ def main():
                     np.savetxt(f"spins_T{temperature:.3f}_opt.txt", lattice_spins.reshape(-1), fmt='%d')
                     print(f"Simulation complete for T={temperature:.3f}. Final spins saved.")
 
-                if step > 2000 and step % 20 == 0:
+#                if step > 2000 and step % 20 == 0:
+                if step % 100 == 0:
                     np.savetxt(f"spins_T{temperature:.3f}_{step}.txt", lattice_spins.reshape(-1), fmt='%d')
             
             terminate_flag = comm.bcast(terminate_flag, root=0)
