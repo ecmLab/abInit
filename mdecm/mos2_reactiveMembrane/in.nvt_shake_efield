@@ -26,18 +26,21 @@ neigh_modify    delay 5 every 1
 pair_coeff 1 1     0.100   4.4000000   # Cl-Cl
 pair_coeff 2 2     0.050   2.5000000   # CR-CR
 pair_coeff 3 3     0.0157  1.0000000   # H-H
+pair_coeff 4 4     0.0     0.0         # H1-H1
+pair_coeff 5 5     0.0     0.0         # H1-H1
 pair_coeff 6 6     0.003   3.2700000   # Mo-Mo
 pair_coeff 7 7     0.0469  2.5900000   # Na-Na
+pair_coeff 8 8     0.1521  3.1507      # OW-OW
 pair_coeff 9 9     0.1000  3.0000000   # O1-O1
 pair_coeff 10 10   0.1000  3.0000000   # O2-O2
 pair_coeff 11 11   0.1000  3.0000000   # O3-O3
 pair_coeff 12 12   0.1000  3.0000000   # O4-O4
 pair_coeff 13 13   0.0086  3.5500000   # S-S
-pair_coeff 2 9     0.075   3.0250000   # CR-O1
-pair_coeff 2 10    0.075   3.0250000   # CR-O2
-pair_coeff 2 11    0.075   3.0250000   # CR-O3
-pair_coeff 2 12    0.075   3.0250000   # CR-O4
-pair_coeff 6 13    0.00508 3.405       # Mo-S
+#pair_coeff 2 10    0.075   3.0250000   # CR-O2
+#pair_coeff 2 11    0.075   3.0250000   # CR-O3
+#pair_coeff 2 12    0.075   3.0250000   # CR-O4
+#pair_coeff 6 13    0.00508 3.405       # Mo-S
+#pair_coeff 8 9     0.0     0.0
 
 # Fix MoS2 as rigid (zero force and velocity)
 fix fix_hold mos2 setforce 0.0 0.0 0.0

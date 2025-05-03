@@ -9,7 +9,7 @@
 ## Variables used in the file
 ## Constant Value (in armstrong)
 set  pi    3.1415926535897932
-set  rr    10
+set  rr    20
 package require topotools
 
 # Align the mos2 tube to the center of the system
@@ -41,7 +41,7 @@ $H set charge 1.0
 set Mo  [atomselect top "name Mo"]
 $Mo set charge 0.734
 set S  [atomselect top "name S"]
-$S set charge -0.370
+$S set charge -0.44
 ## charge for Na and Cl
 set Na  [atomselect top "name NA"]
 $Na set charge 1.0
