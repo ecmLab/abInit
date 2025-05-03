@@ -9,7 +9,8 @@
 ## Variables used in the file
 ## Constant Value (in armstrong)
 set  pi    3.1415926535897932
-set  rr    10
+set  rr    20
+package require topotools
 
 # Align the mos2 tube to the center of the system
 mol delete all
@@ -46,6 +47,32 @@ set Na  [atomselect top "name NA"]
 $Na set charge 1.0
 set Cl  [atomselect top "name CL"]
 $Cl set charge -1.0
+
+# Add O-H bonds of water molecules
+set nO [$H2O_O num]
+set oid [$H2O_O get index]
+# Iterate through each oxygen and find bonded hydrogens
+for {set i 0} {$i < $nO} {incr i} {
+    set io  [lindex $oid $i]
+    set iwo [atomselect top "index $io"]
+    set resid  [$iwo get resid]
+    # Find H atoms bonded to this oxygen
+    set H1 [atomselect top "name H1 and resid $resid"]
+    set h1id [lindex [$H1 get index] 0]
+    set H2 [atomselect top "name H2 and resid $resid"]
+    set h2id [lindex [$H2 get index] 0]
+
+    # Add O–H bonds
+    topo addbond $io $h1id
+    topo addbond $io $h2id
+
+    # Add H–O–H angle
+    topo addangle $h1id $io $h2id
+}
+
+# Guess bond and angle types if needed
+#topo guessbondtypes
+#topo guessangletypes
 
 set all [atomselect top all]
 $all writepdb sol_r${rr}.pdb
