@@ -9,7 +9,7 @@
 ## Variables used in the file
 ## Constant Value (in armstrong)
 set  pi    3.1415926535897932
-set  rr    20
+set  rr    10
 package require topotools
 
 # Align the mos2 tube to the center of the system
@@ -49,6 +49,7 @@ set Cl  [atomselect top "name CL"]
 $Cl set charge -1.0
 
 # Add O-H bonds of water molecules
+topo clearbonds
 set nO [$H2O_O num]
 set oid [$H2O_O get index]
 # Iterate through each oxygen and find bonded hydrogens
