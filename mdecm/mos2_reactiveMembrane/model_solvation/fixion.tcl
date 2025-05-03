@@ -9,17 +9,19 @@
 ## Variables used in the file
 ## Constant Value (in armstrong)
 set  pi    3.1415926535897932
-set  rr    20
+set  rr    50
+set xyz [list [expr 2.5*$rr] [expr 2.5*$rr] 12.5]
 package require topotools
 
 # Align the mos2 tube to the center of the system
 mol delete all
 mol load pdb sol_r${rr}.pdb
-pbc set {300 300 12.5}
+pbc set $xyz
 set all [atomselect top all]
 set mos2 [atomselect top "resname MOL"]
 set vec [measure center $mos2]
 $all moveby [vecinvert $vec ]
+$all moveby [vecscale 0.5 $xyz]
 $all writepdb sol_r${rr}_fix.pdb
 
 ##Set partial charge to atoms
@@ -41,7 +43,7 @@ $H set charge 1.0
 set Mo  [atomselect top "name Mo"]
 $Mo set charge 0.734
 set S  [atomselect top "name S"]
-$S set charge -0.44
+$S set charge -0.37435
 ## charge for Na and Cl
 set Na  [atomselect top "name NA"]
 $Na set charge 1.0
@@ -76,6 +78,7 @@ for {set i 0} {$i < $nO} {incr i} {
 #topo guessangletypes
 
 set all [atomselect top all]
+puts " TOTAL CHARGE ON THE SYSTEM: [eval vecadd [$all get charge]]"
 $all writepdb sol_r${rr}.pdb
 
 # Export LAMMPS data file with charges
