@@ -1,0 +1,75 @@
+TITLE      water
+REMARK   1 File created by GaussView 6.0.16
+HETATM    1  O           0       3.882  -2.978  -1.170                       O
+HETATM    2  O           0       3.485   2.465   2.066                       O
+HETATM    3  O           0      -3.882  -2.978   1.170                       O
+HETATM    4  O           0      -3.485   2.465  -2.066                       O
+HETATM    5  O           0       4.141  -0.768  -1.549                       O
+HETATM    6  O           0       2.036   2.643   0.345                       O
+HETATM    7  O           0      -4.141  -0.768   1.549                       O
+HETATM    8  O           0      -2.036   2.643  -0.345                       O
+HETATM    9  N           0       1.896  -0.183   0.112                       N
+HETATM   10  N           0      -1.896  -0.183  -0.112                       N
+HETATM   11  C           0       0.496  -0.134   0.582                       C
+HETATM   12  C           0      -0.496  -0.134  -0.583                       C
+HETATM   13  C           0       2.300  -1.561  -0.147                       C
+HETATM   14  C           0       2.798   0.438   1.078                       C
+HETATM   15  C           0      -2.300  -1.561   0.147                       C
+HETATM   16  C           0      -2.798   0.438  -1.078                       C
+HETATM   17  C           0       3.530  -1.681  -1.024                       C
+HETATM   18  C           0       2.702   1.949   1.093                       C
+HETATM   19  C           0      -3.530  -1.681   1.024                       C
+HETATM   20  C           0      -2.702   1.949  -1.092                       C
+HETATM   21  H           0       4.666  -3.011  -1.753                       H
+HETATM   22  H           0       3.409   3.439   2.025                       H
+HETATM   23  H           0      -4.666  -3.011   1.753                       H
+HETATM   24  H           0      -3.409   3.439  -2.024                       H
+HETATM   25  H           0       0.291  -0.958   1.286                       H
+HETATM   26  H           0       0.352   0.796   1.136                       H
+HETATM   27  H           0      -0.352   0.796  -1.137                       H
+HETATM   28  H           0      -0.291  -0.958  -1.285                       H
+HETATM   29  H           0       1.494  -2.082  -0.675                       H
+HETATM   30  H           0       2.484  -2.140   0.774                       H
+HETATM   31  H           0       3.834   0.199   0.819                       H
+HETATM   32  H           0       2.645   0.076   2.109                       H
+HETATM   33  H           0      -1.494  -2.082   0.675                       H
+HETATM   34  H           0      -2.485  -2.140  -0.775                       H
+HETATM   35  H           0      -3.834   0.199  -0.819                       H
+HETATM   36  H           0      -2.645   0.076  -2.109                       H
+END
+CONECT    1   17   21
+CONECT    2   18   22
+CONECT    3   19   23
+CONECT    4   20   24
+CONECT    5   17
+CONECT    6   18
+CONECT    7   19
+CONECT    8   20
+CONECT    9   11   13   14
+CONECT   10   12   15   16
+CONECT   11    9   12   25   26
+CONECT   12   10   11   27   28
+CONECT   13    9   17   29   30
+CONECT   14    9   18   31   32
+CONECT   15   10   19   33   34
+CONECT   16   10   20   35   36
+CONECT   17    1    5   13
+CONECT   18    6    2   14
+CONECT   19   15    3    7
+CONECT   20    4    8   16
+CONECT   21    1
+CONECT   22    2
+CONECT   23    3
+CONECT   24    4
+CONECT   25   11
+CONECT   26   11
+CONECT   27   12
+CONECT   28   12
+CONECT   29   13
+CONECT   30   13
+CONECT   31   14
+CONECT   32   14
+CONECT   33   15
+CONECT   34   15
+CONECT   35   16
+CONECT   36   16

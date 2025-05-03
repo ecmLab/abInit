@@ -1,0 +1,60 @@
+
+units           real
+atom_style      full
+boundary        p p p
+
+read_data       model_solvation/sol_r20.data
+
+# Define groups
+group water type 4 5 8      # Assuming these are O and H atom types
+group mos2  type 6 13       # MoS2 backbone
+group sol   type 1 2 3 4 5 7 8 9 10 11 12  # solvent and solution
+
+# Define SHAKE constraints for water (O-H bonds and H-O-H angle)
+fix fix_shake water shake 0.0001 20 0 b 1 a 1
+
+# Pair style and kspace
+pair_style      lj/cut/coul/long 10.0 10.0
+pair_modify     mix arithmetic
+kspace_style    pppm 1.0e-4
+
+# Neighbor settings
+neighbor        2.0 bin
+neigh_modify    delay 5 every 1
+
+# Pair Coeff
+pair_coeff 1 1     0.100   4.4000000   # Cl-Cl
+pair_coeff 2 2     0.050   2.5000000   # CR-CR
+pair_coeff 3 3     0.0157  1.0000000   # H-H
+pair_coeff 6 6     0.003   3.2700000   # Mo-Mo
+pair_coeff 7 7     0.0469  2.5900000   # Na-Na
+pair_coeff 9 9     0.1000  3.0000000   # O1-O1
+pair_coeff 10 10   0.1000  3.0000000   # O2-O2
+pair_coeff 11 11   0.1000  3.0000000   # O3-O3
+pair_coeff 12 12   0.1000  3.0000000   # O4-O4
+pair_coeff 13 13   0.0086  3.5500000   # S-S
+pair_coeff 2 9     0.075   3.0250000   # CR-O1
+pair_coeff 2 10    0.075   3.0250000   # CR-O2
+pair_coeff 2 11    0.075   3.0250000   # CR-O3
+pair_coeff 2 12    0.075   3.0250000   # CR-O4
+pair_coeff 6 13    0.00508 3.405       # Mo-S
+
+# Fix MoS2 as rigid (zero force and velocity)
+fix fix_hold mos2 setforce 0.0 0.0 0.0
+velocity mos2 set 0.0 0.0 0.0
+
+# Define small electric field along z (0.001 kcal/mol·e·Å)
+fix fix_efield sol efield 0.0 0.0 0.001
+
+# Set timestep and thermostat
+timestep        1.0  # fs
+fix fix_nvt sol nvt temp 300.0 300.0 100.0
+
+# Output
+thermo          1000
+thermo_style    custom step temp etotal press
+
+dump d1 all custom 1000 dump.lammpstrj id type x y z
+
+# Run for 5 ns (5,000,000 steps)
+run 500000
