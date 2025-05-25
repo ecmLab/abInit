@@ -9,7 +9,7 @@
 ## Variables used in the file
 ## Constant Value (in armstrong)
 set  pi    3.1415926535897932
-set  rr    50
+set  rr    20
 set xyz [list [expr 2.5*$rr] [expr 2.5*$rr] 12.5]
 package require topotools
 
@@ -50,8 +50,46 @@ $Na set charge 1.0
 set Cl  [atomselect top "name CL"]
 $Cl set charge -1.0
 
-# Add O-H bonds of water molecules
 topo clearbonds
+topo clearangles
+# Add Cr–O bonds in HCrO4 molecules
+set nCr [$Cr num]
+set crid [$Cr get index]
+# Iterate through each Cr and find bonded oxygen
+for {set i 0} {$i < $nCr} {incr i} {
+    set iCr  [lindex $crid $i]
+    set aCr [atomselect top "index $iCr"]
+    set resid  [$aCr get resid]
+    # Find O and H atoms belong to this Cr
+    set O1 [atomselect top "name O1 and resid $resid"]
+    set O1id [lindex [$O1 get index] 0]
+    set O2 [atomselect top "name O2 and resid $resid"]
+    set O2id [lindex [$O2 get index] 0]
+    set O3 [atomselect top "name O3 and resid $resid"]
+    set O3id [lindex [$O3 get index] 0]
+    set O4 [atomselect top "name O4 and resid $resid"]
+    set O4id [lindex [$O4 get index] 0]
+    set H [atomselect top "name H and resid $resid"]
+    set hid [lindex [$H get index] 0]
+
+    # Add Cr–O bonds
+    topo addbond $iCr $O1id -bondtype 1
+    topo addbond $iCr $O2id -bondtype 1
+    topo addbond $iCr $O3id -bondtype 1
+    topo addbond $iCr $O4id -bondtype 1
+    # Add O–H bonds
+    topo addbond $O1id $hid -bondtype 2
+
+    # Add O–Cr–O angle
+    topo addangle $O1id $iCr $O2id 1
+    topo addangle $O1id $iCr $O3id 1
+    topo addangle $O1id $iCr $O4id 1
+    topo addangle $O2id $iCr $O3id 1
+    topo addangle $O2id $iCr $O4id 1
+    topo addangle $O3id $iCr $O4id 1
+}
+
+# Add O-H bonds in water molecules
 set nO [$H2O_O num]
 set oid [$H2O_O get index]
 # Iterate through each oxygen and find bonded hydrogens
@@ -66,11 +104,11 @@ for {set i 0} {$i < $nO} {incr i} {
     set h2id [lindex [$H2 get index] 0]
 
     # Add O–H bonds
-    topo addbond $io $h1id
-    topo addbond $io $h2id
+    topo addbond $io $h1id -bondtype 3
+    topo addbond $io $h2id -bondtype 3
 
     # Add H–O–H angle
-    topo addangle $h1id $io $h2id
+    topo addangle $h1id $io $h2id 2
 }
 
 # Guess bond and angle types if needed

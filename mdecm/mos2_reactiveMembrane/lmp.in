@@ -7,7 +7,7 @@ boundary        p p p
 read_data       model_solvation/sol_r20.data
 
 # Define groups
-group water type 4 5 8      # Assuming these are O and H atom types
+group water type 4 5 8      # 4 and 5 are H1 and H2 atoms, 8 is O atom
 group mos2  type 6 13       # MoS2 backbone
 group sol   type 1 2 3 4 5 7 8 9 10 11 12  # solvent and solution
 
@@ -33,13 +33,18 @@ pair_coeff 12 12   0.1000  3.0000000   # O4-O4
 pair_coeff 13 13   0.0086  3.5500000   # S-S
 
 bond_style harmonic
-bond_coeff 1 450 0.9572
+bond_coeff 1 650 1.6800
+bond_coeff 2 450 0.9572
+bond_coeff 3 450 0.9572
 
 angle_style     harmonic
-angle_coeff 1 55 104.52
+angle_coeff 1 80 109.50
+angle_coeff 2 55 104.52
 
 ## Minimize the system first
-minimize 1.0e-4 1.0e-6 100 1000
+velocity all create 300.0 12345 dist gaussian mom yes rot yes
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
 
 # *************** Setting ******************************
 # Neighbor settings
