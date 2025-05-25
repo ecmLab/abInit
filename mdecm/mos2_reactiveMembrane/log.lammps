@@ -8,30 +8,30 @@ boundary        p p p
 
 read_data       model_solvation/sol_r20.data
 Reading data file ...
-  orthogonal box = (-1e-06 1e-06 -0.272) to (49.999999 50.000001 12.228)
+  orthogonal box = (-1e-06 1e-06 -0.2585) to (49.999999 50.000001 12.2415)
   3 by 4 by 1 MPI processor grid
   reading atoms ...
   2096 atoms
   scanning bonds ...
-  2 = max bonds/atom
+  4 = max bonds/atom
   scanning angles ...
-  1 = max angles/atom
+  6 = max angles/atom
   reading bonds ...
-  1048 bonds
+  1068 bonds
   reading angles ...
-  524 angles
+  548 angles
 Finding 1-2 1-3 1-4 neighbors ...
   special bond factors lj:    0        0        0       
   special bond factors coul:  0        0        0       
-     2 = max # of 1-2 neighbors
-     1 = max # of 1-3 neighbors
-     1 = max # of 1-4 neighbors
-     2 = max # of special neighbors
+     4 = max # of 1-2 neighbors
+     3 = max # of 1-3 neighbors
+     4 = max # of 1-4 neighbors
+     5 = max # of special neighbors
   special bonds CPU = 0.001 seconds
-  read_data CPU = 0.039 seconds
+  read_data CPU = 0.033 seconds
 
 # Define groups
-group water type 4 5 8      # Assuming these are O and H atom types
+group water type 4 5 8      # 4 and 5 are H1 and H2 atoms, 8 is O atom
 1572 atoms in group water
 group mos2  type 6 13       # MoS2 backbone
 414 atoms in group mos2
@@ -40,6 +40,15 @@ group sol   type 1 2 3 4 5 7 8 9 10 11 12  # solvent and solution
 
 # Pair style and kspace
 pair_style      lj/cut/coul/long 10.0 10.0
+special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0.5     
+  special bond factors coul:  0        0        0.83333333
+     4 = max # of 1-2 neighbors
+     3 = max # of 1-3 neighbors
+     4 = max # of 1-4 neighbors
+     5 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
 pair_modify     mix arithmetic
 #kspace_style    pppm 1.0e-4
 kspace_style ewald 1e-8
@@ -60,20 +69,25 @@ pair_coeff 12 12   0.1000  3.0000000   # O4-O4
 pair_coeff 13 13   0.0086  3.5500000   # S-S
 
 bond_style harmonic
-bond_coeff 1 450 0.9572
+bond_coeff 1 650 1.6800
+bond_coeff 2 450 0.9572
+bond_coeff 3 450 0.9572
 
 angle_style     harmonic
-angle_coeff 1 55 104.52
+angle_coeff 1 80 109.50
+angle_coeff 2 55 104.52
 
 ## Minimize the system first
-minimize 1.0e-4 1.0e-6 100 1000
+velocity all create 300.0 12345 dist gaussian mom yes rot yes
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
 Ewald initialization ...
-WARNING: System is not charge neutral, net charge = -0.00528 (src/src/kspace.cpp:327)
+WARNING: System is not charge neutral, net charge = -0.0246 (src/src/kspace.cpp:327)
   using 12-bit tables for long-range coulomb (src/src/kspace.cpp:342)
 WARNING: For better accuracy use 'pair_modify table 0' (src/src/kspace.cpp:365)
-  G vector (1/distance) = 0.3949358
-  estimated absolute RMS force accuracy = 1.770937e-05
-  estimated relative force accuracy = 5.3331241e-08
+  G vector (1/distance) = 0.39493604
+  estimated absolute RMS force accuracy = 1.7709696e-05
+  estimated relative force accuracy = 5.3332224e-08
   KSpace vectors: actual max1d max3d = 11163 25 66325
                   kxmax kymax kzmax  = 25 25 7
 Generated 78 of 78 mixed pair_coeff terms from arithmetic mixing rule
@@ -89,11 +103,11 @@ Neighbor list info ...
       pair build: half/bin/newton
       stencil: half/bin/3d
       bin: standard
-Per MPI rank memory allocation (min/avg/max) = 54.34 | 54.53 | 55.19 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 56 | 56.27 | 57.26 Mbytes
    Step          Temp          E_pair         E_mol          TotEng         Press     
-         0   0              inf            0.12851475     inf           -nan          
-         1   0              inf            0.12851475     inf           -nan          
-Loop time of 24.9197 on 12 procs for 1 steps with 2096 atoms
+         0   300            inf            287.7589       inf           -nan          
+         1   300            inf            287.7589       inf           -nan          
+Loop time of 29.2149 on 12 procs for 1 steps with 2096 atoms
 
 100.0% CPU use with 12 MPI tasks x 1 OpenMP threads
 
@@ -102,194 +116,31 @@ Minimization stats:
   Energy initial, next-to-last, final = 
     inf                inf                inf               
   Force two-norm initial, final = -nan -nan
-  Force max component initial, final = 1.8303157e+10 1.8303157e+10
+  Force max component initial, final = 1.3916139e+11 1.3916139e+11
   Final line search alpha, max atom move = 0 0
-  Iterations, force evaluations = 1 1041
+  Iterations, force evaluations = 1 1036
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.18394    | 1.3412     | 3.9806     | 105.6 |  5.38
-Bond    | 0.0012857  | 0.0070759  | 0.018833   |   6.7 |  0.03
-Kspace  | 10.824     | 15.021     | 20.836     |  87.3 | 60.28
+Pair    | 0.085302   | 1.5141     | 5.3041     | 137.9 |  5.18
+Bond    | 0.0010107  | 0.0076098  | 0.023642   |   8.7 |  0.03
+Kspace  | 12.306     | 16.748     | 24.189     |  94.1 | 57.33
 Neigh   | 0          | 0          | 0          |   0.0 |  0.00
-Comm    | 0.065503   | 8.3427     | 13.82      | 153.3 | 33.48
+Comm    | 0.074429   | 10.891     | 16.781     | 166.0 | 37.28
 Output  | 0          | 0          | 0          |   0.0 |  0.00
 Modify  | 0          | 0          | 0          |   0.0 |  0.00
-Other   |            | 0.2074     |            |       |  0.83
+Other   |            | 0.05415    |            |       |  0.19
 
-Nlocal:        174.667 ave         374 max          48 min
-Histogram: 4 0 0 1 4 1 0 0 0 2
-Nghost:           3519 ave        4926 max        2573 min
-Histogram: 4 0 0 0 4 2 0 0 0 2
-Neighs:        62728.2 ave      178355 max        9925 min
-Histogram: 4 0 3 3 0 0 0 0 0 2
+Nlocal:        174.667 ave         431 max          37 min
+Histogram: 4 0 2 3 1 0 0 0 0 2
+Nghost:        3403.58 ave        4816 max        2466 min
+Histogram: 4 0 0 2 2 2 0 0 0 2
+Neighs:        69776.5 ave      233429 max        5947 min
+Histogram: 4 2 3 1 0 0 0 0 0 2
 
-Total # of neighbors = 752739
-Ave neighs/atom = 359.1312
-Ave special neighs/atom = 1.5
+Total # of neighbors = 837318
+Ave neighs/atom = 399.48378
+Ave special neighs/atom = 1.5572519
 Neighbor list builds = 0
 Dangerous builds = 0
-
-# *************** Setting ******************************
-# Neighbor settings
-neighbor        2.0 bin
-neigh_modify    delay 5 every 1
-
-# Define SHAKE constraints for water (O-H bonds and H-O-H angle)
-fix spce_model water shake 0.0001 20 0 b 1 a 1
-Finding SHAKE clusters ...
-       0 = # of size 2 clusters
-       0 = # of size 3 clusters
-       0 = # of size 4 clusters
-     524 = # of frozen angles
-  find clusters CPU = 0.000 seconds
-
-# Fix MoS2 as rigid (zero force and velocity)
-fix mos_hold mos2 setforce 0.0 0.0 0.0
-velocity mos2 set 0.0 0.0 0.0
-
-# Define small electric field along z (0.001 kcal/mol·e·Å)
-fix fix_efield sol efield 0.0 0.0 0.001
-
-# Set timestep
-reset_timestep  0
-timestep        0.5  # fs
-fix fix_nvt sol nvt temp 300.0 300.0 100.0
-
-# Thermostat output
-thermo          100
-thermo_style    custom step temp etotal press
-
-dump d1 all custom 100 dump.lammpstrj id type x y z
-
-# Run for 5 ns (5,000,000 steps)
-run 50000
-Ewald initialization ...
-  using 12-bit tables for long-range coulomb (src/src/kspace.cpp:342)
-WARNING: For better accuracy use 'pair_modify table 0' (src/src/kspace.cpp:365)
-  G vector (1/distance) = 0.3949358
-  estimated absolute RMS force accuracy = 1.770937e-05
-  estimated relative force accuracy = 5.3331241e-08
-  KSpace vectors: actual max1d max3d = 11163 25 66325
-                  kxmax kymax kzmax  = 25 25 7
-Generated 78 of 78 mixed pair_coeff terms from arithmetic mixing rule
-Per MPI rank memory allocation (min/avg/max) = 54.09 | 54.23 | 54.67 Mbytes
-   Step          Temp          TotEng         Press     
-         0   0              inf           -nan          
-       100   nan            nan            nan          
-       200   nan            nan            nan          
-       300   nan            nan            nan          
-       400   nan            nan            nan          
-       500   nan            nan            nan          
-       600   nan            nan            nan          
-       700   nan            nan            nan          
-       800   nan            nan            nan          
-       900   nan            nan            nan          
-      1000   nan            nan            nan          
-      1100   nan            nan            nan          
-      1200   nan            nan            nan          
-      1300   nan            nan            nan          
-      1400   nan            nan            nan          
-      1500   nan            nan            nan          
-      1600   nan            nan            nan          
-      1700   nan            nan            nan          
-      1800   nan            nan            nan          
-      1900   nan            nan            nan          
-      2000   nan            nan            nan          
-      2100   nan            nan            nan          
-      2200   nan            nan            nan          
-      2300   nan            nan            nan          
-      2400   nan            nan            nan          
-      2500   nan            nan            nan          
-      2600   nan            nan            nan          
-      2700   nan            nan            nan          
-      2800   nan            nan            nan          
-      2900   nan            nan            nan          
-      3000   nan            nan            nan          
-      3100   nan            nan            nan          
-      3200   nan            nan            nan          
-      3300   nan            nan            nan          
-      3400   nan            nan            nan          
-      3500   nan            nan            nan          
-      3600   nan            nan            nan          
-      3700   nan            nan            nan          
-      3800   nan            nan            nan          
-      3900   nan            nan            nan          
-      4000   nan            nan            nan          
-      4100   nan            nan            nan          
-      4200   nan            nan            nan          
-      4300   nan            nan            nan          
-      4400   nan            nan            nan          
-      4500   nan            nan            nan          
-      4600   nan            nan            nan          
-      4700   nan            nan            nan          
-      4800   nan            nan            nan          
-      4900   nan            nan            nan          
-      5000   nan            nan            nan          
-      5100   nan            nan            nan          
-      5200   nan            nan            nan          
-      5300   nan            nan            nan          
-      5400   nan            nan            nan          
-      5500   nan            nan            nan          
-      5600   nan            nan            nan          
-      5700   nan            nan            nan          
-      5800   nan            nan            nan          
-      5900   nan            nan            nan          
-      6000   nan            nan            nan          
-      6100   nan            nan            nan          
-      6200   nan            nan            nan          
-      6300   nan            nan            nan          
-      6400   nan            nan            nan          
-      6500   nan            nan            nan          
-      6600   nan            nan            nan          
-      6700   nan            nan            nan          
-      6800   nan            nan            nan          
-      6900   nan            nan            nan          
-      7000   nan            nan            nan          
-      7100   nan            nan            nan          
-      7200   nan            nan            nan          
-      7300   nan            nan            nan          
-      7400   nan            nan            nan          
-      7500   nan            nan            nan          
-      7600   nan            nan            nan          
-      7700   nan            nan            nan          
-      7800   nan            nan            nan          
-      7900   nan            nan            nan          
-      8000   nan            nan            nan          
-      8100   nan            nan            nan          
-      8200   nan            nan            nan          
-      8300   nan            nan            nan          
-      8400   nan            nan            nan          
-      8500   nan            nan            nan          
-      8600   nan            nan            nan          
-      8700   nan            nan            nan          
-      8800   nan            nan            nan          
-      8900   nan            nan            nan          
-      9000   nan            nan            nan          
-      9100   nan            nan            nan          
-      9200   nan            nan            nan          
-      9300   nan            nan            nan          
-      9400   nan            nan            nan          
-      9500   nan            nan            nan          
-      9600   nan            nan            nan          
-      9700   nan            nan            nan          
-      9800   nan            nan            nan          
-      9900   nan            nan            nan          
-     10000   nan            nan            nan          
-     10100   nan            nan            nan          
-     10200   nan            nan            nan          
-     10300   nan            nan            nan          
-     10400   nan            nan            nan          
-     10500   nan            nan            nan          
-     10600   nan            nan            nan          
-     10700   nan            nan            nan          
-     10800   nan            nan            nan          
-     10900   nan            nan            nan          
-     11000   nan            nan            nan          
-     11100   nan            nan            nan          
-     11200   nan            nan            nan          
-     11300   nan            nan            nan          
-     11400   nan            nan            nan          
-     11500   nan            nan            nan          
-     11600   nan

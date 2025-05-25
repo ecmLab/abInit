@@ -13,6 +13,7 @@ group sol   type 1 2 3 4 5 7 8 9 10 11 12  # solvent and solution
 
 # Pair style and kspace
 pair_style      lj/cut/coul/long 10.0 10.0
+special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
 pair_modify     mix arithmetic
 #kspace_style    pppm 1.0e-4
 kspace_style ewald 1e-8
@@ -51,8 +52,8 @@ minimize 1.0e-4 1.0e-6 1000 10000
 neighbor        2.0 bin
 neigh_modify    delay 5 every 1
 
-# Define SHAKE constraints for water (O-H bonds and H-O-H angle)
-fix spce_model water shake 0.0001 20 0 b 1 a 1
+# Define SHAKE constraints for water (O-H bonds and H-O-H angle) and HCrO4 (Cr-O O-H bonds and O-Cr-O angle)
+fix spce_model water shake 0.0001 20 0 b 1 2 3 a 1 2
 
 # Fix MoS2 as rigid (zero force and velocity)
 fix mos_hold mos2 setforce 0.0 0.0 0.0
