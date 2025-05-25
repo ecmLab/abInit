@@ -13,10 +13,10 @@
 
 #  wall-clock time for tier3
 ##SBATCH -t 0-60:00:00
-#SBATCH -t 0-02:00:00
+#SBATCH -t 0-00:10:00
 
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=12
+#SBATCH --ntasks-per-node=6
 #SBATCH --mem-per-cpu=20g
 
 #load the lammps module
