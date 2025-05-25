@@ -43,7 +43,7 @@ $H set charge 1.0
 set Mo  [atomselect top "name Mo"]
 $Mo set charge 0.734
 set S  [atomselect top "name S"]
-$S set charge -0.37435
+$S set charge -0.37425
 ## charge for Na and Cl
 set Na  [atomselect top "name NA"]
 $Na set charge 1.0

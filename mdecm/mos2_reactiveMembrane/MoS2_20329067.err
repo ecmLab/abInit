@@ -1,3 +1,0 @@
-Identity added: /home/qhteme/.ssh/id_rsa_github (/home/qhteme/.ssh/id_rsa_github)
-srun: Job step aborted: Waiting up to 4 seconds for job step to finish.
-slurmstepd: error: *** JOB 20329067 ON skl-a-47 CANCELLED AT 2025-05-25T16:37:56 ***

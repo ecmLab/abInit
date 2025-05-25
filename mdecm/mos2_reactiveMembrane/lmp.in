@@ -13,6 +13,7 @@ group sol   type 1 2 3 4 5 7 8 9 10 11 12  # solvent and solution
 
 # Pair style and kspace
 pair_style      lj/cut/coul/long 10.0 10.0
+#pair_style      lj/cut 2.5
 special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
 pair_modify     mix arithmetic
 #kspace_style    pppm 1.0e-4
