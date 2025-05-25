@@ -18,10 +18,6 @@ pair_style      lj/cut/coul/long 10.0 10.0
 pair_modify     mix arithmetic
 kspace_style    pppm 1.0e-4
 
-# Neighbor settings
-neighbor        2.0 bin
-neigh_modify    delay 5 every 1
-
 # Pair Coeff
 pair_coeff 1 1     0.100   4.4000000   # Cl-Cl
 pair_coeff 2 2     0.050   2.5000000   # CR-CR
@@ -36,11 +32,19 @@ pair_coeff 10 10   0.1000  3.0000000   # O2-O2
 pair_coeff 11 11   0.1000  3.0000000   # O3-O3
 pair_coeff 12 12   0.1000  3.0000000   # O4-O4
 pair_coeff 13 13   0.0086  3.5500000   # S-S
-#pair_coeff 2 10    0.075   3.0250000   # CR-O2
-#pair_coeff 2 11    0.075   3.0250000   # CR-O3
-#pair_coeff 2 12    0.075   3.0250000   # CR-O4
-#pair_coeff 6 13    0.00508 3.405       # Mo-S
-#pair_coeff 8 9     0.0     0.0
+
+bond_style harmonic
+bond_coeff 1 450 0.9572
+
+angle_style     harmonic
+angle_coeff 1 55 104.52
+
+# Neighbor settings
+neighbor        2.0 bin
+neigh_modify    delay 5 every 1
+
+velocity all create 300.0 12345 dist gaussian mom yes rot yes
+minimize 1.0e-4 1.0e-6 100 1000
 
 # Fix MoS2 as rigid (zero force and velocity)
 fix fix_hold mos2 setforce 0.0 0.0 0.0
@@ -50,14 +54,14 @@ velocity mos2 set 0.0 0.0 0.0
 fix fix_efield sol efield 0.0 0.0 0.001
 
 # Set timestep and thermostat
-timestep        1.0  # fs
+timestep        0.5  # fs
 fix fix_nvt sol nvt temp 300.0 300.0 100.0
 
 # Output
-thermo          1000
+thermo          100
 thermo_style    custom step temp etotal press
 
-dump d1 all custom 1000 dump.lammpstrj id type x y z
+dump d1 all custom 100 dump.lammpstrj id type x y z
 
 # Run for 5 ns (5,000,000 steps)
-run 500000
+run 50000
