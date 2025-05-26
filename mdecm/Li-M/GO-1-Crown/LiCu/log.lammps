@@ -1,22 +1,22 @@
-LAMMPS (2 Aug 2023 - Update 2)
-  using 1 OpenMP thread(s) per MPI task
-    # -- Default styles (for solo "SPCE" water) --
-     units        real
-     atom_style   full
-     dimension 3
-     boundary p p p
+LAMMPS (19 Nov 2024)
+# -- Default styles (for solo "SPCE" water) --
+units        real
+atom_style   full
+dimension 3
+boundary p p p
 
-
- read_data GO-Multilyer-1-Crown-LiCu.data
+read_data GO-Multilyer-1-Crown-LiCu.data
 Reading data file ...
   orthogonal box = (-10.5 -0.5 -49.5) to (91.6 30.5 49.5)
-  4 by 1 by 3 MPI processor grid
+  1 by 1 by 1 MPI processor grid
   reading atoms ...
   11894 atoms
   scanning bonds ...
   4 = max bonds/atom
   scanning angles ...
   10 = max angles/atom
+  orthogonal box = (-10.5 -0.5 -49.5) to (91.6 30.5 49.5)
+  1 by 1 by 1 MPI processor grid
   reading bonds ...
   10816 bonds
   reading angles ...
@@ -28,23 +28,11 @@ Finding 1-2 1-3 1-4 neighbors ...
     11 = max # of 1-3 neighbors
     31 = max # of 1-4 neighbors
     26 = max # of special neighbors
-  special bonds CPU = 0.002 seconds
-  read_data CPU = 0.108 seconds
- #read_restart waterinfo.restart
-
+  special bonds CPU = 0.003 seconds
+  read_data CPU = 0.056 seconds
 
 group carbon  type 1:11
 130 atoms in group carbon
-#group C10 type 2
-#group C14 type 3
-#group C2  type 4
-##group C3  type 5
-#group C4  type 6
-#group C5  type 7
-#group C6  type 8
-#group C7  type 9
-#group C8  type 10
-#group C9  type 11
 group cu  type 12
 15 atoms in group cu
 group CX  type 13
@@ -179,31 +167,12 @@ set  type 30 charge -0.847600
 Setting atom values ...
   2500 settings made for charge
 
+# Defining the positions of all four carbon planes
+variable zlayer1 equal 12.
+variable zlayer2 equal -12.
+variable zlayer3 equal 12.0
 
-
-# Defining the saltwater reservoir which force is applied
- # region      box_dim block  INF INF INF INF 15.00000 45.000 units box
- # group saltwater_atoms region box_dim
- # group totalsaltwater_atoms  union saltwater_atoms
-
-
-  # Defining the positions of all four carbon planes
-   #variable zpiston1 equal 100
-   variable zlayer1 equal 12.
-   variable zlayer2 equal -12.
-   variable zlayer3 equal 12.0
-   #variable zpis   ton2 equal 133
-
-# Defining the water region recieving force
- #variable zmin equal ${zpiston1}
-  #variable zmax equal ${zpiston2}
-   #region  waterzone  block INF INF INF INF ${zmin} ${zmax} units box
-    #group water_bulk region waterzone
-     #group totalwater  union water_bulk
-
-
-
-pair_style lj/cut/coul/long 11.0 11.0
+pair_style lj/cut/coul/long 11.0
 special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
 Finding 1-2 1-3 1-4 neighbors ...
   special bond factors lj:    0        0        0.5     
@@ -212,8 +181,8 @@ Finding 1-2 1-3 1-4 neighbors ...
     11 = max # of 1-3 neighbors
     31 = max # of 1-4 neighbors
     26 = max # of special neighbors
-  special bonds CPU = 0.001 seconds
-pair_modify tail yes
+  special bonds CPU = 0.002 seconds
+pair_modify     mix arithmetic
 kspace_style ewald 1e-8
 
 pair_coeff 1 1   0.066  3.5000000   # C1-C1
@@ -247,450 +216,9 @@ pair_coeff 28 28  0.1400 2.90000    #OK-OK
 pair_coeff 29 29  0.1700 3.00000  #  ol-ol
 pair_coeff 30 30  0.15550 3.1600    #ow-ow
 
-pair_coeff 1 2 0.0660 3.5000
-pair_coeff 1 3 0.0660 3.5000
-pair_coeff 1 4 0.0660 3.5000
-pair_coeff 1 5 0.0660 3.5000
-pair_coeff 1 6 0.0680 3.5250
-pair_coeff 1 7 0.0660 3.5000
-pair_coeff 1 8 0.0660 3.5000
-pair_coeff 1 9 0.0660 3.5000
-pair_coeff 1 10 0.0660 3.5000
-pair_coeff 1 11 0.0660 3.5000
-pair_coeff 1 12 0.0531 2.7830
-pair_coeff 1 13 0.0680 3.5250
-pair_coeff 1 14 0.0660 3.5000
-pair_coeff 1 15 0.0660 3.5000
-pair_coeff 1 16 0.0882 3.9586
-pair_coeff 1 17 0.0445 3.0000
-pair_coeff 1 18 0.0551 1.9500
-pair_coeff 1 19 0.0000 1.7500
-pair_coeff 1 20 0.0134 2.8708
-pair_coeff 1 21 0.0961 3.2000
-pair_coeff 1 22 0.0961 3.2000
-pair_coeff 1 23 0.0961 3.2000
-pair_coeff 1 24 0.0961 3.2000
-pair_coeff 1 25 0.0961 3.2000
-pair_coeff 1 26 0.1059 3.2500
-pair_coeff 1 27 0.0961 3.2000
-pair_coeff 1 28 0.0961 3.2000
-pair_coeff 1 29 0.1059 3.2500
-pair_coeff 1 30 0.1013 3.3300
-pair_coeff 2 3 0.0660 3.5000
-pair_coeff 2 4 0.0660 3.5000
-pair_coeff 2 5 0.0660 3.5000
-pair_coeff 2 6 0.0680 3.5250
-pair_coeff 2 7 0.0660 3.5000
-pair_coeff 2 8 0.0660 3.5000
-pair_coeff 2 9 0.0660 3.5000
-pair_coeff 2 10 0.0660 3.5000
-pair_coeff 2 11 0.0660 3.5000
-pair_coeff 2 12 0.0531 2.7830
-pair_coeff 2 13 0.0680 3.5250
-pair_coeff 2 14 0.0660 3.5000
-pair_coeff 2 15 0.0660 3.5000
-pair_coeff 2 16 0.0882 3.9586
-pair_coeff 2 17 0.0445 3.0000
-pair_coeff 2 18 0.0551 1.9500
-pair_coeff 2 19 0.0000 1.7500
-pair_coeff 2 20 0.0134 2.8708
-pair_coeff 2 21 0.0961 3.2000
-pair_coeff 2 22 0.0961 3.2000
-pair_coeff 2 23 0.0961 3.2000
-pair_coeff 2 24 0.0961 3.2000
-pair_coeff 2 25 0.0961 3.2000
-pair_coeff 2 26 0.1059 3.2500
-pair_coeff 2 27 0.0961 3.2000
-pair_coeff 2 28 0.0961 3.2000
-pair_coeff 2 29 0.1059 3.2500
-pair_coeff 2 30 0.1013 3.3300
-pair_coeff 3 4 0.0660 3.5000
-pair_coeff 3 5 0.0660 3.5000
-pair_coeff 3 6 0.0680 3.5250
-pair_coeff 3 7 0.0660 3.5000
-pair_coeff 3 8 0.0660 3.5000
-pair_coeff 3 9 0.0660 3.5000
-pair_coeff 3 10 0.0660 3.5000
-pair_coeff 3 11 0.0660 3.5000
-pair_coeff 3 12 0.0531 2.7830
-pair_coeff 3 13 0.0680 3.5250
-pair_coeff 3 14 0.0660 3.5000
-pair_coeff 3 15 0.0660 3.5000
-pair_coeff 3 16 0.0882 3.9586
-pair_coeff 3 17 0.0445 3.0000
-pair_coeff 3 18 0.0551 1.9500
-pair_coeff 3 19 0.0000 1.7500
-pair_coeff 3 20 0.0134 2.8708
-pair_coeff 3 21 0.0961 3.2000
-pair_coeff 3 22 0.0961 3.2000
-pair_coeff 3 23 0.0961 3.2000
-pair_coeff 3 24 0.0961 3.2000
-pair_coeff 3 25 0.0961 3.2000
-pair_coeff 3 26 0.1059 3.2500
-pair_coeff 3 27 0.0961 3.2000
-pair_coeff 3 28 0.0961 3.2000
-pair_coeff 3 29 0.1059 3.2500
-pair_coeff 3 30 0.1013 3.3300
-pair_coeff 4 5 0.0660 3.5000
-pair_coeff 4 6 0.0680 3.5250
-pair_coeff 4 7 0.0660 3.5000
-pair_coeff 4 8 0.0660 3.5000
-pair_coeff 4 9 0.0660 3.5000
-pair_coeff 4 10 0.0660 3.5000
-pair_coeff 4 11 0.0660 3.5000
-pair_coeff 4 12 0.0531 2.7830
-pair_coeff 4 13 0.0680 3.5250
-pair_coeff 4 14 0.0660 3.5000
-pair_coeff 4 15 0.0660 3.5000
-pair_coeff 4 16 0.0882 3.9586
-pair_coeff 4 17 0.0445 3.0000
-pair_coeff 4 18 0.0551 1.9500
-pair_coeff 4 19 0.0000 1.7500
-pair_coeff 4 20 0.0134 2.8708
-pair_coeff 4 21 0.0961 3.2000
-pair_coeff 4 22 0.0961 3.2000
-pair_coeff 4 23 0.0961 3.2000
-pair_coeff 4 24 0.0961 3.2000
-pair_coeff 4 25 0.0961 3.2000
-pair_coeff 4 26 0.1059 3.2500
-pair_coeff 4 27 0.0961 3.2000
-pair_coeff 4 28 0.0961 3.2000
-pair_coeff 4 29 0.1059 3.2500
-pair_coeff 4 30 0.1013 3.3300
-pair_coeff 5 6 0.0680 3.5250
-pair_coeff 5 7 0.0660 3.5000
-pair_coeff 5 8 0.0660 3.5000
-pair_coeff 5 9 0.0660 3.5000
-pair_coeff 5 10 0.0660 3.5000
-pair_coeff 5 11 0.0660 3.5000
-pair_coeff 5 12 0.0531 2.7830
-pair_coeff 5 13 0.0680 3.5250
-pair_coeff 5 14 0.0660 3.5000
-pair_coeff 5 15 0.0660 3.5000
-pair_coeff 5 16 0.0882 3.9586
-pair_coeff 5 17 0.0445 3.0000
-pair_coeff 5 18 0.0551 1.9500
-pair_coeff 5 19 0.0000 1.7500
-pair_coeff 5 20 0.0134 2.8708
-pair_coeff 5 21 0.0961 3.2000
-pair_coeff 5 22 0.0961 3.2000
-pair_coeff 5 23 0.0961 3.2000
-pair_coeff 5 24 0.0961 3.2000
-pair_coeff 5 25 0.0961 3.2000
-pair_coeff 5 26 0.1059 3.2500
-pair_coeff 5 27 0.0961 3.2000
-pair_coeff 5 28 0.0961 3.2000
-pair_coeff 5 29 0.1059 3.2500
-pair_coeff 5 30 0.1013 3.3300
-pair_coeff 6 7 0.0680 3.5250
-pair_coeff 6 8 0.0680 3.5250
-pair_coeff 6 9 0.0680 3.5250
-pair_coeff 6 10 0.0680 3.5250
-pair_coeff 6 11 0.0680 3.5250
-pair_coeff 6 12 0.0547 2.8080
-pair_coeff 6 13 0.0700 3.5500
-pair_coeff 6 14 0.0680 3.5250
-pair_coeff 6 15 0.0680 3.5250
-pair_coeff 6 16 0.0908 3.9836
-pair_coeff 6 17 0.0458 3.0250
-pair_coeff 6 18 0.0567 1.9750
-pair_coeff 6 19 0.0000 1.7750
-pair_coeff 6 20 0.0138 2.8957
-pair_coeff 6 21 0.0990 3.2250
-pair_coeff 6 22 0.0990 3.2250
-pair_coeff 6 23 0.0990 3.2250
-pair_coeff 6 24 0.0990 3.2250
-pair_coeff 6 25 0.0990 3.2250
-pair_coeff 6 26 0.1091 3.2750
-pair_coeff 6 27 0.0990 3.2250
-pair_coeff 6 28 0.0990 3.2250
-pair_coeff 6 29 0.1091 3.2750
-pair_coeff 6 30 0.1043 3.3550
-pair_coeff 7 8 0.0660 3.5000
-pair_coeff 7 9 0.0660 3.5000
-pair_coeff 7 10 0.0660 3.5000
-pair_coeff 7 11 0.0660 3.5000
-pair_coeff 7 12 0.0531 2.7830
-pair_coeff 7 13 0.0680 3.5250
-pair_coeff 7 14 0.0660 3.5000
-pair_coeff 7 15 0.0660 3.5000
-pair_coeff 7 16 0.0882 3.9586
-pair_coeff 7 17 0.0445 3.0000
-pair_coeff 7 18 0.0551 1.9500
-pair_coeff 7 19 0.0000 1.7500
-pair_coeff 7 20 0.0134 2.8708
-pair_coeff 7 21 0.0961 3.2000
-pair_coeff 7 22 0.0961 3.2000
-pair_coeff 7 23 0.0961 3.2000
-pair_coeff 7 24 0.0961 3.2000
-pair_coeff 7 25 0.0961 3.2000
-pair_coeff 7 26 0.1059 3.2500
-pair_coeff 7 27 0.0961 3.2000
-pair_coeff 7 28 0.0961 3.2000
-pair_coeff 7 29 0.1059 3.2500
-pair_coeff 7 30 0.1013 3.3300
-pair_coeff 8 9 0.0660 3.5000
-pair_coeff 8 10 0.0660 3.5000
-pair_coeff 8 11 0.0660 3.5000
-pair_coeff 8 12 0.0531 2.7830
-pair_coeff 8 13 0.0680 3.5250
-pair_coeff 8 14 0.0660 3.5000
-pair_coeff 8 15 0.0660 3.5000
-pair_coeff 8 16 0.0882 3.9586
-pair_coeff 8 17 0.0445 3.0000
-pair_coeff 8 18 0.0551 1.9500
-pair_coeff 8 19 0.0000 1.7500
-pair_coeff 8 20 0.0134 2.8708
-pair_coeff 8 21 0.0961 3.2000
-pair_coeff 8 22 0.0961 3.2000
-pair_coeff 8 23 0.0961 3.2000
-pair_coeff 8 24 0.0961 3.2000
-pair_coeff 8 25 0.0961 3.2000
-pair_coeff 8 26 0.1059 3.2500
-pair_coeff 8 27 0.0961 3.2000
-pair_coeff 8 28 0.0961 3.2000
-pair_coeff 8 29 0.1059 3.2500
-pair_coeff 8 30 0.1013 3.3300
-pair_coeff 9 10 0.0660 3.5000
-pair_coeff 9 11 0.0660 3.5000
-pair_coeff 9 12 0.0531 2.7830
-pair_coeff 9 13 0.0680 3.5250
-pair_coeff 9 14 0.0660 3.5000
-pair_coeff 9 15 0.0660 3.5000
-pair_coeff 9 16 0.0882 3.9586
-pair_coeff 9 17 0.0445 3.0000
-pair_coeff 9 18 0.0551 1.9500
-pair_coeff 9 19 0.0000 1.7500
-pair_coeff 9 20 0.0134 2.8708
-pair_coeff 9 21 0.0961 3.2000
-pair_coeff 9 22 0.0961 3.2000
-pair_coeff 9 23 0.0961 3.2000
-pair_coeff 9 24 0.0961 3.2000
-pair_coeff 9 25 0.0961 3.2000
-pair_coeff 9 26 0.1059 3.2500
-pair_coeff 9 27 0.0961 3.2000
-pair_coeff 9 28 0.0961 3.2000
-pair_coeff 9 29 0.1059 3.2500
-pair_coeff 9 30 0.1013 3.3300
-pair_coeff 10 11 0.0660 3.5000
-pair_coeff 10 12 0.0531 2.7830
-pair_coeff 10 13 0.0680 3.5250
-pair_coeff 10 14 0.0660 3.5000
-pair_coeff 10 15 0.0660 3.5000
-pair_coeff 10 16 0.0882 3.9586
-pair_coeff 10 17 0.0445 3.0000
-pair_coeff 10 18 0.0551 1.9500
-pair_coeff 10 19 0.0000 1.7500
-pair_coeff 10 20 0.0134 2.8708
-pair_coeff 10 21 0.0961 3.2000
-pair_coeff 10 22 0.0961 3.2000
-pair_coeff 10 23 0.0961 3.2000
-pair_coeff 10 24 0.0961 3.2000
-pair_coeff 10 25 0.0961 3.2000
-pair_coeff 10 26 0.1059 3.2500
-pair_coeff 10 27 0.0961 3.2000
-pair_coeff 10 28 0.0961 3.2000
-pair_coeff 10 29 0.1059 3.2500
-pair_coeff 10 30 0.1013 3.3300
-pair_coeff 11 12 0.0531 2.7830
-pair_coeff 11 13 0.0680 3.5250
-pair_coeff 11 14 0.0660 3.5000
-pair_coeff 11 15 0.0660 3.5000
-pair_coeff 11 16 0.0882 3.9586
-pair_coeff 11 17 0.0445 3.0000
-pair_coeff 11 18 0.0551 1.9500
-pair_coeff 11 19 0.0000 1.7500
-pair_coeff 11 20 0.0134 2.8708
-pair_coeff 11 21 0.0961 3.2000
-pair_coeff 11 22 0.0961 3.2000
-pair_coeff 11 23 0.0961 3.2000
-pair_coeff 11 24 0.0961 3.2000
-pair_coeff 11 25 0.0961 3.2000
-pair_coeff 11 26 0.1059 3.2500
-pair_coeff 11 27 0.0961 3.2000
-pair_coeff 11 28 0.0961 3.2000
-pair_coeff 11 29 0.1059 3.2500
-pair_coeff 11 30 0.1013 3.3300
-pair_coeff 12 13 0.0547 2.8080
-pair_coeff 12 14 0.0531 2.7830
-pair_coeff 12 15 0.0531 2.7830
-pair_coeff 12 16 0.0709 3.2416
-pair_coeff 12 17 0.0358 2.2830
-pair_coeff 12 18 0.0443 1.2330
-pair_coeff 12 19 0.0000 1.0330
-pair_coeff 12 20 0.0108 2.1537
-pair_coeff 12 21 0.0773 2.4830
-pair_coeff 12 22 0.0773 2.4830
-pair_coeff 12 23 0.0773 2.4830
-pair_coeff 12 24 0.0773 2.4830
-pair_coeff 12 25 0.0773 2.4830
-pair_coeff 12 26 0.0852 2.5330
-pair_coeff 12 27 0.0773 2.4830
-pair_coeff 12 28 0.0773 2.4830
-pair_coeff 12 29 0.0852 2.5330
-pair_coeff 12 30 0.0815 2.6130
-pair_coeff 13 14 0.0680 3.5250
-pair_coeff 13 15 0.0680 3.5250
-pair_coeff 13 16 0.0908 3.9836
-pair_coeff 13 17 0.0458 3.0250
-pair_coeff 13 18 0.0567 1.9750
-pair_coeff 13 19 0.0000 1.7750
-pair_coeff 13 20 0.0138 2.8957
-pair_coeff 13 21 0.0990 3.2250
-pair_coeff 13 22 0.0990 3.2250
-pair_coeff 13 23 0.0990 3.2250
-pair_coeff 13 24 0.0990 3.2250
-pair_coeff 13 25 0.0990 3.2250
-pair_coeff 13 26 0.1091 3.2750
-pair_coeff 13 27 0.0990 3.2250
-pair_coeff 13 28 0.0990 3.2250
-pair_coeff 13 29 0.1091 3.2750
-pair_coeff 13 30 0.1043 3.3550
-pair_coeff 14 15 0.0660 3.5000
-pair_coeff 14 16 0.0882 3.9586
-pair_coeff 14 17 0.0445 3.0000
-pair_coeff 14 18 0.0551 1.9500
-pair_coeff 14 19 0.0000 1.7500
-pair_coeff 14 20 0.0134 2.8708
-pair_coeff 14 21 0.0961 3.2000
-pair_coeff 14 22 0.0961 3.2000
-pair_coeff 14 23 0.0961 3.2000
-pair_coeff 14 24 0.0961 3.2000
-pair_coeff 14 25 0.0961 3.2000
-pair_coeff 14 26 0.1059 3.2500
-pair_coeff 14 27 0.0961 3.2000
-pair_coeff 14 28 0.0961 3.2000
-pair_coeff 14 29 0.1059 3.2500
-pair_coeff 14 30 0.1013 3.3300
-pair_coeff 15 16 0.0882 3.9586
-pair_coeff 15 17 0.0445 3.0000
-pair_coeff 15 18 0.0551 1.9500
-pair_coeff 15 19 0.0000 1.7500
-pair_coeff 15 20 0.0134 2.8708
-pair_coeff 15 21 0.0961 3.2000
-pair_coeff 15 22 0.0961 3.2000
-pair_coeff 15 23 0.0961 3.2000
-pair_coeff 15 24 0.0961 3.2000
-pair_coeff 15 25 0.0961 3.2000
-pair_coeff 15 26 0.1059 3.2500
-pair_coeff 15 27 0.0961 3.2000
-pair_coeff 15 28 0.0961 3.2000
-pair_coeff 15 29 0.1059 3.2500
-pair_coeff 15 30 0.1013 3.3300
-pair_coeff 16 17 0.0594 3.4586
-pair_coeff 16 18 0.0736 2.4086
-pair_coeff 16 19 0.0000 2.2086
-pair_coeff 16 20 0.0180 3.3293
-pair_coeff 16 21 0.1284 3.6586
-pair_coeff 16 22 0.1284 3.6586
-pair_coeff 16 23 0.1284 3.6586
-pair_coeff 16 24 0.1284 3.6586
-pair_coeff 16 25 0.1284 3.6586
-pair_coeff 16 26 0.1415 3.7086
-pair_coeff 16 27 0.1284 3.6586
-pair_coeff 16 28 0.1284 3.6586
-pair_coeff 16 29 0.1415 3.7086
-pair_coeff 16 30 0.1353 3.7886
-pair_coeff 17 18 0.0371 1.4500
-pair_coeff 17 19 0.0000 1.2500
-pair_coeff 17 20 0.0091 2.3708
-pair_coeff 17 21 0.0648 2.7000
-pair_coeff 17 22 0.0648 2.7000
-pair_coeff 17 23 0.0648 2.7000
-pair_coeff 17 24 0.0648 2.7000
-pair_coeff 17 25 0.0648 2.7000
-pair_coeff 17 26 0.0714 2.7500
-pair_coeff 17 27 0.0648 2.7000
-pair_coeff 17 28 0.0648 2.7000
-pair_coeff 17 29 0.0714 2.7500
-pair_coeff 17 30 0.0683 2.8300
-pair_coeff 18 19 0.0000 0.2000
-pair_coeff 18 20 0.0112 1.3207
-pair_coeff 18 21 0.0802 1.6500
-pair_coeff 18 22 0.0802 1.6500
-pair_coeff 18 23 0.0802 1.6500
-pair_coeff 18 24 0.0802 1.6500
-pair_coeff 18 25 0.0802 1.6500
-pair_coeff 18 26 0.0884 1.7000
-pair_coeff 18 27 0.0802 1.6500
-pair_coeff 18 28 0.0802 1.6500
-pair_coeff 18 29 0.0884 1.7000
-pair_coeff 18 30 0.0846 1.7800
-pair_coeff 19 20 0.0000 1.1207
-pair_coeff 19 21 0.0000 1.4500
-pair_coeff 19 22 0.0000 1.4500
-pair_coeff 19 23 0.0000 1.4500
-pair_coeff 19 24 0.0000 1.4500
-pair_coeff 19 25 0.0000 1.4500
-pair_coeff 19 26 0.0000 1.5000
-pair_coeff 19 27 0.0000 1.4500
-pair_coeff 19 28 0.0000 1.4500
-pair_coeff 19 29 0.0000 1.5000
-pair_coeff 19 30 0.0000 1.5800
-pair_coeff 20 21 0.0196 2.5707
-pair_coeff 20 22 0.0196 2.5707
-pair_coeff 20 23 0.0196 2.5707
-pair_coeff 20 24 0.0196 2.5707
-pair_coeff 20 25 0.0196 2.5707
-pair_coeff 20 26 0.0216 2.6208
-pair_coeff 20 27 0.0196 2.5707
-pair_coeff 20 28 0.0196 2.5707
-pair_coeff 20 29 0.0216 2.6208
-pair_coeff 20 30 0.0206 2.7008
-pair_coeff 21 22 0.1400 2.9000
-pair_coeff 21 23 0.1400 2.9000
-pair_coeff 21 24 0.1400 2.9000
-pair_coeff 21 25 0.1400 2.9000
-pair_coeff 21 26 0.1543 2.9500
-pair_coeff 21 27 0.1400 2.9000
-pair_coeff 21 28 0.1400 2.9000
-pair_coeff 21 29 0.1543 2.9500
-pair_coeff 21 30 0.1475 3.0300
-pair_coeff 22 23 0.1400 2.9000
-pair_coeff 22 24 0.1400 2.9000
-pair_coeff 22 25 0.1400 2.9000
-pair_coeff 22 26 0.1543 2.9500
-pair_coeff 22 27 0.1400 2.9000
-pair_coeff 22 28 0.1400 2.9000
-pair_coeff 22 29 0.1543 2.9500
-pair_coeff 22 30 0.1475 3.0300
-pair_coeff 23 24 0.1400 2.9000
-pair_coeff 23 25 0.1400 2.9000
-pair_coeff 23 26 0.1543 2.9500
-pair_coeff 23 27 0.1400 2.9000
-pair_coeff 23 28 0.1400 2.9000
-pair_coeff 23 29 0.1543 2.9500
-pair_coeff 23 30 0.1475 3.0300
-pair_coeff 24 25 0.1400 2.9000
-pair_coeff 24 26 0.1543 2.9500
-pair_coeff 24 27 0.1400 2.9000
-pair_coeff 24 28 0.1400 2.9000
-pair_coeff 24 29 0.1543 2.9500
-pair_coeff 24 30 0.1475 3.0300
-pair_coeff 25 26 0.1543 2.9500
-pair_coeff 25 27 0.1400 2.9000
-pair_coeff 25 28 0.1400 2.9000
-pair_coeff 25 29 0.1543 2.9500
-pair_coeff 25 30 0.1475 3.0300
-pair_coeff 26 27 0.1543 2.9500
-pair_coeff 26 28 0.1543 2.9500
-pair_coeff 26 29 0.1700 3.0000
-pair_coeff 26 30 0.1626 3.0800
-pair_coeff 27 28 0.1400 2.9000
-pair_coeff 27 29 0.1543 2.9500
-pair_coeff 27 30 0.1475 3.0300
-pair_coeff 28 29 0.1543 2.9500
-pair_coeff 28 30 0.1475 3.0300
-pair_coeff 29 30 0.1626 3.0800
-#pair_modify   mix  arithmetic
-
-
-
 bond_style     harmonic
-
 bond_coeff     1 268.0000     1.5290  # C1-C2
 bond_coeff     2 268.0000     1.5290 # C1-C4
-#bond_coeff     3 268.0000     1.5290 # C1-C9
 bond_coeff     3 340.0000     1.0900  # C1-H1
 bond_coeff     4 320.0000     1.4100 # C1-O5
 bond_coeff     5 268.0000     1.5290  # C10-C9
@@ -709,7 +237,6 @@ bond_coeff     17 340.0000     1.0900 # C4-H1
 bond_coeff     18 340.0000     1.364 # C4-OJ
 bond_coeff     19 320.0000     1.41 # C4-OK
 bond_coeff     20 268.0000     1.5290  # C5-C6
-#bond_coeff     22 268.0000     1.5290 # C5-CX
 bond_coeff     21 340.0000     1.0900 # C5-H1
 bond_coeff     22 320.0000     1.4100  # C5-O2
 bond_coeff     23 340.0000     1.0900 # C6-H1
@@ -724,7 +251,6 @@ bond_coeff     31 320.0000     1.4100  # C9-O4
 bond_coeff     32 469.00000    1.4000  # CX-CX
 bond_coeff     33 317.00000    1.5100  # CX-CY
 bond_coeff     34 469.00000    1.4000  # CX-CZ
-#bond_coeff     37 340.0000     1.0900  # CX-H1
 bond_coeff     35 320.00000    1.41000 # CX-O4
 bond_coeff     36 469.00000    1.4 # CY-CY
 bond_coeff     37 469.00000    1.4 # CY-CZ
@@ -740,20 +266,15 @@ bond_coeff     46 553.00000    0.945  # HK-OL
 bond_coeff     47 529.58100    1.0000 # ow-hw
 bond_coeff     48 0.0000000    0.0000 # O3-OE
 
-
 angle_style    harmonic
-
 angle_coeff     1 37.500    110.700  # C1-C2-H1
 angle_coeff     2 50.000    109.500  #C1-C2-O1
 angle_coeff     3 50.000    109.500  #C1-C4-CY
 angle_coeff     4 33.000    107.800  #C1-C4-H1
 angle_coeff     5 50.000    109.500  #C1-C4-OJ
-#angle_coeff     6 50.000    109.500  # C1-C4-OK
 angle_coeff     6 37.500    110.700  #C1-C9-H1
-#angle_coeff     8 60.000    109.500  #C1-C9-O4
 angle_coeff     7 37.500    110.700  #C1-H1-C4
 angle_coeff     8 50.000    109.500 #C1-H1-OJ
-#angle_coeff     11 50.000    109.500 #C1-O5-C1
 angle_coeff     9 60.000    109.500 #C1-O5-C10
 angle_coeff     10 50.000    109.500 #C1-O5-CY
 angle_coeff     11 37.500    110.700 #C10-C9-H1
@@ -782,11 +303,6 @@ angle_coeff     33 0.0000    0.00000 #C4-OK-H1
 angle_coeff     34 35.000    113.000 # 4  C4-OK-HK
 angle_coeff     35 35.000    109.500 #C5-C6-H1
 angle_coeff     36 50.000    109.500 #C5-C6-O3
-#angle_coeff     40 63.000    120.000 #  C5-CX-CX
-#angle_coeff     41 63.000    120.000 #  C5-CX-CZ
-#angle_coeff     42 37.500    110.700 #C5-CX-H1
-#angle_coeff     43 37.500    110.700  #C5-H1-CX
-#angle_coeff     44 63.000    120.000 # C6-C5-CX
 angle_coeff     37 37.500    110.700 #C6-C5-H1
 angle_coeff     38 50.000    109.500 #C6-C5-O2
 angle_coeff     39 60.000    109.500 #C6-O3-C7
@@ -798,17 +314,12 @@ angle_coeff     44 37.500    110.700 #C8-C7-H1
 angle_coeff     45 50.000    109.500 #C8-C7-O3
 angle_coeff     46 60.000    109.500 #C8-O4-C9
 angle_coeff     47 60.000    109.500  #C8-O4-CX
-#angle_coeff     48 37.500    110.700 #9-C1-H1
-#angle_coeff     49 60.000    109.500 #C9-C1-O5
 angle_coeff     48 37.500    110.700 #C9-C10-H1
 angle_coeff     49 50.000    109.500 #C9-C10-O5
 angle_coeff     50 60.000    109.500 # C9-O4-CX
-#angle_coeff     61 37.500    110.700 # CX-C5-H1
-#angle_coeff     62 60.000    109.500 # CX-C5-O2
 angle_coeff     51 63 120  # 5  CX-CX-CX
 angle_coeff     52 63 120  # 6  CX-CX-CY
 angle_coeff     53 63 120  # 7  CX-CX-CZ
-#angle_coeff     66 37.500    110.700 #  CX-CX-H1
 angle_coeff     54 60.000    109.500 # CX-CX-O4
 angle_coeff     55 70 120  # 8  CX-CY-CX
 angle_coeff     56 63 120  # 9  CX-CY-CY
@@ -825,7 +336,6 @@ angle_coeff     66 70 120   # 17  CY-C4-OJ
 angle_coeff     67 70 120   # 18  CY-C4-OK
 angle_coeff     68 40 109.5 # 19 CY-CX-CY
 angle_coeff     69 40 109.5 # 20  CY-CX-CZ
-#angle_coeff     83 60.000    109.500 # CY-CX-O4
 angle_coeff     70 58.35 112.7 # 21  CY-CY-CY
 angle_coeff     71 63 120 # 22  CY-CY-CZ
 angle_coeff     72 50 109.5 # 23  CY-CY-OE
@@ -841,271 +351,4 @@ angle_coeff     81 40 109.5 # 31  CZ-CY-CZ
 angle_coeff     82 50 109.5 # 32  CZ-CY-OE
 angle_coeff     83 50 109.5 # 33  CZ-CY-OL
 angle_coeff     84 70 120 # 34  CZ-CZ-CZ
-angle_coeff     85 50 109.5 # 35  CZ-CZ-OE
-angle_coeff     86 50 109.5 # CZ-OE-O3
-angle_coeff     87 33.000    107.800 #H1-C1-H1
-angle_coeff     88 35.000    109.500 #H1-C1-O5
-angle_coeff     89 33.000    107.800 #H1-C10-H1
-angle_coeff     90 35.000    109.500 #H1-C10-O5
-angle_coeff     91 33.000    107.800 #H1-C14-H1
-angle_coeff     92 35.000    109.500 #H1-C14-O2
-angle_coeff     93 33.000    107.800 #H1-C2-H1
-angle_coeff     94 35.000    109.500 #H1-C2-O1
-angle_coeff     95 33.000    107.800 #H1-C3-H1
-angle_coeff     96 35.000    109.500 #H1-C3-O1
-angle_coeff     97 37.500    110.70 # H1-C3-OJ
-angle_coeff     98 37.500    110.70 # H1-C4-OJ
-angle_coeff     99 37.500    110.70 # H1-C4-OK
-angle_coeff     100 33.000    107.800 #H1-C5-H1
-angle_coeff     101 35.000    109.500 #H1-C5-O2
-angle_coeff     102 33.000    107.800 # H1-C6-H1
-angle_coeff     103 35.000    109.500 #H1-C6-O3
-angle_coeff     104 33.000    107.800 #H1-C7-H1
-angle_coeff     105 35.000    109.500 #H1-C7-O3
-angle_coeff     106 33.000    107.800 #H1-C8-H1
-angle_coeff     107 35.000    109.500 #H1-C8-O4
-angle_coeff     108 33.000    107.800 #H1-C9-H1
-angle_coeff     109 35.000    109.500 #H1-C9-O4
-angle_coeff     110 37.5 110.70 # H1-OK-HK
-angle_coeff     111 37.95 109.4700 # 36  HW-OW-HW
-angle_coeff     112 63.000    120.000 # O1-C3-OJ
-angle_coeff     113 63.000    120.000 # O5-CY-OL
-angle_coeff     114 60 109.5 # 37  OJ-C4-OK
-
-
-
-
- #info coeffs out log
-
-#thermo 100
-thermo_style custom ebond eangle edihed eimp epair evdwl ecoul elong etail pe press
-#thermo_modify   norm no flush yes
-
- minimize 1.0e-4 1.0e-6 1000 100000
-Ewald initialization ...
-WARNING: System is not charge neutral, net charge = 1.67935 (src/src/kspace.cpp:327)
-  using 12-bit tables for long-range coulomb (src/src/kspace.cpp:342)
-WARNING: For better accuracy use 'pair_modify table 0' (src/src/kspace.cpp:365)
-  G vector (1/distance) = 0.35141414
-  estimated absolute RMS force accuracy = 9.8511897e-06
-  estimated relative force accuracy = 2.9666565e-08
-  KSpace vectors: actual max1d max3d = 60188 44 352484
-                  kxmax kymax kzmax  = 44 14 43
-Generated 0 of 435 mixed pair_coeff terms from geometric mixing rule
-Neighbor list info ...
-  update: every = 1 steps, delay = 0 steps, check = yes
-  max neighbors/atom: 2000, page size: 100000
-  master list distance cutoff = 13
-  ghost atom cutoff = 13
-  binsize = 6.5, bins = 16 5 16
-  1 neighbor lists, perpetual/occasional/extra = 1 0 0
-  (1) pair lj/cut/coul/long, perpetual
-      attributes: half, newton on
-      pair build: half/bin/newton
-      stencil: half/bin/3d
-      bin: standard
-Per MPI rank memory allocation (min/avg/max) = 121.3 | 121.5 | 121.9 Mbytes
-    E_bond        E_angle        E_dihed        E_impro         E_pair         E_vdwl         E_coul         E_long         E_tail         PotEng         Press     
- 7495.9113      37016.509      0              0              13488939       13488311       193501.57     -192873.62     -117.74978      13533451       11819823     
- 2049.4155      31018.743      0              0             -46607.388      12702.012      144683.62     -203993.02     -117.74978     -13539.229     -764.79309    
-Loop time of 645.274 on 12 procs for 1000 steps with 11894 atoms
-
-99.9% CPU use with 12 MPI tasks x 1 OpenMP threads
-
-Minimization stats:
-  Stopping criterion = max iterations
-  Energy initial, next-to-last, final = 
-      13533451.1911695  -13536.9637329687  -13539.2288930328
-  Force two-norm initial, final = 40869093 67.470228
-  Force max component initial, final = 13526603 17.597311
-  Final line search alpha, max atom move = 0.0019753731 0.034761255
-  Iterations, force evaluations = 1000 1907
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 6.1718     | 7.8441     | 9.7101     |  36.0 |  1.22
-Bond    | 0.069321   | 0.18228    | 0.42384    |  34.5 |  0.03
-Kspace  | 503.83     | 568.14     | 632.49     | 163.8 | 88.05
-Neigh   | 0.34123    | 0.34149    | 0.34197    |   0.0 |  0.05
-Comm    | 3.5253     | 63.707     | 134.72     | 530.9 |  9.87
-Output  | 9.1287e-05 | 0.00010806 | 0.000121   |   0.0 |  0.00
-Modify  | 0          | 0          | 0          |   0.0 |  0.00
-Other   |            | 5.055      |            |       |  0.78
-
-Nlocal:        991.167 ave        1136 max         817 min
-Histogram: 1 1 1 1 2 1 0 1 2 2
-Nghost:        5276.25 ave        5678 max        4767 min
-Histogram: 1 2 1 1 0 0 1 2 2 2
-Neighs:         185902 ave      239546 max      143847 min
-Histogram: 1 1 2 2 2 2 0 0 0 2
-
-Total # of neighbors = 2230821
-Ave neighs/atom = 187.55852
-Ave special neighs/atom = 7.0428788
-Neighbor list builds = 51
-Dangerous builds = 0
-
- # *************** Setting ******************************
- #timestep        0.1
- #fix fxlan  sol langevin 298.0 298.0 1000.0 48279
- #fix fxnve  sol nve   # <-- needed by fix langevin (see lammps documentation)
- #thermo          100
- #run 1000
-
- #unfix fxlan
- #unfix fxnve
-
-
- neighbor        3.00 bin
- #neigh_modify    delay 0 every 10 check yes
- neigh_modify  delay 0 every 1 check yes page 500000 one 50000
-
-
- reset_timestep  0
-
-
- compute         teatom all  temp
- compute         peatom all  pe/atom
- compute         keatom all  ke/atom
-
-
-# Defining spring force compute for bilayer
- #compute force_gg bilayer reduce sum fx fy fz
- #variable   Lx equal 62.0
- #variable   Ly equal 75.0
- #variable press_gg1 equal c_force_gg[1]
- #variable press_gg2 equal c_force_gg[2]
- #variable press_gg3 equal c_force_gg[3]
- #variable press_vector equal (c_force_gg[1]*c_force_gg[1]+c_force_gg[2]*c_force_gg[2]+c_force_gg[3]*c_force_gg[3])
- #variable totalpress equal sqrt(v_press_vector)/(v_Lx*v_Ly)
-
-
- # Defining force compute between watersalt and graphenepore
-#  compute force_gg totalsaltwater_atoms group/group bilayer
- #  variable   Lx equal 62.0
- #  variable   Ly equal 75.0
- #  variable press_gg equal c_force_gg/(v_Lx*v_Ly)
-
-
-group water type 19 30
-7500 atoms in group water
-group sol   type 12 16 19 20 30
-7575 atoms in group sol
-
-
-#fix watersalt_force totalsaltwater_atoms addforce 0.0 0.0 0.0268 # P=100 MPa
- fix spce_model  water shake 0.0001 20 0 b 1 a 1
-Finding SHAKE clusters ...
-       0 = # of size 2 clusters
-       0 = # of size 3 clusters
-       0 = # of size 4 clusters
-       0 = # of frozen angles
-  find clusters CPU = 0.001 seconds
- #fix npt_ensemble all npt temp 298.0 298.0 100.0 iso 1.0 1.0 1000.0
- fix  e_field sol efield 0.0 0.0 0.15
-#fix force_applied waterNacl addforce 0.0 0.0 -0.0024 # p=256mpa totalwater
-#fix zrest  bilayer spring/self 10.0 z
-#fix graphenelayerforce bilayer setforce 0.0 0.0 v_totalpress
-#fix graphenelayervel bilayer move linear 0.0 0.0 0.0 units lattice
- fix nvt_ensemble sol nvt temp 298.0 298.0 500.0
-
-
-  # Defining spring force compute for bilayer
-  # compute force_gg bilayer reduce sum fx fy fz
-  # variable   Lx equal 62.0
-  # variable   Ly equal 75.0
-  # variable press_gg1 equal c_force_gg[1]
-  # variable press_gg2 equal c_force_gg[2]
-  # variable press_gg3 equal c_force_gg[3]
-  # variable press_vector equal (c_force_gg[1]*c_force_gg[1]+c_force_gg[2]*c_force_gg[2]+c_force_gg[3]*c_force_gg[3])
- #  variable totalpress equal sqrt(v_press_vector)/(v_Lx*v_Ly)
-
- # Counting the number of waters and ions in the feed region
- region feedzone block INF INF INF INF ${zlayer2} ${zlayer1} units box
- region feedzone block INF INF INF INF -12 ${zlayer1} units box
- region feedzone block INF INF INF INF -12 12 units box
- variable num_feed_waters equal "count(ow,feedzone)"
- variable num_feed_li equal "count(li,feedzone)"
- #variable num_feed_ni equal "count(ni,feedzone)"
- #variable num_feed_co equal "count(co,feedzone)"
- #variable num_feed_mn equal "count(mn,feedzone)"
- variable num_feed_cu equal "count(cu,feedzone)"
- #variable num_feed_na equal "count(na,feedzone)"
-
-#  compute myRDF sol-crown rdf 50 9 7 cutoff 10.0
- #fix myfix sol-crown ave/time 50 1 50 c_myRDF[*] file tmp_Co.rdf mode vector
-
- #compute myRD_1 sol-crown rdf 50 9 8 cutoff 10.0
- #fix myfix_1 sol-crown ave/time 50 1 50 c_myRDF[*] file tmp_Li.rdf mode vector
-
-
- thermo   500
- thermo_style    custom step temp etotal press v_num_feed_waters v_num_feed_li v_num_feed_cu #v_num_feed_mn v_num_feed_ni v_num_feed_cu
- thermo_modify   norm no flush yes
-
-
- #variable  end equal 500000
-
- #dump          pos all custom ${end} pos_filename id element type q x y z
- #dump_modify   pos format line "%5d %5s %d %13.10f %17.12f %17.12f %17.12f"
- #dump_modify   pos sort id
- #dump_modify   pos element group C1 C10 C14 C2 C3 C4 C5 C6 C7 C8 C9 CO CX CY CZ Cl H1 HK HW Li O1 O2 O3 O4 O5 OE OJ OK OL OW
-
- #dump          vel all custom ${end} vel_filename id element vx vy vz
- #dump_modify   vel format line "%5d %5s %18.15f %18.15f %18.15f"
- #dump_modify   vel sort id
- #dump_modify   vel element C4 CO CX CY CZ Cl HK HW Li OE OJ OK OL OW
-
-
- dump         trj all custom 500 trj-GO-1C-LiCu.dat id element type x y z vx vy vz fx fy fz
- dump_modify  trj sort id
- dump_modify     trj element C1 C10 C14 C2 C3 C4 C5 C6 C7 C8 C9 Cu CX CY CZ Cl H1 HK HW Li O1 O2 O3 O4 O5 OE OJ OK OL OW
-
- #write_data combined.lmp
- write_restart   waterinfo.restart
-System init for write_restart ...
-Ewald initialization ...
-  using 12-bit tables for long-range coulomb (src/src/kspace.cpp:342)
-WARNING: For better accuracy use 'pair_modify table 0' (src/src/kspace.cpp:365)
-  G vector (1/distance) = 0.35141414
-  estimated absolute RMS force accuracy = 9.8511897e-06
-  estimated relative force accuracy = 2.9666565e-08
-  KSpace vectors: actual max1d max3d = 60188 44 352484
-                  kxmax kymax kzmax  = 44 14 43
-Generated 0 of 435 mixed pair_coeff terms from geometric mixing rule
-Neighbor list info ...
-  update: every = 1 steps, delay = 0 steps, check = yes
-  max neighbors/atom: 50000, page size: 500000
-  master list distance cutoff = 14
-  ghost atom cutoff = 14
-  binsize = 7, bins = 15 5 15
-  1 neighbor lists, perpetual/occasional/extra = 1 0 0
-  (1) pair lj/cut/coul/long, perpetual
-      attributes: half, newton on
-      pair build: half/bin/newton
-      stencil: half/bin/3d
-      bin: standard
-
- timestep       2.0
- run         500000
-Ewald initialization ...
-  using 12-bit tables for long-range coulomb (src/src/kspace.cpp:342)
-WARNING: For better accuracy use 'pair_modify table 0' (src/src/kspace.cpp:365)
-  G vector (1/distance) = 0.35141414
-  estimated absolute RMS force accuracy = 9.8511897e-06
-  estimated relative force accuracy = 2.9666565e-08
-  KSpace vectors: actual max1d max3d = 60188 44 352484
-                  kxmax kymax kzmax  = 44 14 43
-Generated 0 of 435 mixed pair_coeff terms from geometric mixing rule
-Per MPI rank memory allocation (min/avg/max) = 122.6 | 122.7 | 122.8 Mbytes
-   Step          Temp          TotEng         Press      v_num_feed_waters v_num_feed_li  v_num_feed_cu 
-         0   0             -13539.229     -764.79309      0              0              0            
-       500   16.962458     -12898.962     -732.03895      0              0              0            
-      1000   34.233132     -12212.501     -591.50025      0              0              0            
-      1500   58.197514     -11012.896     -436.01407      0              0              0            
-      2000   88.874535     -9205.5795     -272.45518      0              0              0            
-      2500   125.69438     -6772.5426     -232.71459      0              0              0            
-      3000   162.34717     -3997.6978     -371.9212       0              0              0            
-      3500   192.49257     -1571.0672     -121.23654      1              0              0            
-      4000   198.71033     -842.92265     -318.62672      2              0              0            
+angle_coeff     85 50 10

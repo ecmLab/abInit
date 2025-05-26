@@ -10,23 +10,23 @@ end structure
 structure hcro4.pdb
   number 4
   resnumbers 3
-  inside cylinder 0.0 0.0 -5 0.0 0.0 1.0 20 10
+  inside cylinder 0.0 0.0 -10.5 0.0 0.0 1.0 20 21.00
 end structure
 
 structure water.pdb
-  number 524
+  number 958
   resnumbers 3
-  inside cylinder 0.0 0.0 -5 0.0 0.0 1.0 20 10
+  inside cylinder 0.0 0.0 -10.5 0.0 0.0 1.0 20 21.00
 end structure
 
 structure na.pdb
   number 46
   resnumbers 3
-  inside cylinder 0.0 0.0 -5 0.0 0.0 1.0 20 10
+  inside cylinder 0.0 0.0 -10.5 0.0 0.0 1.0 20 21.00
 end structure
 
 structure cl.pdb
   number 40
   resnumbers 3
-  inside cylinder 0.0 0.0 -5 0.0 0.0 1.0 20 10
+  inside cylinder 0.0 0.0 -10.5 0.0 0.0 1.0 20 21.00
 end structure
