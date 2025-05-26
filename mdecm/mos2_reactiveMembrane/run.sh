@@ -7,16 +7,16 @@
 #SBATCH --partition=debug
 
 # displays outputs/err
-#SBATCH --output=%x_%j.out
+##SBATCH --output=%x_%j.out
+##SBATCH --error=%x_%j.err
 #SBATCH --mail-user=slack:@qhteme
-#SBATCH --error=%x_%j.err
 
 #  wall-clock time for tier3
 ##SBATCH -t 0-60:00:00
-#SBATCH -t 0-00:10:00
+#SBATCH -t 0-02:00:00
 
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=6
+#SBATCH --ntasks-per-node=12
 #SBATCH --mem-per-cpu=20g
 
 #load the lammps module

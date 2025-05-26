@@ -1,5 +1,1014 @@
-<<<<<<< HEAD
 LAMMPS (2 Aug 2023 - Update 2)
-=======
-LAMMPS (19 Nov 2024)
->>>>>>> f526594200578e4579c83cd2495f814bd12c12ec
+  using 1 OpenMP thread(s) per MPI task
+units           real
+atom_style      full
+dimension 3
+boundary        p p p
+
+read_data       model_solvation/sol_r20.data
+Reading data file ...
+  orthogonal box = (1e-06 1e-06 -0) to (50.000001 50.000001 22.33)
+  3 by 4 by 1 MPI processor grid
+  reading atoms ...
+  3824 atoms
+  scanning bonds ...
+  4 = max bonds/atom
+  scanning angles ...
+  6 = max angles/atom
+  reading bonds ...
+  1936 bonds
+  reading angles ...
+  982 angles
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0       
+  special bond factors coul:  0        0        0       
+     4 = max # of 1-2 neighbors
+     3 = max # of 1-3 neighbors
+     4 = max # of 1-4 neighbors
+     5 = max # of special neighbors
+  special bonds CPU = 0.001 seconds
+  read_data CPU = 0.052 seconds
+
+# Define groups
+group water type 4 5 8      # 4 and 5 are H1 and H2 atoms, 8 is O atom
+2874 atoms in group water
+group mos2  type 6 13       # MoS2 backbone
+840 atoms in group mos2
+group sol   type 1 2 3 4 5 7 8 9 10 11 12  # solvent and solution
+2984 atoms in group sol
+
+# Pair style and kspace
+pair_style      lj/cut/coul/long 10.0
+special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0.5     
+  special bond factors coul:  0        0        0.83333333
+     4 = max # of 1-2 neighbors
+     3 = max # of 1-3 neighbors
+     4 = max # of 1-4 neighbors
+     5 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+pair_modify     mix arithmetic
+#kspace_style    pppm 1.0e-4
+kspace_style ewald 1e-8
+
+# Pair Coeff
+pair_coeff 1 1     0.070   3.5600000   # Cl-Cl
+pair_coeff 2 2     0.050   2.5000000   # CR-CR
+pair_coeff 3 3     0.001   1.0000000   # H-H
+pair_coeff 4 4     0.0     0.0         # H1-H1
+pair_coeff 5 5     0.0     0.0         # H2-H2
+pair_coeff 6 6     0.0134  4.2000000   # Mo-Mo
+pair_coeff 7 7     0.0469  2.4300000   # Na-Na
+pair_coeff 8 8     0.1521  3.1507      # OW-OW
+pair_coeff 9 9     0.1000  3.0000000   # O1-O1
+pair_coeff 10 10   0.1000  3.0000000   # O2-O2
+pair_coeff 11 11   0.1000  3.0000000   # O3-O3
+pair_coeff 12 12   0.1000  3.0000000   # O4-O4
+pair_coeff 13 13   0.4610  3.1300000   # S-S
+
+bond_style harmonic
+bond_coeff 1 650 1.600
+bond_coeff 2 450 0.600
+bond_coeff 3 450 0.957
+
+angle_style     harmonic
+angle_coeff 1 80 109.50
+angle_coeff 2 55 104.52
+
+## Minimize the system first
+velocity all create 300.0 12345 dist gaussian mom yes rot yes
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+Ewald initialization ...
+WARNING: System is not charge neutral, net charge = 0.0008 (src/src/kspace.cpp:327)
+  using 12-bit tables for long-range coulomb (src/src/kspace.cpp:342)
+WARNING: For better accuracy use 'pair_modify table 0' (src/src/kspace.cpp:365)
+  G vector (1/distance) = 0.39451625
+  estimated absolute RMS force accuracy = 1.7176048e-05
+  estimated relative force accuracy = 5.1725158e-08
+  KSpace vectors: actual max1d max3d = 17962 25 66325
+                  kxmax kymax kzmax  = 25 25 12
+Generated 78 of 78 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 12
+  ghost atom cutoff = 12
+  binsize = 6, bins = 9 9 4
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut/coul/long, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 56.06 | 56.5 | 57.59 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   300            5413549.7      0.79161607     5416969.1      26738563     
+       333   300           -42083.445      1046.0543     -37618.7        6286.5921    
+Loop time of 32.6526 on 12 procs for 333 steps with 3824 atoms
+
+100.0% CPU use with 12 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+      5413550.44166373  -41033.8408585404   -41037.391171468
+  Force two-norm initial, final = 88588263 94.075669
+  Force max component initial, final = 39971546 34.565212
+  Final line search alpha, max atom move = 0.0031767693 0.10980571
+  Iterations, force evaluations = 333 500
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.1715     | 1.2568     | 3.5209     |  96.3 |  3.85
+Bond    | 0.00094678 | 0.0062137  | 0.015643   |   6.0 |  0.02
+Kspace  | 12.655     | 19.102     | 29.105     | 122.6 | 58.50
+Neigh   | 0.14411    | 0.14527    | 0.14615    |   0.1 |  0.44
+Comm    | 0.061937   | 11.92      | 19.497     | 181.6 | 36.50
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.2222     |            |       |  0.68
+
+Nlocal:        318.667 ave         618 max         112 min
+Histogram: 4 0 0 1 2 3 0 0 0 2
+Nghost:           4394 ave        5711 max        3509 min
+Histogram: 4 0 0 2 2 2 0 0 0 2
+Neighs:         107705 ave      288157 max       16054 min
+Histogram: 4 0 1 4 1 0 0 0 0 2
+
+Total # of neighbors = 1292455
+Ave neighs/atom = 337.98509
+Ave special neighs/atom = 1.5345188
+Neighbor list builds = 23
+Dangerous builds = 0
+
+# *************** Setting ******************************
+# Neighbor settings
+#neigh_modify delay 0 every 1 check yes
+neigh_modify    delay 5 every 1
+
+# Define SHAKE constraints for water (O-H bonds and H-O-H angle)
+fix spce_model water shake 0.0001 20 100 b 3 a 2
+Finding SHAKE clusters ...
+       0 = # of size 2 clusters
+       0 = # of size 3 clusters
+       0 = # of size 4 clusters
+     958 = # of frozen angles
+  find clusters CPU = 0.001 seconds
+
+# Fix MoS2 as rigid (zero force and velocity)
+fix mos_hold mos2 setforce 0.0 0.0 0.0
+velocity mos2 set 0.0 0.0 0.0
+
+# Define small electric field along z (0.001 kcal/mol·e·Å)
+#fix fix_efield sol efield 0.0 0.0 0.001
+velocity sol set 0.0 0.0 0.01 sum yes
+
+# Set timestep
+reset_timestep  0
+timestep        1  # fs
+fix fix_nvt sol nvt temp 300.0 300.0 100.0
+
+# Thermostat output
+thermo          100
+thermo_style    custom step temp etotal press
+
+dump d1 all custom 100 dump.lammpstrj id type mol x y z q
+
+# Run for 5 ns (5,000,000 steps)
+run 100000
+Ewald initialization ...
+  using 12-bit tables for long-range coulomb (src/src/kspace.cpp:342)
+WARNING: For better accuracy use 'pair_modify table 0' (src/src/kspace.cpp:365)
+  G vector (1/distance) = 0.39451625
+  estimated absolute RMS force accuracy = 1.7176048e-05
+  estimated relative force accuracy = 5.1725158e-08
+  KSpace vectors: actual max1d max3d = 17962 25 66325
+                  kxmax kymax kzmax  = 25 25 12
+Generated 78 of 78 mixed pair_coeff terms from arithmetic mixing rule
+SHAKE stats (type/ave/delta/count) on step 0
+Bond:   3   0.982022  0.0419118       1916
+Angle:  2   100.167   8.83834          958
+Per MPI rank memory allocation (min/avg/max) = 55.81 | 56.21 | 57.07 Mbytes
+   Step          Temp          TotEng         Press     
+         0   596.95444     -36863.849      9251.507     
+SHAKE stats (type/ave/delta/count) on step 100
+Bond:   3   0.957     2.93349e-06     1916
+Angle:  2   104.52    0.000240479      958
+       100   301.97137     -36521.258      9117.6812    
+SHAKE stats (type/ave/delta/count) on step 200
+Bond:   3   0.957     3.09683e-06     1916
+Angle:  2   104.52    0.000188871      958
+       200   237.56423     -37036.662      8234.5396    
+SHAKE stats (type/ave/delta/count) on step 300
+Bond:   3   0.957     1.96203e-06     1916
+Angle:  2   104.52    0.000123568      958
+       300   202.69185     -37317.355      8256.7253    
+SHAKE stats (type/ave/delta/count) on step 400
+Bond:   3   0.957     1.00212e-06     1916
+Angle:  2   104.52    9.52087e-05      958
+       400   193.73264     -37385.068      8684.4958    
+SHAKE stats (type/ave/delta/count) on step 500
+Bond:   3   0.957     2.48384e-06     1916
+Angle:  2   104.52    0.000174062      958
+       500   204.13177     -37232.18       8263.1982    
+SHAKE stats (type/ave/delta/count) on step 600
+Bond:   3   0.957     2.93948e-06     1916
+Angle:  2   104.52    0.000158601      958
+       600   213.67786     -37029.36       8569.5208    
+SHAKE stats (type/ave/delta/count) on step 700
+Bond:   3   0.957     1.28071e-06     1916
+Angle:  2   104.52    0.000173413      958
+       700   213.65417     -36876.64       9046.7989    
+SHAKE stats (type/ave/delta/count) on step 800
+Bond:   3   0.957     1.19774e-06     1916
+Angle:  2   104.52    0.000103021      958
+       800   213.4233      -36797.555      9008.9277    
+SHAKE stats (type/ave/delta/count) on step 900
+Bond:   3   0.957     1.17854e-06     1916
+Angle:  2   104.52    9.15396e-05      958
+       900   214.0404      -36768.112      8885.2773    
+SHAKE stats (type/ave/delta/count) on step 1000
+Bond:   3   0.957     1.07467e-06     1916
+Angle:  2   104.52    9.3848e-05       958
+      1000   213.71597     -36757.337      8899.1159    
+SHAKE stats (type/ave/delta/count) on step 1100
+Bond:   3   0.957     1.07848e-06     1916
+Angle:  2   104.52    8.70294e-05      958
+      1100   208.26927     -36760.481      8841.1971    
+SHAKE stats (type/ave/delta/count) on step 1200
+Bond:   3   0.957     1.18756e-06     1916
+Angle:  2   104.52    9.63729e-05      958
+      1200   213.04706     -36758.206      8426.9724    
+SHAKE stats (type/ave/delta/count) on step 1300
+Bond:   3   0.957     1.2435e-06      1916
+Angle:  2   104.52    9.69869e-05      958
+      1300   207.80924     -36736.033      8298.8716    
+SHAKE stats (type/ave/delta/count) on step 1400
+Bond:   3   0.957     1.06146e-06     1916
+Angle:  2   104.52    9.61629e-05      958
+      1400   211.17366     -36711.787      8519.1793    
+SHAKE stats (type/ave/delta/count) on step 1500
+Bond:   3   0.957     1.41804e-06     1916
+Angle:  2   104.52    9.43835e-05      958
+      1500   212.47378     -36685.304      7976.8096    
+SHAKE stats (type/ave/delta/count) on step 1600
+Bond:   3   0.957     1.22584e-06     1916
+Angle:  2   104.52    8.82874e-05      958
+      1600   213.40313     -36663.302      8151.7829    
+SHAKE stats (type/ave/delta/count) on step 1700
+Bond:   3   0.957     1.36017e-06     1916
+Angle:  2   104.52    0.000112386      958
+      1700   207.92689     -36684.128      8613.182     
+SHAKE stats (type/ave/delta/count) on step 1800
+Bond:   3   0.957     1.46284e-06     1916
+Angle:  2   104.52    0.00010703       958
+      1800   206.00433     -36719.949      8654.4486    
+SHAKE stats (type/ave/delta/count) on step 1900
+Bond:   3   0.957     1.05601e-06     1916
+Angle:  2   104.52    9.16875e-05      958
+      1900   209.98545     -36727.363      8184.5709    
+SHAKE stats (type/ave/delta/count) on step 2000
+Bond:   3   0.957     1.42934e-06     1916
+Angle:  2   104.52    0.000100185      958
+      2000   210.37342     -36696.152      8066.7486    
+SHAKE stats (type/ave/delta/count) on step 2100
+Bond:   3   0.957     1.1378e-06      1916
+Angle:  2   104.52    0.000117676      958
+      2100   212.16811     -36661.271      7651.884     
+SHAKE stats (type/ave/delta/count) on step 2200
+Bond:   3   0.957     1.1517e-06      1916
+Angle:  2   104.52    9.41845e-05      958
+      2200   218.9164      -36626.22       7794.8599    
+SHAKE stats (type/ave/delta/count) on step 2300
+Bond:   3   0.957     1.31009e-06     1916
+Angle:  2   104.52    0.000101707      958
+      2300   215.6537      -36627.323      7910.569     
+SHAKE stats (type/ave/delta/count) on step 2400
+Bond:   3   0.957     1.45628e-06     1916
+Angle:  2   104.52    0.000115925      958
+      2400   213.451       -36672.563      7782.3512    
+SHAKE stats (type/ave/delta/count) on step 2500
+Bond:   3   0.957     1.20135e-06     1916
+Angle:  2   104.52    0.000106588      958
+      2500   205.38024     -36716.845      7852.3716    
+SHAKE stats (type/ave/delta/count) on step 2600
+Bond:   3   0.957     1.30834e-06     1916
+Angle:  2   104.52    0.000113854      958
+      2600   206.72679     -36712.134      7609.2737    
+SHAKE stats (type/ave/delta/count) on step 2700
+Bond:   3   0.957     1.06768e-06     1916
+Angle:  2   104.52    9.95043e-05      958
+      2700   209.6119      -36671.725      7855.3454    
+SHAKE stats (type/ave/delta/count) on step 2800
+Bond:   3   0.957     1.38556e-06     1916
+Angle:  2   104.52    9.39911e-05      958
+      2800   213.05045     -36665.938      7566.9837    
+SHAKE stats (type/ave/delta/count) on step 2900
+Bond:   3   0.957     1.93821e-06     1916
+Angle:  2   104.52    0.000128795      958
+      2900   216.32761     -36704.064      7631.1901    
+SHAKE stats (type/ave/delta/count) on step 3000
+Bond:   3   0.957     1.552e-06       1916
+Angle:  2   104.52    0.000143791      958
+      3000   210.48791     -36770.975      7673.0349    
+SHAKE stats (type/ave/delta/count) on step 3100
+Bond:   3   0.957     1.43873e-06     1916
+Angle:  2   104.52    0.000113301      958
+      3100   210.52554     -36813.732      7662.1493    
+SHAKE stats (type/ave/delta/count) on step 3200
+Bond:   3   0.957     1.1087e-06      1916
+Angle:  2   104.52    0.000100766      958
+      3200   207.92942     -36852.563      7201.2738    
+SHAKE stats (type/ave/delta/count) on step 3300
+Bond:   3   0.957     1.26304e-06     1916
+Angle:  2   104.52    9.73762e-05      958
+      3300   216.69898     -36845.147      7386.8633    
+SHAKE stats (type/ave/delta/count) on step 3400
+Bond:   3   0.957     1.4118e-06      1916
+Angle:  2   104.52    0.000104701      958
+      3400   205.25019     -36821.024      7644.9091    
+SHAKE stats (type/ave/delta/count) on step 3500
+Bond:   3   0.957     1.05073e-06     1916
+Angle:  2   104.52    0.000104409      958
+      3500   211.8185      -36784.851      7792.3803    
+SHAKE stats (type/ave/delta/count) on step 3600
+Bond:   3   0.957     1.63664e-06     1916
+Angle:  2   104.52    0.000104082      958
+      3600   213.12905     -36789.601      7998.5058    
+SHAKE stats (type/ave/delta/count) on step 3700
+Bond:   3   0.957     1.53287e-06     1916
+Angle:  2   104.52    0.000124347      958
+      3700   214.04934     -36834.935      7326.9415    
+SHAKE stats (type/ave/delta/count) on step 3800
+Bond:   3   0.957     1.36303e-06     1916
+Angle:  2   104.52    0.000104363      958
+      3800   210.04859     -36878.348      7452.8046    
+SHAKE stats (type/ave/delta/count) on step 3900
+Bond:   3   0.957     9.80845e-07     1916
+Angle:  2   104.52    9.45659e-05      958
+      3900   206.73609     -36892.154      7532.4786    
+SHAKE stats (type/ave/delta/count) on step 4000
+Bond:   3   0.957     1.45333e-06     1916
+Angle:  2   104.52    0.000125131      958
+      4000   215.42018     -36818.058      7245.1939    
+SHAKE stats (type/ave/delta/count) on step 4100
+Bond:   3   0.957     1.02806e-06     1916
+Angle:  2   104.52    8.86078e-05      958
+      4100   220.21964     -36768.337      7355.9258    
+SHAKE stats (type/ave/delta/count) on step 4200
+Bond:   3   0.957     1.3431e-06      1916
+Angle:  2   104.52    0.00010883       958
+      4200   209.03306     -36802.418      7677.944     
+SHAKE stats (type/ave/delta/count) on step 4300
+Bond:   3   0.957     1.76487e-06     1916
+Angle:  2   104.52    0.000150243      958
+      4300   212.17149     -36853.571      7120.5664    
+SHAKE stats (type/ave/delta/count) on step 4400
+Bond:   3   0.957     1.09693e-06     1916
+Angle:  2   104.52    9.22287e-05      958
+      4400   210.96544     -36883.354      7411.3027    
+SHAKE stats (type/ave/delta/count) on step 4500
+Bond:   3   0.957     1.00419e-06     1916
+Angle:  2   104.52    9.96386e-05      958
+      4500   213.94725     -36878.876      7394.988     
+SHAKE stats (type/ave/delta/count) on step 4600
+Bond:   3   0.957     1.09296e-06     1916
+Angle:  2   104.52    0.000114591      958
+      4600   208.93427     -36854.514      7619.459     
+SHAKE stats (type/ave/delta/count) on step 4700
+Bond:   3   0.957     1.48029e-06     1916
+Angle:  2   104.52    0.000144886      958
+      4700   218.35068     -36727.343      7510.9075    
+SHAKE stats (type/ave/delta/count) on step 4800
+Bond:   3   0.957     1.61426e-06     1916
+Angle:  2   104.52    0.000102405      958
+      4800   218.29772     -36716.539      7695.1303    
+SHAKE stats (type/ave/delta/count) on step 4900
+Bond:   3   0.957     1.96198e-06     1916
+Angle:  2   104.52    0.000165931      958
+      4900   215.26465     -36787.009      6996.0884    
+SHAKE stats (type/ave/delta/count) on step 5000
+Bond:   3   0.957     1.48439e-06     1916
+Angle:  2   104.52    0.000148889      958
+      5000   212.74537     -36862.903      7385.2064    
+SHAKE stats (type/ave/delta/count) on step 5100
+Bond:   3   0.957     1.09257e-06     1916
+Angle:  2   104.52    8.73932e-05      958
+      5100   213.62485     -36891.111      7001.5796    
+SHAKE stats (type/ave/delta/count) on step 5200
+Bond:   3   0.957     1.14609e-06     1916
+Angle:  2   104.52    9.37705e-05      958
+      5200   210.54035     -36890.68       7181.6595    
+SHAKE stats (type/ave/delta/count) on step 5300
+Bond:   3   0.957     1.17381e-06     1916
+Angle:  2   104.52    9.46793e-05      958
+      5300   213.09037     -36857.502      7291.8814    
+SHAKE stats (type/ave/delta/count) on step 5400
+Bond:   3   0.957     1.1637e-06      1916
+Angle:  2   104.52    0.000107496      958
+      5400   213.03028     -36813.808      7318.2843    
+SHAKE stats (type/ave/delta/count) on step 5500
+Bond:   3   0.957     1.18104e-06     1916
+Angle:  2   104.52    0.00011514       958
+      5500   212.3273      -36775.056      7474.0555    
+SHAKE stats (type/ave/delta/count) on step 5600
+Bond:   3   0.957     1.27187e-06     1916
+Angle:  2   104.52    0.000103985      958
+      5600   215.92867     -36752.723      7499.4085    
+SHAKE stats (type/ave/delta/count) on step 5700
+Bond:   3   0.957     2.04408e-06     1916
+Angle:  2   104.52    0.00011797       958
+      5700   209.55508     -36828.449      7334.9326    
+SHAKE stats (type/ave/delta/count) on step 5800
+Bond:   3   0.957     1.45196e-06     1916
+Angle:  2   104.52    0.000118895      958
+      5800   213.45993     -36879.831      7367.2221    
+SHAKE stats (type/ave/delta/count) on step 5900
+Bond:   3   0.957     1.18538e-06     1916
+Angle:  2   104.52    9.42675e-05      958
+      5900   208.94649     -36903.02       7256.6064    
+SHAKE stats (type/ave/delta/count) on step 6000
+Bond:   3   0.957     1.12717e-06     1916
+Angle:  2   104.52    0.000103213      958
+      6000   209.47515     -36896.497      7647.3332    
+SHAKE stats (type/ave/delta/count) on step 6100
+Bond:   3   0.957     1.20992e-06     1916
+Angle:  2   104.52    0.000118907      958
+      6100   213.00853     -36817.377      7644.9717    
+SHAKE stats (type/ave/delta/count) on step 6200
+Bond:   3   0.957     1.19875e-06     1916
+Angle:  2   104.52    9.12368e-05      958
+      6200   214.67651     -36778.011      7411.9722    
+SHAKE stats (type/ave/delta/count) on step 6300
+Bond:   3   0.957     1.33254e-06     1916
+Angle:  2   104.52    9.91804e-05      958
+      6300   213.65187     -36792.534      7406.5019    
+SHAKE stats (type/ave/delta/count) on step 6400
+Bond:   3   0.957     1.31002e-06     1916
+Angle:  2   104.52    0.00011196       958
+      6400   212.66221     -36821.733      7391.042     
+SHAKE stats (type/ave/delta/count) on step 6500
+Bond:   3   0.957     1.01957e-06     1916
+Angle:  2   104.52    9.62553e-05      958
+      6500   208.90585     -36850.853      7168.5623    
+SHAKE stats (type/ave/delta/count) on step 6600
+Bond:   3   0.957     1.09835e-06     1916
+Angle:  2   104.52    0.000100424      958
+      6600   210.60661     -36840.466      7146.843     
+SHAKE stats (type/ave/delta/count) on step 6700
+Bond:   3   0.957     1.19462e-06     1916
+Angle:  2   104.52    0.000101226      958
+      6700   216.85636     -36797.515      7438.8309    
+SHAKE stats (type/ave/delta/count) on step 6800
+Bond:   3   0.957     9.72645e-07     1916
+Angle:  2   104.52    9.16963e-05      958
+      6800   213.9444      -36777.45       8048.8969    
+SHAKE stats (type/ave/delta/count) on step 6900
+Bond:   3   0.957     2.16272e-06     1916
+Angle:  2   104.52    0.000132944      958
+      6900   211.05179     -36828.379      7157.3747    
+SHAKE stats (type/ave/delta/count) on step 7000
+Bond:   3   0.957     1.49975e-06     1916
+Angle:  2   104.52    9.88667e-05      958
+      7000   210.31841     -36892.788      6900.2143    
+SHAKE stats (type/ave/delta/count) on step 7100
+Bond:   3   0.957     1.0896e-06      1916
+Angle:  2   104.52    0.000108606      958
+      7100   207.37702     -36891.753      7157.2156    
+SHAKE stats (type/ave/delta/count) on step 7200
+Bond:   3   0.957     1.2385e-06      1916
+Angle:  2   104.52    0.000116909      958
+      7200   210.02858     -36853.547      7019.7197    
+SHAKE stats (type/ave/delta/count) on step 7300
+Bond:   3   0.957     1.28203e-06     1916
+Angle:  2   104.52    9.49075e-05      958
+      7300   212.58795     -36804.424      7082.4065    
+SHAKE stats (type/ave/delta/count) on step 7400
+Bond:   3   0.957     1.37206e-06     1916
+Angle:  2   104.52    0.000105969      958
+      7400   217.33405     -36816.728      7085.1675    
+SHAKE stats (type/ave/delta/count) on step 7500
+Bond:   3   0.957     1.32168e-06     1916
+Angle:  2   104.52    9.43706e-05      958
+      7500   213.88369     -36839.095      7241.6629    
+SHAKE stats (type/ave/delta/count) on step 7600
+Bond:   3   0.957     1.20214e-06     1916
+Angle:  2   104.52    0.000103885      958
+      7600   209.78837     -36860.609      7264.975     
+SHAKE stats (type/ave/delta/count) on step 7700
+Bond:   3   0.957     1.51437e-06     1916
+Angle:  2   104.52    0.000122173      958
+      7700   209.22167     -36898.509      7190.4616    
+SHAKE stats (type/ave/delta/count) on step 7800
+Bond:   3   0.957     1.1182e-06      1916
+Angle:  2   104.52    9.10712e-05      958
+      7800   205.80425     -36919.789      7383.9392    
+SHAKE stats (type/ave/delta/count) on step 7900
+Bond:   3   0.957     1.51192e-06     1916
+Angle:  2   104.52    0.00013205       958
+      7900   210.51757     -36874.781      7182.5875    
+SHAKE stats (type/ave/delta/count) on step 8000
+Bond:   3   0.957     1.31714e-06     1916
+Angle:  2   104.52    0.000128292      958
+      8000   209.68044     -36793.023      7043.9805    
+SHAKE stats (type/ave/delta/count) on step 8100
+Bond:   3   0.957     1.13588e-06     1916
+Angle:  2   104.52    8.3145e-05       958
+      8100   214.44033     -36776.838      6991.3537    
+SHAKE stats (type/ave/delta/count) on step 8200
+Bond:   3   0.957     1.30006e-06     1916
+Angle:  2   104.52    0.000100494      958
+      8200   209.65701     -36791.997      7263.2532    
+SHAKE stats (type/ave/delta/count) on step 8300
+Bond:   3   0.957     1.59899e-06     1916
+Angle:  2   104.52    0.000121038      958
+      8300   207.91966     -36847.349      7267.3413    
+SHAKE stats (type/ave/delta/count) on step 8400
+Bond:   3   0.957     1.44049e-06     1916
+Angle:  2   104.52    0.000107772      958
+      8400   207.37939     -36900.974      6774.3644    
+SHAKE stats (type/ave/delta/count) on step 8500
+Bond:   3   0.957     1.3435e-06      1916
+Angle:  2   104.52    0.000133168      958
+      8500   208.13199     -36902.364      6836.6036    
+SHAKE stats (type/ave/delta/count) on step 8600
+Bond:   3   0.957     1.22035e-06     1916
+Angle:  2   104.52    0.000113675      958
+      8600   211.69144     -36801.703      7504.8735    
+SHAKE stats (type/ave/delta/count) on step 8700
+Bond:   3   0.957     1.09516e-06     1916
+Angle:  2   104.52    8.98004e-05      958
+      8700   213.31681     -36786.155      6940.0998    
+SHAKE stats (type/ave/delta/count) on step 8800
+Bond:   3   0.957     1.83692e-06     1916
+Angle:  2   104.52    0.000117299      958
+      8800   211.43434     -36816.037      7563.2175    
+SHAKE stats (type/ave/delta/count) on step 8900
+Bond:   3   0.957     1.28711e-06     1916
+Angle:  2   104.52    0.000111745      958
+      8900   213.59721     -36865.821      6815.9824    
+SHAKE stats (type/ave/delta/count) on step 9000
+Bond:   3   0.957     1.27256e-06     1916
+Angle:  2   104.52    9.4667e-05       958
+      9000   211.34998     -36902.983      6819.3232    
+SHAKE stats (type/ave/delta/count) on step 9100
+Bond:   3   0.957     1.36092e-06     1916
+Angle:  2   104.52    0.000157182      958
+      9100   211.24466     -36878.884      7088.7569    
+SHAKE stats (type/ave/delta/count) on step 9200
+Bond:   3   0.957     1.1385e-06      1916
+Angle:  2   104.52    0.000102068      958
+      9200   218.49923     -36785.55       7288.002     
+SHAKE stats (type/ave/delta/count) on step 9300
+Bond:   3   0.957     1.54332e-06     1916
+Angle:  2   104.52    9.91069e-05      958
+      9300   214.65256     -36787.979      7320.9941    
+SHAKE stats (type/ave/delta/count) on step 9400
+Bond:   3   0.957     1.51309e-06     1916
+Angle:  2   104.52    0.000124553      958
+      9400   214.68316     -36834.033      7429.4196    
+SHAKE stats (type/ave/delta/count) on step 9500
+Bond:   3   0.957     1.42308e-06     1916
+Angle:  2   104.52    0.000121749      958
+      9500   211.21859     -36890.844      7522.763     
+SHAKE stats (type/ave/delta/count) on step 9600
+Bond:   3   0.957     1.09198e-06     1916
+Angle:  2   104.52    9.51131e-05      958
+      9600   215.13873     -36909.735      7423.5149    
+SHAKE stats (type/ave/delta/count) on step 9700
+Bond:   3   0.957     1.12141e-06     1916
+Angle:  2   104.52    9.17603e-05      958
+      9700   210.84139     -36913.747      7078.3776    
+SHAKE stats (type/ave/delta/count) on step 9800
+Bond:   3   0.957     1.17271e-06     1916
+Angle:  2   104.52    0.000108741      958
+      9800   210.74725     -36897.281      7039.8394    
+SHAKE stats (type/ave/delta/count) on step 9900
+Bond:   3   0.957     1.09768e-06     1916
+Angle:  2   104.52    0.000100466      958
+      9900   216.78451     -36866.852      7238.0242    
+SHAKE stats (type/ave/delta/count) on step 10000
+Bond:   3   0.957     1.26899e-06     1916
+Angle:  2   104.52    0.000122539      958
+     10000   214.00497     -36825.455      7246.4142    
+SHAKE stats (type/ave/delta/count) on step 10100
+Bond:   3   0.957     1.10971e-06     1916
+Angle:  2   104.52    0.000101887      958
+     10100   216.82149     -36768.06       6978.6575    
+SHAKE stats (type/ave/delta/count) on step 10200
+Bond:   3   0.957     1.99686e-06     1916
+Angle:  2   104.52    0.000162376      958
+     10200   219.74332     -36795.827      7375.9521    
+SHAKE stats (type/ave/delta/count) on step 10300
+Bond:   3   0.957     1.66555e-06     1916
+Angle:  2   104.52    0.000132129      958
+     10300   211.44007     -36873.928      7261.9119    
+SHAKE stats (type/ave/delta/count) on step 10400
+Bond:   3   0.957     1.17657e-06     1916
+Angle:  2   104.52    0.00010022       958
+     10400   208.72313     -36900.433      7255.2993    
+SHAKE stats (type/ave/delta/count) on step 10500
+Bond:   3   0.957     1.2011e-06      1916
+Angle:  2   104.52    9.09463e-05      958
+     10500   207.18124     -36915.818      7239.6122    
+SHAKE stats (type/ave/delta/count) on step 10600
+Bond:   3   0.957     1.51888e-06     1916
+Angle:  2   104.52    0.000117623      958
+     10600   210.1802      -36884.989      7474.0077    
+SHAKE stats (type/ave/delta/count) on step 10700
+Bond:   3   0.957     1.21101e-06     1916
+Angle:  2   104.52    9.87411e-05      958
+     10700   214.55422     -36821.589      7234.183     
+SHAKE stats (type/ave/delta/count) on step 10800
+Bond:   3   0.957     1.13225e-06     1916
+Angle:  2   104.52    9.70964e-05      958
+     10800   216.9393      -36804.918      7194.7919    
+SHAKE stats (type/ave/delta/count) on step 10900
+Bond:   3   0.957     1.71165e-06     1916
+Angle:  2   104.52    0.000150394      958
+     10900   220.71957     -36857.848      7215.5964    
+SHAKE stats (type/ave/delta/count) on step 11000
+Bond:   3   0.957     1.58496e-06     1916
+Angle:  2   104.52    9.8635e-05       958
+     11000   208.04092     -36937.971      6864.7207    
+SHAKE stats (type/ave/delta/count) on step 11100
+Bond:   3   0.957     9.9515e-07      1916
+Angle:  2   104.52    9.97591e-05      958
+     11100   212.93374     -36933.031      7141.6601    
+SHAKE stats (type/ave/delta/count) on step 11200
+Bond:   3   0.957     1.12268e-06     1916
+Angle:  2   104.52    9.7348e-05       958
+     11200   212.50205     -36891.933      7107.4266    
+SHAKE stats (type/ave/delta/count) on step 11300
+Bond:   3   0.957     1.05475e-06     1916
+Angle:  2   104.52    9.61671e-05      958
+     11300   215.63989     -36852.465      7427.2715    
+SHAKE stats (type/ave/delta/count) on step 11400
+Bond:   3   0.957     1.24542e-06     1916
+Angle:  2   104.52    0.000125867      958
+     11400   219.87659     -36795.733      7014.9503    
+SHAKE stats (type/ave/delta/count) on step 11500
+Bond:   3   0.957     1.52309e-06     1916
+Angle:  2   104.52    0.000152053      958
+     11500   217.39707     -36785.444      7265.946     
+SHAKE stats (type/ave/delta/count) on step 11600
+Bond:   3   0.957     1.55196e-06     1916
+Angle:  2   104.52    0.0001304        958
+     11600   214.62621     -36879.124      6899.4707    
+SHAKE stats (type/ave/delta/count) on step 11700
+Bond:   3   0.957     1.13727e-06     1916
+Angle:  2   104.52    9.16868e-05      958
+     11700   211.76956     -36901.272      6992.483     
+SHAKE stats (type/ave/delta/count) on step 11800
+Bond:   3   0.957     1.30889e-06     1916
+Angle:  2   104.52    9.46389e-05      958
+     11800   206.40707     -36898.672      6853.7932    
+SHAKE stats (type/ave/delta/count) on step 11900
+Bond:   3   0.957     1.1013e-06      1916
+Angle:  2   104.52    0.000102005      958
+     11900   214.52581     -36865.373      6922.4401    
+SHAKE stats (type/ave/delta/count) on step 12000
+Bond:   3   0.957     1.06191e-06     1916
+Angle:  2   104.52    8.7465e-05       958
+     12000   211.18591     -36824.625      7366.0945    
+SHAKE stats (type/ave/delta/count) on step 12100
+Bond:   3   0.957     1.56085e-06     1916
+Angle:  2   104.52    0.000136216      958
+     12100   213.27358     -36846.138      7334.5306    
+SHAKE stats (type/ave/delta/count) on step 12200
+Bond:   3   0.957     1.29376e-06     1916
+Angle:  2   104.52    0.000109901      958
+     12200   209.83967     -36912.883      7259.1545    
+SHAKE stats (type/ave/delta/count) on step 12300
+Bond:   3   0.957     9.73856e-07     1916
+Angle:  2   104.52    9.91585e-05      958
+     12300   207.81206     -36925.868      7064.298     
+SHAKE stats (type/ave/delta/count) on step 12400
+Bond:   3   0.957     1.27031e-06     1916
+Angle:  2   104.52    0.000159358      958
+     12400   210.54401     -36890.778      7525.6217    
+SHAKE stats (type/ave/delta/count) on step 12500
+Bond:   3   0.957     1.10049e-06     1916
+Angle:  2   104.52    0.000107264      958
+     12500   217.15481     -36806.025      7585.6722    
+SHAKE stats (type/ave/delta/count) on step 12600
+Bond:   3   0.957     1.35706e-06     1916
+Angle:  2   104.52    0.000111119      958
+     12600   217.84379     -36821.659      6811.9939    
+SHAKE stats (type/ave/delta/count) on step 12700
+Bond:   3   0.957     1.49341e-06     1916
+Angle:  2   104.52    0.000111597      958
+     12700   213.5271      -36877.559      7462.2827    
+SHAKE stats (type/ave/delta/count) on step 12800
+Bond:   3   0.957     1.26846e-06     1916
+Angle:  2   104.52    0.000113262      958
+     12800   215.77779     -36911.325      7139.3862    
+SHAKE stats (type/ave/delta/count) on step 12900
+Bond:   3   0.957     9.74349e-07     1916
+Angle:  2   104.52    9.88542e-05      958
+     12900   211.76655     -36938.052      7401.3459    
+SHAKE stats (type/ave/delta/count) on step 13000
+Bond:   3   0.957     1.15156e-06     1916
+Angle:  2   104.52    9.42163e-05      958
+     13000   206.264       -36959.346      7394.4673    
+SHAKE stats (type/ave/delta/count) on step 13100
+Bond:   3   0.957     1.81971e-06     1916
+Angle:  2   104.52    0.00015135       958
+     13100   210.50242     -36914.429      7011.5659    
+SHAKE stats (type/ave/delta/count) on step 13200
+Bond:   3   0.957     1.12659e-06     1916
+Angle:  2   104.52    9.40242e-05      958
+     13200   215.09535     -36838.571      7469.2421    
+SHAKE stats (type/ave/delta/count) on step 13300
+Bond:   3   0.957     1.64594e-06     1916
+Angle:  2   104.52    0.000114686      958
+     13300   218.77458     -36866.119      7199.4368    
+SHAKE stats (type/ave/delta/count) on step 13400
+Bond:   3   0.957     1.21718e-06     1916
+Angle:  2   104.52    9.9277e-05       958
+     13400   214.39904     -36906.055      7008.0936    
+SHAKE stats (type/ave/delta/count) on step 13500
+Bond:   3   0.957     1.27414e-06     1916
+Angle:  2   104.52    9.3535e-05       958
+     13500   208.6728      -36918.885      7170.9466    
+SHAKE stats (type/ave/delta/count) on step 13600
+Bond:   3   0.957     1.16577e-06     1916
+Angle:  2   104.52    0.000117204      958
+     13600   213.90824     -36884.778      6987.8495    
+SHAKE stats (type/ave/delta/count) on step 13700
+Bond:   3   0.957     1.36822e-06     1916
+Angle:  2   104.52    9.76969e-05      958
+     13700   219.75427     -36799.739      7358.0313    
+SHAKE stats (type/ave/delta/count) on step 13800
+Bond:   3   0.957     1.84892e-06     1916
+Angle:  2   104.52    0.000152433      958
+     13800   217.114       -36829.773      7864.6265    
+SHAKE stats (type/ave/delta/count) on step 13900
+Bond:   3   0.957     1.29372e-06     1916
+Angle:  2   104.52    9.82227e-05      958
+     13900   210.54159     -36882.972      7368.6555    
+SHAKE stats (type/ave/delta/count) on step 14000
+Bond:   3   0.957     1.1547e-06      1916
+Angle:  2   104.52    8.76606e-05      958
+     14000   213.05564     -36888.805      7061.7754    
+SHAKE stats (type/ave/delta/count) on step 14100
+Bond:   3   0.957     1.35959e-06     1916
+Angle:  2   104.52    0.000116488      958
+     14100   210.83363     -36920.587      7195.451     
+SHAKE stats (type/ave/delta/count) on step 14200
+Bond:   3   0.957     1.52651e-06     1916
+Angle:  2   104.52    0.000105461      958
+     14200   211.95806     -36960.218      7289.3108    
+SHAKE stats (type/ave/delta/count) on step 14300
+Bond:   3   0.957     1.36615e-06     1916
+Angle:  2   104.52    0.000109828      958
+     14300   208.46336     -36994.487      6888.019     
+SHAKE stats (type/ave/delta/count) on step 14400
+Bond:   3   0.957     1.21429e-06     1916
+Angle:  2   104.52    0.000104877      958
+     14400   202.95128     -37006.165      7064.2036    
+SHAKE stats (type/ave/delta/count) on step 14500
+Bond:   3   0.957     1.44836e-06     1916
+Angle:  2   104.52    0.000130359      958
+     14500   209.32755     -36925.486      7124.7633    
+SHAKE stats (type/ave/delta/count) on step 14600
+Bond:   3   0.957     1.06568e-06     1916
+Angle:  2   104.52    9.56479e-05      958
+     14600   219.67328     -36877.711      6887.9632    
+SHAKE stats (type/ave/delta/count) on step 14700
+Bond:   3   0.957     1.06348e-06     1916
+Angle:  2   104.52    9.38356e-05      958
+     14700   212.23618     -36878.758      6935.6842    
+SHAKE stats (type/ave/delta/count) on step 14800
+Bond:   3   0.957     1.48154e-06     1916
+Angle:  2   104.52    0.000110324      958
+     14800   213.05457     -36889.874      7196.5679    
+SHAKE stats (type/ave/delta/count) on step 14900
+Bond:   3   0.957     1.41281e-06     1916
+Angle:  2   104.52    0.000114706      958
+     14900   205.75486     -36933.95       6857.4873    
+SHAKE stats (type/ave/delta/count) on step 15000
+Bond:   3   0.957     1.15794e-06     1916
+Angle:  2   104.52    8.85601e-05      958
+     15000   209.68471     -36948.928      6994.6159    
+SHAKE stats (type/ave/delta/count) on step 15100
+Bond:   3   0.957     1.16903e-06     1916
+Angle:  2   104.52    0.000114055      958
+     15100   207.82963     -36903.753      6879.6547    
+SHAKE stats (type/ave/delta/count) on step 15200
+Bond:   3   0.957     1.24214e-06     1916
+Angle:  2   104.52    0.000113213      958
+     15200   214.43967     -36837.259      7010.414     
+SHAKE stats (type/ave/delta/count) on step 15300
+Bond:   3   0.957     1.38915e-06     1916
+Angle:  2   104.52    0.000100522      958
+     15300   211.17407     -36836.566      7053.2951    
+SHAKE stats (type/ave/delta/count) on step 15400
+Bond:   3   0.957     1.36266e-06     1916
+Angle:  2   104.52    0.000130784      958
+     15400   212.07462     -36876.074      7142.8878    
+SHAKE stats (type/ave/delta/count) on step 15500
+Bond:   3   0.957     1.07626e-06     1916
+Angle:  2   104.52    9.07938e-05      958
+     15500   207.73391     -36902.013      6882.9349    
+SHAKE stats (type/ave/delta/count) on step 15600
+Bond:   3   0.957     1.08735e-06     1916
+Angle:  2   104.52    9.17762e-05      958
+     15600   212.00078     -36890.638      6781.6936    
+SHAKE stats (type/ave/delta/count) on step 15700
+Bond:   3   0.957     1.25155e-06     1916
+Angle:  2   104.52    9.46587e-05      958
+     15700   215.40562     -36875.537      7048.5697    
+SHAKE stats (type/ave/delta/count) on step 15800
+Bond:   3   0.957     1.0256e-06      1916
+Angle:  2   104.52    9.79832e-05      958
+     15800   207.04636     -36860.08       6780.1943    
+SHAKE stats (type/ave/delta/count) on step 15900
+Bond:   3   0.957     1.25295e-06     1916
+Angle:  2   104.52    0.000113692      958
+     15900   220.84331     -36811.203      7031.5382    
+SHAKE stats (type/ave/delta/count) on step 16000
+Bond:   3   0.957     1.06549e-06     1916
+Angle:  2   104.52    9.18586e-05      958
+     16000   216.98528     -36774.643      7178.6044    
+SHAKE stats (type/ave/delta/count) on step 16100
+Bond:   3   0.957     1.95618e-06     1916
+Angle:  2   104.52    0.000173815      958
+     16100   212.0635      -36818.153      6940.819     
+SHAKE stats (type/ave/delta/count) on step 16200
+Bond:   3   0.957     1.56446e-06     1916
+Angle:  2   104.52    0.000104918      958
+     16200   209.31631     -36893.577      6754.6371    
+SHAKE stats (type/ave/delta/count) on step 16300
+Bond:   3   0.957     1.11727e-06     1916
+Angle:  2   104.52    9.16544e-05      958
+     16300   213.59348     -36909.062      6969.5783    
+SHAKE stats (type/ave/delta/count) on step 16400
+Bond:   3   0.957     1.16793e-06     1916
+Angle:  2   104.52    0.000100915      958
+     16400   204.61854     -36903.51       7127.3563    
+SHAKE stats (type/ave/delta/count) on step 16500
+Bond:   3   0.957     1.05915e-06     1916
+Angle:  2   104.52    0.000108295      958
+     16500   219.33885     -36827.942      7201.2377    
+SHAKE stats (type/ave/delta/count) on step 16600
+Bond:   3   0.957     1.43057e-06     1916
+Angle:  2   104.52    0.000109345      958
+     16600   216.58238     -36830.55       7117.3267    
+SHAKE stats (type/ave/delta/count) on step 16700
+Bond:   3   0.957     1.50103e-06     1916
+Angle:  2   104.52    0.000100575      958
+     16700   211.23997     -36876.484      7017.9477    
+SHAKE stats (type/ave/delta/count) on step 16800
+Bond:   3   0.957     1.15189e-06     1916
+Angle:  2   104.52    9.75658e-05      958
+     16800   213.69485     -36898.468      6825.9305    
+SHAKE stats (type/ave/delta/count) on step 16900
+Bond:   3   0.957     1.10445e-06     1916
+Angle:  2   104.52    9.78272e-05      958
+     16900   210.61651     -36886.153      7305.874     
+SHAKE stats (type/ave/delta/count) on step 17000
+Bond:   3   0.957     1.29294e-06     1916
+Angle:  2   104.52    9.3579e-05       958
+     17000   218.05687     -36861.144      7157.2088    
+SHAKE stats (type/ave/delta/count) on step 17100
+Bond:   3   0.957     1.71281e-06     1916
+Angle:  2   104.52    0.00011519       958
+     17100   212.16102     -36881.366      7290.2692    
+SHAKE stats (type/ave/delta/count) on step 17200
+Bond:   3   0.957     1.28125e-06     1916
+Angle:  2   104.52    0.000118101      958
+     17200   212.09881     -36930.039      6855.232     
+SHAKE stats (type/ave/delta/count) on step 17300
+Bond:   3   0.957     1.37461e-06     1916
+Angle:  2   104.52    0.000106326      958
+     17300   206.59026     -36964.795      6980.0241    
+SHAKE stats (type/ave/delta/count) on step 17400
+Bond:   3   0.957     1.21033e-06     1916
+Angle:  2   104.52    9.88017e-05      958
+     17400   206.63023     -36973.372      6853.138     
+SHAKE stats (type/ave/delta/count) on step 17500
+Bond:   3   0.957     1.85398e-06     1916
+Angle:  2   104.52    0.000138045      958
+     17500   209.7982      -36899.115      6965.1438    
+SHAKE stats (type/ave/delta/count) on step 17600
+Bond:   3   0.957     1.29961e-06     1916
+Angle:  2   104.52    9.13953e-05      958
+     17600   211.75187     -36847.801      7147.6812    
+SHAKE stats (type/ave/delta/count) on step 17700
+Bond:   3   0.957     1.18148e-06     1916
+Angle:  2   104.52    0.000102802      958
+     17700   210.85594     -36824.042      6730.9079    
+SHAKE stats (type/ave/delta/count) on step 17800
+Bond:   3   0.957     1.13867e-06     1916
+Angle:  2   104.52    0.000100551      958
+     17800   215.79709     -36822.989      7289.6775    
+SHAKE stats (type/ave/delta/count) on step 17900
+Bond:   3   0.957     1.80767e-06     1916
+Angle:  2   104.52    0.000169866      958
+     17900   206.84104     -36917.783      7548.1902    
+SHAKE stats (type/ave/delta/count) on step 18000
+Bond:   3   0.957     1.0279e-06      1916
+Angle:  2   104.52    9.84459e-05      958
+     18000   214.56615     -36941.929      6920.8198    
+SHAKE stats (type/ave/delta/count) on step 18100
+Bond:   3   0.957     1.31233e-06     1916
+Angle:  2   104.52    0.00011973       958
+     18100   210.75546     -36910.466      6848.5179    
+SHAKE stats (type/ave/delta/count) on step 18200
+Bond:   3   0.957     1.26794e-06     1916
+Angle:  2   104.52    0.000110752      958
+     18200   211.323       -36858.048      7454.9936    
+SHAKE stats (type/ave/delta/count) on step 18300
+Bond:   3   0.957     1.48988e-06     1916
+Angle:  2   104.52    0.000103004      958
+     18300   214.0467      -36838.787      7338.2466    
+SHAKE stats (type/ave/delta/count) on step 18400
+Bond:   3   0.957     1.88903e-06     1916
+Angle:  2   104.52    0.000129005      958
+     18400   211.12038     -36878.763      6638.9701    
+SHAKE stats (type/ave/delta/count) on step 18500
+Bond:   3   0.957     1.81352e-06     1916
+Angle:  2   104.52    0.000123749      958
+     18500   210.53264     -36987.746      7011.7017    
+SHAKE stats (type/ave/delta/count) on step 18600
+Bond:   3   0.957     1.25404e-06     1916
+Angle:  2   104.52    0.000107611      958
+     18600   207.3942      -36986.954      6688.6853    
+SHAKE stats (type/ave/delta/count) on step 18700
+Bond:   3   0.957     1.24799e-06     1916
+Angle:  2   104.52    0.000134897      958
+     18700   209.66193     -36917.782      7041.7695    
+SHAKE stats (type/ave/delta/count) on step 18800
+Bond:   3   0.957     1.25736e-06     1916
+Angle:  2   104.52    0.000100299      958
+     18800   212.03181     -36871.762      7133.7266    
+SHAKE stats (type/ave/delta/count) on step 18900
+Bond:   3   0.957     1.07322e-06     1916
+Angle:  2   104.52    9.35602e-05      958
+     18900   217.022       -36858.489      7781.3731    
+SHAKE stats (type/ave/delta/count) on step 19000
+Bond:   3   0.957     1.46568e-06     1916
+Angle:  2   104.52    0.000125653      958
+     19000   213.00691     -36890.009      7100.8067    
+SHAKE stats (type/ave/delta/count) on step 19100
+Bond:   3   0.957     1.9099e-06      1916
+Angle:  2   104.52    0.000120293      958
+     19100   207.15982     -36973.075      6843.2391    
+SHAKE stats (type/ave/delta/count) on step 19200
+Bond:   3   0.957     1.14387e-06     1916
+Angle:  2   104.52    0.000113961      958
+     19200   208.67731     -36965.323      7036.1164    
+SHAKE stats (type/ave/delta/count) on step 19300
+Bond:   3   0.957     1.09532e-06     1916
+Angle:  2   104.52    9.14419e-05      958
+     19300   213.10691     -36922.613      7194.3536    
+SHAKE stats (type/ave/delta/count) on step 19400
+Bond:   3   0.957     1.25428e-06     1916
+Angle:  2   104.52    9.67901e-05      958
+     19400   211.87505     -36908.211      7449.5978    
+SHAKE stats (type/ave/delta/count) on step 19500
+Bond:   3   0.957     1.11858e-06     1916
+Angle:  2   104.52    9.84377e-05      958
+     19500   215.57515     -36884.832      7146.6995    
+SHAKE stats (type/ave/delta/count) on step 19600
+Bond:   3   0.957     1.33775e-06     1916
+Angle:  2   104.52    0.000130667      958
+     19600   210.05655     -36852.73       7284.3357    
+SHAKE stats (type/ave/delta/count) on step 19700
+Bond:   3   0.957     9.45896e-07     1916
+Angle:  2   104.52    9.15591e-05      958
+     19700   215.89302     -36765.195      7834.6383    
+SHAKE stats (type/ave/delta/count) on step 19800
+Bond:   3   0.957     1.87567e-06     1916
+Angle:  2   104.52    0.000144381      958
+     19800   220.04535     -36810.509      7791.9127    
+SHAKE stats (type/ave/delta/count) on step 19900
+Bond:   3   0.957     1.38982e-06     1916
+Angle:  2   104.52    0.000129647      958
+     19900   209.58179     -36878.797      7430.6658    
+SHAKE stats (type/ave/delta/count) on step 20000
+Bond:   3   0.957     1.24388e-06     1916
+Angle:  2   104.52    9.96214e-05      958
+     20000   215.12747     -36912.164      7447.3004    
+SHAKE stats (type/ave/delta/count) on step 20100
+Bond:   3   0.957     9.66289e-07     1916
+Angle:  2   104.52    9.56738e-05      958
+     20100   218.7125      -36929.537      6712.6798    
+SHAKE stats (type/ave/delta/count) on step 20200
+Bond:   3   0.957     1.49717e-06     1916
+Angle:  2   104.52    0.000109417      958
+     20200   210.05145     -36947.706      7256.7731    
+SHAKE stats (type/ave/delta/count) on step 20300
+Bond:   3   0.957     1.49829e-06     1916
+Angle:  2   104.52    0.000107006      958
+     20300   209.6109      -36991.971      7006.398     
+SHAKE stats (type/ave/delta/count) on step 20400
+Bond:   3   0.957     1.14413e-06     1916
+Angle:  2   104.52    0.000103395      958
+     20400   204.06973     -37001.806      7019.4127    
+SHAKE stats (type/ave/delta/count) on step 20500
+Bond:   3   0.957     1.75161e-06 

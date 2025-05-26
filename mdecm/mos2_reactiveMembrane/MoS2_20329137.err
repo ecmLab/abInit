@@ -1,4 +1,0 @@
-Identity added: /home/qhteme/.ssh/id_rsa_github (/home/qhteme/.ssh/id_rsa_github)
-slurmstepd: error: *** STEP 20329137.0 ON skl-a-47 CANCELLED AT 2025-05-25T20:10:41 DUE TO TIME LIMIT ***
-slurmstepd: error: *** JOB 20329137 ON skl-a-47 CANCELLED AT 2025-05-25T20:10:41 DUE TO TIME LIMIT ***
-srun: Job step aborted: Waiting up to 4 seconds for job step to finish.
