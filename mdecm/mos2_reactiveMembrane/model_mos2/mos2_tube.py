@@ -56,11 +56,11 @@ def build_mos2_nanotube(m=20, length=3, vacuum=10):
 # m=40  for r=2.0240nm in radius corresponds to 40*3.18 in circumference
 # m=100 for r=5.0611nm in radius corresponds to 100*3.18 in circumference
 # m=200 for r=10.122nm in radius corresponds to 200*3.18 in circumference
-mos2_tube = build_mos2_nanotube(m=40, length=7, vacuum=10)
+mos2_tube = build_mos2_nanotube(m=100, length=7, vacuum=10)
 
 # Save as LAMMPS data file and XYZ for visualization
-write('mos2_r20.data', mos2_tube, format='lammps-data', atom_style='atomic')
-write('mos2_r20.xyz', mos2_tube)
-write("mos2_r20.pdb", mos2_tube, format="proteindatabank")
+write('mos2_r50.data', mos2_tube, format='lammps-data', atom_style='atomic')
+write('mos2_r50.xyz', mos2_tube)
+write("mos2_r50.pdb", mos2_tube, format="proteindatabank")
 
 print("MoS₂ nanotube structure generated and saved")
