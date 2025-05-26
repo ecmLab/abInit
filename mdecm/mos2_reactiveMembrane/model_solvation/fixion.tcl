@@ -10,7 +10,7 @@
 ## Constant Value (in armstrong)
 set  pi    3.1415926535897932
 set  rr    20
-set xyz [list [expr 2.5*$rr] [expr 2.5*$rr] 12.5]
+set xyz [list [expr 2.5*$rr] [expr 2.5*$rr] 22.33]
 package require topotools
 
 # Align the mos2 tube to the center of the system
@@ -34,7 +34,7 @@ set H2O_H [atomselect top "name H1 H2"]
 $H2O_H set charge 0.417
 ## partial charge in (HCrO4)-
 set Cr [atomselect top "name CR"]
-$Cr set charge 0.813
+$Cr set charge 0.812
 set O  [atomselect top "name O1 O2 O3 O4"]
 $O set charge -0.703
 set H  [atomselect top "name H"]
@@ -43,7 +43,7 @@ $H set charge 1.0
 set Mo  [atomselect top "name Mo"]
 $Mo set charge 0.734
 set S  [atomselect top "name S"]
-$S set charge -0.37425
+$S set charge -0.37057
 ## charge for Na and Cl
 set Na  [atomselect top "name NA"]
 $Na set charge 1.0
