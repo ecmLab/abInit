@@ -9,7 +9,7 @@
 ## Variables used in the file
 ## Constant Value (in armstrong)
 set  pi    3.1415926535897932
-set  rr    20
+set  rr    50
 set xyz [list [expr 2.5*$rr] [expr 2.5*$rr] 22.33]
 package require topotools
 
