@@ -52,6 +52,20 @@ $Cl set charge -1.0
 
 topo clearbonds
 topo clearangles
+# Add Mo–O bonds in MoS2 tube
+set nMo [$Mo num]
+set moid [$Mo get index]
+# Iterate through each Mo and find bonded sulfur
+for {set i 0} {$i < $nMo} {incr i} {
+    set iMo  [lindex $moid $i]
+    set aCr [atomselect top "index $iMo"]
+    set resid  [$aCr get resid]
+    # Find S atoms belong to this Mo
+    set S1 [atomselect top "name O1 and resid $resid"]
+    set O1id [lindex [$O1 get index] 0]
+
+}
+
 # Add Cr–O bonds in HCrO4 molecules
 set nCr [$Cr num]
 set crid [$Cr get index]

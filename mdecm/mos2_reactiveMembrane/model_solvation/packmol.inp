@@ -1,8 +1,8 @@
 tolerance 2.0
 filetype pdb
-output sol_r10.pdb
+output sol_r18.pdb
 
-structure ../model_mos2/mos2_r10.pdb
+structure ../model_mos2/mos2_r18.pdb
   number 1
   fixed 0.0 0.0 0.0 0.0 0.0 0.0
 end structure
