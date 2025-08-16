@@ -8,6 +8,7 @@ read_data       ../model_solvation/sol_N10.data
 # Define groups
 group water type 4 5 9     # 4 and 5 are H1 and H2 atoms, 9 is O atom
 group mos2  type 6 7 14 15 16 17     # MoS2 backbone
+group hcro  type 2 3 10 11 12 13     # HCrO4 ions
 group sol   type 1 2 3 4 5 8 9 10 11 12  13 # solvent and solution
 
 # Pair style and kspace
@@ -64,10 +65,12 @@ fix spce_model water shake 0.0001 20 0 b 4 a 2
 fix mos_hold mos2 setforce 0.0 0.0 0.0
 velocity mos2 set 0.0 0.0 0.0
 
-# Define small electric field along x direction (0.001 kcal/mol·e·Å)
+# Define electric field along x direction (0.001 kcal/mol·e·Å)
 #fix fix_efield sol efield 0.001 0.0 0.0
-# Define small velocity field along x direction (0.01A/fs = 1000m/s)
-velocity sol set 0.01 0.0 0.0 sum yes
+# Define velocity field along x direction (0.00002A/fs=0.02A/ps=2nm/ns)
+#velocity hcro set 0.0002 0.0 0.0 sum yes
+# Define acceleration/gravity field along x direction (unit kcal/g/A = 4.18*10^7 nm/ns^2)
+fix 1 sol gravity 0.04 vector 1 0 0
 
 # Set timestep
 reset_timestep  0
@@ -77,8 +80,8 @@ fix fix_nvt all nvt temp 300.0 300.0 100.0
 # Thermostat output
 thermo          100
 thermo_style    custom step temp etotal press
-
+# dump every 100fs = 0.1ps
 dump d1 all custom 100 dump.lammpstrj id type mol x y z q
 
 # Run for 5 ns (5,000,000 steps)
-run 500000
+run 5000000
