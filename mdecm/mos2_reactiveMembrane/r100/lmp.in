@@ -9,6 +9,7 @@ read_data       ../model_solvation/sol_N100.data
 group water type 4 5 9     # 4 and 5 are H1 and H2 atoms, 9 is O atom
 group mos2  type 6 7 14 15 16 17     # MoS2 backbone
 group sol   type 1 2 3 4 5 8 9 10 11 12  13 # solvent and solution
+group dmp   type 1 2 3 6 7 8 10 11 12 13 14 15 16 17 # all without water
 
 # Pair style and kspace
 pair_style      lj/cut/coul/long 10.0
@@ -77,7 +78,7 @@ fix fix_nvt sol nvt temp 300.0 300.0 100.0
 thermo          100
 thermo_style    custom step temp etotal press
 
-dump d1 all custom 1000 dump.lammpstrj id type mol x y z q
+dump d1 dmp custom 1000 dump.lammpstrj id type mol x y z q
 
 # Run for 5 ns (5,000,000 steps)
 run 100000

@@ -77,7 +77,7 @@ fix fix_nvt sol nvt temp 300.0 300.0 100.0
 thermo          100
 thermo_style    custom step temp etotal press
 
-dump d1 all custom 1000 dump.lammpstrj id type mol x y z q
+dump d1 all custom 100 dump.lammpstrj id type mol x y z q
 
 # Run for 5 ns (5,000,000 steps)
-run 100000
+run 500000
