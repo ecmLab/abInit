@@ -26,7 +26,7 @@ if {$nn == 10} {
    set  rr    87.7385
 }
 
-set xyz [list [expr 7*$a0] [expr 2.5*$rr] [expr 2.5*$rr]]
+set xyz [list [expr 7*$a0] [expr 4.0*$rr] [expr 4.0*$rr]]
 package require topotools
 
 # Align the mos2 tube to the center of the system
@@ -70,7 +70,6 @@ set all [atomselect top all]
 ##Build topo relations
 topo clearbonds
 topo clearangles
-# Add Mo–S bonds in MoS2 tube
 set Mo1  [atomselect top "name Mo1"]
 set nMo1 [$Mo1 num]
 set moid [$Mo1 get index]
@@ -79,55 +78,90 @@ for {set i 0} {$i < $nMo1} {incr i} {
     set iMo1  [lindex $moid $i]
     set aMo1 [atomselect top "index $iMo1"]
     set resid  [$aMo1 get resid]
-# Find the other Mo atom having the same resid
+ # Find the other Mo atom having the same resid
     set aMo2 [atomselect top "name Mo2 and resid $resid"]
     set iMo2 [lindex [$aMo2 get index] 0]
-# Find S atoms having the same resid
+ # Find S atoms having the same resid
     set S1 [atomselect top "name S1 and resid $resid"]
-    set S1id [lindex [$S1 get index] 0]
+    set iS1 [lindex [$S1 get index] 0]
     set S2 [atomselect top "name S2 and resid $resid"]
-    set S2id [lindex [$S2 get index] 0]
+    set iS2 [lindex [$S2 get index] 0]
     set S3 [atomselect top "name S3 and resid $resid"]
-    set S3id [lindex [$S3 get index] 0]
+    set iS3 [lindex [$S3 get index] 0]
     set S4 [atomselect top "name S4 and resid $resid"]
-    set S4id [lindex [$S4 get index] 0]
+    set iS4 [lindex [$S4 get index] 0]
 
-    # Add Mo1-S bonds in the same resid, with bond length=2.4127A
-    topo addbond $iMo1 $S1id -bondtype 1
-    topo addbond $iMo1 $S2id -bondtype 1
-    # Add Mo1-S bonds with its neighing resid along x-1 direction id(x-1) = id - 6*nn
-    set S1id_xm1 [expr $S1id-$nn*6]
-    set S2id_xm1 [expr $S2id-$nn*6]
+## Add Mo1-S bonds, with bond length=2.4127A
+  # Add Mo1-S bonds in the same resid
+    topo addbond $iMo1 $iS1 -bondtype 1
+    topo addbond $iMo1 $iS2 -bondtype 1
+  # Add Mo1-S bonds with its neighing resid along x-1 direction id(x-1) = id - 6*nn
+    set iS1_xm1 [expr $iS1-$nn*6]
+    set iS2_xm1 [expr $iS2-$nn*6]
     if {$resid <= $nn} {
-       set S1id_xm1 [expr $S1id+$nn*36]
-       set S2id_xm1 [expr $S2id+$nn*36]
+       set iS1_xm1 [expr $iS1+$nn*36]
+       set iS2_xm1 [expr $iS2+$nn*36]
     }
-    topo addbond $iMo1 $S1id_xm1 -bondtype 1
-    topo addbond $iMo1 $S2id_xm1 -bondtype 1
-    # Add Mo1-S bonds with its neighing resid along y-1 direction id(y-1) = id - 6
-    set S3id_ym1 [expr $S3id-6]
-    set S4id_ym1 [expr $S4id-6]
+    topo addbond $iMo1 $iS1_xm1 -bondtype 1
+    topo addbond $iMo1 $iS2_xm1 -bondtype 1
+  # Add Mo1-S bonds with its neighing resid along y-1 direction id(y-1) = id - 6
+    set iS3_ym1 [expr $iS3-6]
+    set iS4_ym1 [expr $iS4-6]
     if {[ expr $resid % $nn ] == 1} {
-       set S3id_ym1 [expr $S3id+($nn-1)*6]
-       set S4id_ym1 [expr $S4id+($nn-1)*6]
+       set iS3_ym1 [expr $iS3+($nn-1)*6]
+       set iS4_ym1 [expr $iS4+($nn-1)*6]
     }
-    topo addbond $iMo1 $S3id_ym1 -bondtype 1
-    topo addbond $iMo1 $S4id_ym1 -bondtype 1
+    topo addbond $iMo1 $iS3_ym1 -bondtype 1
+    topo addbond $iMo1 $iS4_ym1 -bondtype 1
 
-    # Add Mo2-S bonds in the same resid, with bond length=2.4127A
-    topo addbond $iMo2 $S1id -bondtype 1
-    topo addbond $iMo2 $S2id -bondtype 1
-    topo addbond $iMo2 $S3id -bondtype 1
-    topo addbond $iMo2 $S4id -bondtype 1
-    # Add Mo2-S bonds with its neighing resid along x+1 direction id(x+1) = id + 6*nn
-    set S3id_xp1 [expr $S3id+$nn*6]
-    set S4id_xp1 [expr $S4id+$nn*6]
+## Add Mo2-S bonds, with bond length=2.4127A
+  # Add Mo2-S bonds in the same resid
+    topo addbond $iMo2 $iS1 -bondtype 1
+    topo addbond $iMo2 $iS2 -bondtype 1
+    topo addbond $iMo2 $iS3 -bondtype 1
+    topo addbond $iMo2 $iS4 -bondtype 1
+  # Add Mo2-S bonds with its neighing resid along x+1 direction id(x+1) = id + 6*nn
+    set iS3_xp1 [expr $iS3+$nn*6]
+    set iS4_xp1 [expr $iS4+$nn*6]
     if {$resid > $nn*6} {
-       set S3id_xp1 [expr $S3id-$nn*36]
-       set S4id_xp1 [expr $S4id-$nn*36]
+       set iS3_xp1 [expr $iS3-$nn*36]
+       set iS4_xp1 [expr $iS4-$nn*36]
     }
-    topo addbond $iMo2 $S3id_xp1 -bondtype 1
-    topo addbond $iMo2 $S4id_xp1 -bondtype 1
+    topo addbond $iMo2 $iS3_xp1 -bondtype 1
+    topo addbond $iMo2 $iS4_xp1 -bondtype 1
+
+## Add Mo-S1-Mo angle, and Mo-S2-Mo angle
+  # Add Mo1 along x+1 direction id(x+1) = id + 6*nn
+    set iMo1_xp1 [expr $iMo1+$nn*6]
+    if {$resid > $nn*6} {
+       set iMo1_xp1 [expr $iMo1-$nn*36]
+    }
+    topo addangle $iMo1 $iS1 $iMo2 1
+    topo addangle $iMo1 $iS1 $iMo1_xp1 1
+    topo addangle $iMo2 $iS1 $iMo1_xp1 1
+    topo addangle $iMo1 $iS2 $iMo2 1
+    topo addangle $iMo1 $iS2 $iMo1_xp1 1
+    topo addangle $iMo2 $iS2 $iMo1_xp1 1
+
+## Add Mo-S3-Mo angle, and Mo-S4-Mo angle
+  # Add Mo1 along y+1 direction id(y+1) = id - 6
+    set iMo1_yp1 [expr $iMo1+6]
+    if {[ expr $resid % $nn ] == 10} {
+       set iMo1_yp1 [expr $iMo1-($nn-1)*6]
+    }
+  # Add Mo2 along x-1 direction id(x-1) = id - 6*nn
+    set iMo2_xm1 [expr $iMo2-$nn*6]
+    if {$resid <= $nn} {
+       set iMo2_xm1 [expr $iMo2_xm1+$nn*36]
+    }
+    topo addangle $iMo2 $iS3 $iMo2_xm1 1
+    topo addangle $iMo2 $iS3 $iMo1_yp1 1
+    topo addangle $iMo1_yp1 $iS3 $iMo2_xm1 1
+    topo addangle $iMo2 $iS4 $iMo2_xm1 1
+    topo addangle $iMo2 $iS4 $iMo1_yp1 1
+    topo addangle $iMo1_yp1 $iS4 $iMo2_xm1 1
+
+## Add Mo-S plane impropers
 
 }
 
@@ -160,12 +194,12 @@ for {set i 0} {$i < $nCr} {incr i} {
     topo addbond $O1id $hid -bondtype 3
 
     # Add O–Cr–O angle
-    topo addangle $O1id $iCr $O2id 1
-    topo addangle $O1id $iCr $O3id 1
-    topo addangle $O1id $iCr $O4id 1
-    topo addangle $O2id $iCr $O3id 1
-    topo addangle $O2id $iCr $O4id 1
-    topo addangle $O3id $iCr $O4id 1
+    topo addangle $O1id $iCr $O2id 2
+    topo addangle $O1id $iCr $O3id 2
+    topo addangle $O1id $iCr $O4id 2
+    topo addangle $O2id $iCr $O3id 2
+    topo addangle $O2id $iCr $O4id 2
+    topo addangle $O3id $iCr $O4id 2
 }
 
 # Add O-H bonds in water molecules
@@ -188,7 +222,7 @@ for {set i 0} {$i < $nO} {incr i} {
     topo addbond $io $h2id -bondtype 4
 
     # Add H–O–H angle
-    topo addangle $h1id $io $h2id 2
+    topo addangle $h1id $io $h2id 3
 }
 
 # Guess bond and angle types if needed

@@ -24,17 +24,17 @@ end structure
 structure water.pdb
   number 958
   resnumbers 3
-  inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 15.9 20
+  inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 15.9 21
 end structure
 # Insert Na ions
 structure na.pdb
   number 46
   resnumbers 3
-  inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 15.9 20
+  inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 15.9 21
 end structure
 # Insert Cl ions
 structure cl.pdb
   number 40
   resnumbers 3
-  inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 15.9 20
+  inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 15.9 21
 end structure

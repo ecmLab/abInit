@@ -44,8 +44,9 @@ bond_coeff 3 450 0.600                 # O-H bond  in HCRO4
 bond_coeff 4 450 0.957                 # O-H bond  in water
 
 angle_style     harmonic
-angle_coeff 1 55 104.52                # O-CR-O angle in HCRO4
-angle_coeff 2 80 109.50                # H-O-H angle in water
+angle_coeff 1 100 82.38                # Mo-S-Mo angle in MoS2
+angle_coeff 2 55 104.52                # O-CR-O angle in HCRO4
+angle_coeff 3 80 109.50                # H-O-H angle in water
 
 ## Minimize the system first
 velocity all create 300.0 12345 dist gaussian mom yes rot yes
