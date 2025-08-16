@@ -146,7 +146,7 @@ for {set i 0} {$i < $nMo1} {incr i} {
 ## Add Mo-S3-Mo angle, and Mo-S4-Mo angle
   # Add Mo1 along y+1 direction id(y+1) = id - 6
     set iMo1_yp1 [expr $iMo1+6]
-    if {[ expr $resid % $nn ] == 10} {
+    if {[ expr $resid % $nn ] == 0} {
        set iMo1_yp1 [expr $iMo1-($nn-1)*6]
     }
   # Add Mo2 along x-1 direction id(x-1) = id - 6*nn
@@ -154,6 +154,7 @@ for {set i 0} {$i < $nMo1} {incr i} {
     if {$resid <= $nn} {
        set iMo2_xm1 [expr $iMo2_xm1+$nn*36]
     }
+
     topo addangle $iMo2 $iS3 $iMo2_xm1 1
     topo addangle $iMo2 $iS3 $iMo1_yp1 1
     topo addangle $iMo1_yp1 $iS3 $iMo2_xm1 1
