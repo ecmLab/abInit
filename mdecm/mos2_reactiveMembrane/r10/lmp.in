@@ -1,0 +1,83 @@
+units           real
+atom_style      full
+dimension 3
+boundary        p p p
+
+read_data       ../model_solvation/sol_N10.data
+
+# Define groups
+group water type 4 5 9     # 4 and 5 are H1 and H2 atoms, 9 is O atom
+group mos2  type 6 7 14 15 16 17     # MoS2 backbone
+group sol   type 1 2 3 4 5 8 9 10 11 12  13 # solvent and solution
+
+# Pair style and kspace
+pair_style      lj/cut/coul/long 10.0
+special_bonds lj 0.0 0.0 0.5 coul 0.0 0.0 0.83333333
+pair_modify     mix arithmetic
+#kspace_style    pppm 1.0e-4
+kspace_style ewald 1e-8
+
+# Pair Coeff
+pair_coeff 1 1     0.070   3.5600000   # Cl-Cl
+pair_coeff 2 2     0.050   2.5000000   # CR-CR
+pair_coeff 3 3     0.001   1.0000000   # H-H
+pair_coeff 4 4     0.0     0.0         # H1-H1
+pair_coeff 5 5     0.0     0.0         # H2-H2
+pair_coeff 6 6     0.0134  4.2000000   # Mo1-Mo1
+pair_coeff 7 7     0.0134  4.2000000   # Mo2-Mo2
+pair_coeff 8 8     0.0469  2.4300000   # Na-Na
+pair_coeff 9 9     0.1521  3.1507      # OW-OW
+pair_coeff 10 10   0.1000  3.0000000   # O1-O1
+pair_coeff 11 11   0.1000  3.0000000   # O2-O2
+pair_coeff 12 12   0.1000  3.0000000   # O3-O3
+pair_coeff 13 13   0.1000  3.0000000   # O4-O4
+pair_coeff 14 14   0.4610  3.1300000   # S1-S1
+pair_coeff 15 15   0.4610  3.1300000   # S2-S2
+pair_coeff 16 16   0.4610  3.1300000   # S3-S3
+pair_coeff 17 17   0.4610  3.1300000   # S4-S4
+
+bond_style harmonic
+bond_coeff 1 650 2.4127                # Mo-S bond
+bond_coeff 2 650 1.600                 # CR-O bond in HCRO4
+bond_coeff 3 450 0.600                 # O-H bond  in HCRO4
+bond_coeff 4 450 0.957                 # O-H bond  in water
+
+angle_style     harmonic
+angle_coeff 1 55 104.52                # O-CR-O angle in HCRO4
+angle_coeff 2 80 109.50                # H-O-H angle in water
+
+## Minimize the system first
+velocity all create 300.0 12345 dist gaussian mom yes rot yes
+min_style cg
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# *************** Setting ******************************
+# Neighbor settings
+#neigh_modify delay 0 every 1 check yes
+neigh_modify    delay 5 every 1
+
+# Define SHAKE constraints for water (O-H bonds and H-O-H angle)
+fix spce_model water shake 0.0001 20 0 b 4 a 2
+
+# Fix MoS2 as rigid (zero force and velocity)
+fix mos_hold mos2 setforce 0.0 0.0 0.0
+velocity mos2 set 0.0 0.0 0.0
+
+# Define small electric field along x direction (0.001 kcal/mol·e·Å)
+#fix fix_efield sol efield 0.001 0.0 0.0
+# Define small velocity field along x direction (0.01A/fs = 1000m/s)
+velocity sol set 0.01 0.0 0.0 sum yes
+
+# Set timestep
+reset_timestep  0
+timestep        1  # fs
+fix fix_nvt sol nvt temp 300.0 300.0 100.0
+
+# Thermostat output
+thermo          100
+thermo_style    custom step temp etotal press
+
+dump d1 all custom 1000 dump.lammpstrj id type mol x y z q
+
+# Run for 5 ns (5,000,000 steps)
+run 100000
