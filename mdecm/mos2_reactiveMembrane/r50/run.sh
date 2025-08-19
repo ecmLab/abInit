@@ -11,7 +11,7 @@
 #SBATCH --mail-user=slack:@qhteme
 
 #  wall-clock time for tier3
-#SBATCH -t 0-48:00:00
+#SBATCH -t 0-72:00:00
 ##SBATCH -t 0-02:00:00
 
 #SBATCH --nodes=1
