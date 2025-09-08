@@ -12,7 +12,7 @@
 set  pi    3.1415926535897932
 set  a0    3.1828
 
-set  nn    100
+set  nn    20
 ## Radius of Mo layer
 # when nn = 10, rr = 8.7738 ;  when nn = 20, rr  = 17.5477;
 # when nn = 50, rr = 43.8692;  when nn = 100, rr = 87.7385;

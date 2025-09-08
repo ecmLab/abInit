@@ -16,9 +16,12 @@ end structure
 
 # Insert Cr ions
 structure hcro4.pdb
-  number 4
+# New design makes the hcro4 5x higher concentration
+  number 20
   resnumbers 3
-  inside cylinder -1.0 0.0 0.0 1.0 0.0 0.0 10 10
+# New design makes the hcro4 more concentrated at the middle area of the tube
+# central radius: 8.0-9.0-10.0-11.0-12.0
+  inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 12 21
 end structure
 # Insert water molecules
 structure water.pdb
@@ -28,7 +31,7 @@ structure water.pdb
 end structure
 # Insert Na ions
 structure na.pdb
-  number 46
+  number 62
   resnumbers 3
   inside cylinder 0.0 0.0 0.0 1.0 0.0 0.0 15.9 21
 end structure
