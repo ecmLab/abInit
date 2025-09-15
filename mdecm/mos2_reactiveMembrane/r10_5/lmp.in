@@ -3,7 +3,7 @@ atom_style      full
 dimension 3
 boundary        p p p
 
-read_data       ../model_solvation/sol_N20_1.data
+read_data       ../model_solvation/sol_N10_5.data
 
 # Define groups
 group water type 4 5 9     # 4 and 5 are H1 and H2 atoms, 9 is O atom
@@ -83,5 +83,5 @@ thermo_style    custom step temp etotal press
 # dump every 1000fs = 1ps
 dump d1 dmp custom 1000 dump.lammpstrj id type mol x y z q
 
-# Run for 4 ns (4,000,000 steps)
-run 4000000
+# Run for 5 ns (5,000,000 steps)
+run 5000000

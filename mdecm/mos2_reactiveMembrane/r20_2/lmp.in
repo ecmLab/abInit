@@ -3,7 +3,7 @@ atom_style      full
 dimension 3
 boundary        p p p
 
-read_data       ../model_solvation/sol_N20_1.data
+read_data       ../model_solvation/sol_N20_2.data
 
 # Define groups
 group water type 4 5 9     # 4 and 5 are H1 and H2 atoms, 9 is O atom
