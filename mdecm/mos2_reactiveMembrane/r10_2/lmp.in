@@ -6,8 +6,10 @@ boundary        p p p
 read_data       ../model_solvation/sol_N10_2.data
 
 # Define groups
-group water type 4 5 9     # 4 and 5 are H1 and H2 atoms, 9 is O atom
 group mos2  type 6 7 14 15 16 17     # MoS2 backbone
+group water type 4 5 9     # 4 and 5 are H1 and H2 atoms, 9 is O atom
+group hcro  type 2 3 10 11 12 13     # HCRO4- ions
+group slvn  type 1 2 3 8 10 11 12  13 # solvent
 group sol   type 1 2 3 4 5 8 9 10 11 12  13 # solvent and solution
 group dmp   type 1 2 3 6 7 8 10 11 12 13 14 15 16 17 # all without water
 
@@ -70,7 +72,7 @@ velocity mos2 set 0.0 0.0 0.0
 # Define velocity field along x direction (0.00002A/fs=0.02A/ps=2nm/ns)
 #velocity hcro set 0.0002 0.0 0.0 sum yes
 # Define acceleration/gravity field along x direction (unit kcal/g/A = 4.18*10^7 nm/ns^2)
-fix 1 sol gravity 0.02 vector 1 0 0
+fix 1 slvn gravity 0.04 vector 1 0 0
 
 # Set timestep
 reset_timestep  0

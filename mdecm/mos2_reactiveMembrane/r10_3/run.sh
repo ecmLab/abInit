@@ -3,8 +3,8 @@
 
 #SBATCH --job-name=MoS2
 #SBATCH --account=purewater
-#SBATCH --partition=tier3
-##SBATCH --partition=debug
+##SBATCH --partition=tier3
+#SBATCH --partition=debug
 
 # displays outputs/err
 ##SBATCH --output=%x_%j.out
