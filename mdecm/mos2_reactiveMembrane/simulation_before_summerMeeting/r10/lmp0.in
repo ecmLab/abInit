@@ -3,7 +3,7 @@ atom_style      full
 dimension 3
 boundary        p p p
 
-read_data       ../model_solvation/sol_N10_2.data
+read_data       ../model_solvation/sol_N10_1.data
 
 # Define groups
 group mos2  type 6 7 14 15 16 17     # MoS2 backbone
@@ -67,14 +67,12 @@ fix spce_model water shake 0.0001 20 0 b 4 a 2
 fix mos_hold mos2 setforce 0.0 0.0 0.0
 velocity mos2 set 0.0 0.0 0.0
 
-### Setup for HCrO- transport in radial and axial directions
+# Define electric field along x direction (0.001 kcal/mol·e·Å)
+#fix fix_efield sol efield 0.001 0.0 0.0
+# Define velocity field along x direction (0.00002A/fs=0.02A/ps=2nm/ns)
+#velocity hcro set 0.0002 0.0 0.0 sum yes
 # Define acceleration/gravity field along x direction (unit kcal/g/A = 4.18*10^7 nm/ns^2)
 fix 1 hcro gravity 0.3 vector 1 0 0
-# Define force along radial direction (0.001 kcal/mol·e·Å)
-variable r atom sqrt(x^2+y^2)
-variable fx atom 0.1*x/v_r  # positive = outward
-variable fy atom 0.1*y/v_r
-fix radial_out hcro addforce v_fx v_fy 0.0
 
 # Set timestep
 reset_timestep  0
