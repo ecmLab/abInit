@@ -72,7 +72,7 @@ velocity mos2 set 0.0 0.0 0.0
 # Define velocity field along x direction (0.00002A/fs=0.02A/ps=2nm/ns)
 #velocity hcro set 0.0002 0.0 0.0 sum yes
 # Define acceleration/gravity field along x direction (unit kcal/g/A = 4.18*10^7 nm/ns^2)
-fix 1 hcro gravity 0.04 vector 1 0 0
+fix 1 hcro gravity 0.25 vector 1 0 0
 
 # Set timestep
 reset_timestep  0
