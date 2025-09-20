@@ -88,7 +88,7 @@ fix fix_nvt sol nvt temp 300.0 300.0 200.0
 thermo          1000
 thermo_style    custom step temp etotal press
 # dump every 1000fs = 1ps
-dump d1 dmp custom 1000 dump.lammpstrj id type mol x y z q
+dump d1 dmp custom 1000 dump.lammpstrj id type mol xu yu zu q
 
 # Run for 5 ns (5,000,000 steps)
 run 5000000
