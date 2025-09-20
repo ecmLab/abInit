@@ -277,10 +277,10 @@ def calculate_statistics_from_unwrapped(unwrapped_data, timesteps, tube_center):
 def plot_displacement_comparison(dataframes):
     """Plot displacement and velocity comparison for all simulations"""
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-    fig.suptitle('HCrO4⁻ Ion Analysis: r10_1, r10_2, r10_3, r10_5', fontsize=16)
+    fig.suptitle('HCrO4⁻ Ion Analysis: r10_1, r10_2, r10_3, r10_4', fontsize=16)
 
     # Define colors for each simulation
-    colors = {'r10_1': 'blue', 'r10_2': 'orange', 'r10_3': 'green', 'r10_5': 'red'}
+    colors = {'r10_1': 'blue', 'r10_2': 'orange', 'r10_3': 'green', 'r10_4': 'red'}
     datasets = [(sim, df, colors[sim]) for sim, df in dataframes.items()]
 
     for name, df, color in datasets:
@@ -349,7 +349,7 @@ def plot_displacement_comparison(dataframes):
     plt.show()
 
 def main():
-    simulations = ['r10_1', 'r10_2', 'r10_3', 'r10_5']
+    simulations = ['r10_1', 'r10_2', 'r10_3', 'r10_4']
     results = {}
     dataframes = {}
 
@@ -408,7 +408,7 @@ def main():
 
     # Summary
     print(f"\n=== FINAL RESULTS ===")
-    for sim in ['r10_1', 'r10_2', 'r10_3', 'r10_5']:
+    for sim in ['r10_1', 'r10_2', 'r10_3', 'r10_4']:
         if sim in results:
             data = results[sim]
             print(f"{sim}: Axial displacement = {data['axial_displacement']:+.2f} Å")
