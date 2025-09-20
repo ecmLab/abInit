@@ -75,8 +75,8 @@ fix 1 hcro gravity 0.3 vector 1 0 0
 variable ycenter equal 17.548
 variable zcenter equal 17.548
 variable r atom sqrt((y-${ycenter})^2+(z-${zcenter})^2)
-variable fy atom 0.1*(y-${ycenter})/v_r  # positive = outward from tube center
-variable fz atom 0.1*(z-${zcenter})/v_r  # positive = outward from tube center
+variable fy atom 1*(y-${ycenter})/v_r  # positive = outward from tube center
+variable fz atom 1*(z-${zcenter})/v_r  # positive = outward from tube center
 fix radial_out hcro addforce 0 v_fy v_fz
 
 # Set timestep
