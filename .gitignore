@@ -3,4 +3,4 @@
 *.ipynb
 *.DS_Store
 *.lammpstrj
-analysis/
+log.lammps

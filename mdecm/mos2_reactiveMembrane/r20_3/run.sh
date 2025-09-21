@@ -3,8 +3,8 @@
 
 #SBATCH --job-name=MoS2
 #SBATCH --account=purewater
-#SBATCH --partition=tier3
-##SBATCH --partition=debug
+##SBATCH --partition=tier3
+#SBATCH --partition=debug
 
 # displays outputs/err
 ##SBATCH --output=%x_%j.out
@@ -12,10 +12,10 @@
 #SBATCH --mail-user=slack:@qhteme
 
 #  wall-clock time for tier3
-#SBATCH -t 0-72:00:00
+#SBATCH -t 0-12:00:00
 ##SBATCH -t 0-02:00:00
 
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=32
 #SBATCH --mem-per-cpu=500M
 
