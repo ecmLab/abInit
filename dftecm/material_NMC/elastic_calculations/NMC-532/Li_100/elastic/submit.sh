@@ -2,9 +2,9 @@
 # The -l above is required to get the full environment with modules
 
 #SBATCH --job-name=NMC532_Li_100_elastic
-##SBATCH --account=purewater
+#SBATCH --account=purewater
 #SBATCH --partition=tier3
-#SBATCH --partition=debug
+##SBATCH --partition=debug
 
 # displays outputs/err
 ##SBATCH --output=%x_%j.out
