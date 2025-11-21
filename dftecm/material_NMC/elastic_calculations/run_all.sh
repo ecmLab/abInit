@@ -8,7 +8,7 @@ for dir in */Li_*/relax; do
         echo "Submitting $dir"
         cd "$dir"
         # Uncomment the line below for your scheduler:
-        # sbatch submit.sh
+         sbatch submit.sh
         cd - > /dev/null
     fi
 done
