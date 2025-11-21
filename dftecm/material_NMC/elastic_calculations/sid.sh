@@ -1,7 +1,7 @@
 #!/bin/bash -l
 # The -l above is required to get the full environment with modules
 
-#SBATCH --job-name=NMC321_Li_100_relax
+#SBATCH --job-name=NMC-elasticity
 ##SBATCH --account=purewater
 #SBATCH --partition=tier3
 #SBATCH --partition=debug

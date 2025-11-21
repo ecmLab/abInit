@@ -1,14 +1,26 @@
-#!/bin/bash
-#SBATCH --job-name=NMC-711_Li50_elastic
+#!/bin/bash -l
+# The -l above is required to get the full environment with modules
+
+#SBATCH --job-name=NMC711_Li_050_elastic
+##SBATCH --account=purewater
+#SBATCH --partition=tier3
+#SBATCH --partition=debug
+
+# displays outputs/err
+##SBATCH --output=%x_%j.out
+##SBATCH --error=%x_%j.err
+#SBATCH --mail-user=slack:@qhteme
+
+#  wall-clock time for tier3
+#SBATCH -t 0-48:00:00
+
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=32
-#SBATCH --time=24:00:00
-#SBATCH --partition=normal
+#SBATCH --mem-per-cpu=500M
 
-module load vasp/6.3.0
+#spack load vasp@6.3.2 /vpzm2zw
+spack load vasp@6.3.2/iriumba
+## Commands to run:
 
-cd $SLURM_SUBMIT_DIR
-
-mpirun -np $SLURM_NTASKS vasp_std > vasp.out 2>&1
-
-echo "Job completed at $(date)"
+# srun -n vasp_std
+srun vasp_std
