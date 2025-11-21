@@ -1,0 +1,47 @@
+# INCAR for elastic constant calculation of NMC-321_Li25
+# Elastic property calculation - Step 2: Elastic constants
+
+SYSTEM = NMC-321_Li25
+
+# Electronic relaxation
+ENCUT = 600        # Plane-wave cutoff (eV)
+PREC = Accurate
+EDIFF = 1E-7       # Tight electronic convergence
+NELMIN = 4
+NELM = 200
+LREAL = Auto
+
+# SCAN+rVV10 functional (meta-GGA with nonlocal vdW)
+METAGGA = SCAN
+LUSE_VDW = .TRUE.
+BPARAM = 15.7      # rVV10 parameter for SCAN
+LASPH = .TRUE.     # Non-spherical contributions (required for meta-GGA)
+ADDGRID = .TRUE.   # Additional support grid for accuracy
+
+
+# Elastic constants calculation
+IBRION = 6         # Finite differences for elastic tensor
+ISIF = 3           # Calculate stress tensor
+NFREE = 4          # Number of displacements (2 or 4)
+POTIM = 0.015      # Step size for finite differences
+
+# SCAN+rVV10 functional (no U correction needed)
+
+# Spin polarization
+ISPIN = 2
+MAGMOM = 2*0.0 4*1.0 1*4.0 1*0.5 12*0.0
+
+# Smearing
+ISMEAR = 0
+SIGMA = 0.05
+
+# Output
+LWAVE = .FALSE.
+LCHARG = .FALSE.
+LORBIT = 11
+
+# Parallelization
+NCORE = 4
+KPAR = 2
+
+# vdW correction

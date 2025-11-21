@@ -1,0 +1,85 @@
+NMC Elastic Property Calculations Summary
+============================================================
+
+
+NMC-1011
+----------------------------------------
+  Original: 9 atoms, 3 Li
+  Lattice: a=4.925, b=8.531, c=4.986
+  Li_100: 3/3 Li, 9 atoms, k-mesh: 8x5x8
+  Li_075: 2/3 Li, 8 atoms, k-mesh: 8x5x8
+  Li_050: 2/3 Li, 8 atoms, k-mesh: 8x5x8
+  Li_025: 1/3 Li, 7 atoms, k-mesh: 8x5x8
+
+NMC-111
+----------------------------------------
+  Original: 24 atoms, 6 Li
+  Lattice: a=4.957, b=2.840, c=14.121
+  Li_100: 6/6 Li, 24 atoms, k-mesh: 8x14x3
+  Li_075: 4/6 Li, 22 atoms, k-mesh: 8x14x3
+  Li_050: 3/6 Li, 21 atoms, k-mesh: 8x14x3
+  Li_025: 2/6 Li, 20 atoms, k-mesh: 8x14x3
+
+NMC-321
+----------------------------------------
+  Original: 24 atoms, 6 Li
+  Lattice: a=5.039, b=8.624, c=5.045
+  Li_100: 6/6 Li, 24 atoms, k-mesh: 8x5x8
+  Li_075: 4/6 Li, 22 atoms, k-mesh: 8x5x8
+  Li_050: 3/6 Li, 21 atoms, k-mesh: 8x5x8
+  Li_025: 2/6 Li, 20 atoms, k-mesh: 8x5x8
+
+NMC-411-mono
+----------------------------------------
+  Original: 24 atoms, 6 Li
+  Lattice: a=5.736, b=2.828, c=14.035
+  Li_100: 6/6 Li, 24 atoms, k-mesh: 7x14x3
+  Li_075: 4/6 Li, 22 atoms, k-mesh: 7x14x3
+  Li_050: 3/6 Li, 21 atoms, k-mesh: 7x14x3
+  Li_025: 2/6 Li, 20 atoms, k-mesh: 7x14x3
+
+NMC-411-rhombo
+----------------------------------------
+  Original: 120 atoms, 30 Li
+  Lattice: a=14.544, b=5.804, c=14.267
+  Li_100: 30/30 Li, 120 atoms, k-mesh: 3x7x3
+  Li_075: 22/30 Li, 112 atoms, k-mesh: 3x7x3
+  Li_050: 15/30 Li, 105 atoms, k-mesh: 3x7x3
+  Li_025: 8/30 Li, 98 atoms, k-mesh: 3x7x3
+
+NMC-532
+----------------------------------------
+  Original: 64 atoms, 16 Li
+  Lattice: a=9.953, b=5.885, c=9.919
+  Li_100: 16/16 Li, 64 atoms, k-mesh: 4x7x4
+  Li_075: 12/16 Li, 60 atoms, k-mesh: 4x7x4
+  Li_050: 8/16 Li, 56 atoms, k-mesh: 4x7x4
+  Li_025: 4/16 Li, 52 atoms, k-mesh: 4x7x4
+
+NMC-611
+----------------------------------------
+  Original: 72 atoms, 18 Li
+  Lattice: a=14.831, b=8.607, c=14.011
+  Li_100: 18/18 Li, 72 atoms, k-mesh: 3x5x3
+  Li_075: 14/18 Li, 68 atoms, k-mesh: 3x5x3
+  Li_050: 9/18 Li, 63 atoms, k-mesh: 3x5x3
+  Li_025: 4/18 Li, 58 atoms, k-mesh: 3x5x3
+
+NMC-711
+----------------------------------------
+  Original: 240 atoms, 60 Li
+  Lattice: a=14.290, b=11.442, c=14.001
+  Li_100: 60/60 Li, 240 atoms, k-mesh: 3x3x3
+  Li_075: 45/60 Li, 225 atoms, k-mesh: 3x3x3
+  Li_050: 30/60 Li, 210 atoms, k-mesh: 3x3x3
+  Li_025: 15/60 Li, 195 atoms, k-mesh: 3x3x3
+
+NMC-811
+----------------------------------------
+  Original: 48 atoms, 12 Li
+  Lattice: a=5.740, b=5.740, c=14.202
+  Li_100: 12/12 Li, 48 atoms, k-mesh: 7x7x3
+  Li_075: 9/12 Li, 45 atoms, k-mesh: 7x7x3
+  Li_050: 6/12 Li, 42 atoms, k-mesh: 7x7x3
+  Li_025: 3/12 Li, 39 atoms, k-mesh: 7x7x3
+

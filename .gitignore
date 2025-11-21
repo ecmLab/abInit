@@ -2,5 +2,5 @@
 *.out
 *.ipynb
 *.DS_Store
-*.lammpstrj
-log.lammps
+model/
+reference/
