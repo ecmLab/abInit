@@ -18,8 +18,7 @@
 #SBATCH --ntasks-per-node=32
 #SBATCH --mem-per-cpu=500M
 
-#spack load vasp@6.3.2 /vpzm2zw
-spack load vasp@6.3.2/iriumba
+spack load vasp@6.3.2
 ## Commands to run:
 
 # srun -n vasp_std
