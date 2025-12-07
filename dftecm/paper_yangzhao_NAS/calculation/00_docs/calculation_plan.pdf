@@ -1,0 +1,200 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Length 2974 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54.00 738.00 Tm
+(# DFT Plan: Na3SbS4 Hydration and Recyclability) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(This plan implements thermodynamic and transport calculations to support experiments on ) Tj
+0 -14.00 Td
+(Na3SbS4 hydration/recovery and interfacial stabilization, aligned with Yaosen Tian et al. ) Tj
+0 -14.00 Td
+(\(Joule 2019\) and Meng et al. \(JES 2023\).) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## Scope) Tj
+0 -14.00 Td
+(- Structures: Na3SbS4 \(anhydrous\) and Na3SbS4∑8H2O \(from Yaosen\), with optional ) Tj
+0 -14.00 Td
+(Na3SbS4∑9H2O \(modeled\)) Tj
+0 -14.00 Td
+(- Methods: VASP/PBE \(+D3 optional\), convex-hull reaction thermodynamics, gas mu\(T,p\) for ) Tj
+0 -14.00 Td
+(H2O/H2S, NEB for Na migration, input scaffolding for reproducible runs) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## Targets) Tj
+0 -14.00 Td
+(- dE/dG for:) Tj
+0 -14.00 Td
+(  - Na + Na3SbS4 -> 4 Na2S + Na3Sb \(Reaction 1\)) Tj
+0 -14.00 Td
+(  - Na + Na3SbS4∑8H2O -> 4 Na2S + Na3Sb + 16 NaH + 8 Na2O \(Reaction 3\)) Tj
+0 -14.00 Td
+(  - Na + Na3SbS4∑9H2O -> 4 Na2S + Na3Sb + 18 NaH + 9 Na2O \(Reaction 2\)) Tj
+0 -14.00 Td
+(  - Hydration: Na3SbS4 + n H2O\(g\) -> Na3SbS4∑nH2O \(n = 8, 9\)) Tj
+0 -14.00 Td
+(- RHT mapping for hydration favorability and dehydration recoverability at dry-room ) Tj
+0 -14.00 Td
+(conditions) Tj
+0 -14.00 Td
+(- Na migration barriers in Na3SbS4∑8H2O vs 9H2O to rationalize conductivity trends) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## Directory Map) Tj
+0 -14.00 Td
+(- 10_structures: CIF inputs \(copied from model/\)) Tj
+0 -14.00 Td
+(- 20_vasp_inputs: CIF->POSCAR converter, templates \(INCAR, KPOINTS\), and input prep) Tj
+0 -14.00 Td
+(- 30_thermo: reactions, example energies, and dE/dG calculator with mu\(T,p\)) Tj
+0 -14.00 Td
+(- 40_transport: NEB scaffolding) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## DFT Settings \(recommended\)) Tj
+0 -14.00 Td
+(- Code: VASP) Tj
+0 -14.00 Td
+(- Functional: PBE; consider D3\(BJ\) \(IVDW=12\) for hydrates) Tj
+0 -14.00 Td
+(- PAW: Na \(Na or Na_pv\), Sb, S, O, H) Tj
+0 -14.00 Td
+(- ENCUT: 520 eV; PREC=Accurate; LASPH = .TRUE.) Tj
+0 -14.00 Td
+(- Smearing: ISMEAR=0, SIGMA=0.05 eV) Tj
+0 -14.00 Td
+(- Relax: IBRION=2, ISIF=3, NSW=100, EDIFF=1e-6, EDIFFG=-0.02 eV/Ang) Tj
+0 -14.00 Td
+(- Static: NSW=0) Tj
+0 -14.00 Td
+(- K-mesh: Gamma-centered, auto from ~0.2 A^-1 spacing \(prepare_inputs.py\)) Tj
+0 -14.00 Td
+(- NEB: IMAGES=5, LCLIMB=.TRUE., IOPT=1) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## Thermodynamics) Tj
+0 -14.00 Td
+(- Solids: use static total energies \(eV/f.u.\) after relaxation) Tj
+0 -14.00 Td
+(- Gases: mu\(T,p\) via Shomate equations \(H2O, H2S\) with ideal gas RT ln\(p/p0\)) Tj
+0 -14.00 Td
+(- RH handling: p_H2O from RH and T using saturation vapor pressure fit) Tj
+0 -14.00 Td
+(- Inputs: 30_thermo/energies.yaml and reactions.yaml) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## Transport \(NEB\)) Tj
+0 -14.00 Td
+(- Build supercells and identify Na vacancy hops) Tj
+0 -14.00 Td
+(- Scaffold NEB folders \(40_transport/make_neb.py\)) Tj
+ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612.00 792.00] /Contents 3 0 R /Resources << /Font << /F1 1 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 1812 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54.00 738.00 Tm
+(- Use relaxed endpoints; interpolate images; run NEB) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## Workflow) Tj
+0 -14.00 Td
+(1\) Prepare inputs) Tj
+0 -14.00 Td
+(   - python3 20_vasp_inputs/prepare_inputs.py --cif 10_structures/Na3SbS4.cif --out ) Tj
+0 -14.00 Td
+(20_vasp_inputs/Na3SbS4) Tj
+0 -14.00 Td
+(   - python3 20_vasp_inputs/prepare_inputs.py --cif 10_structures/Na3SbS4_yaosen.cif --out) Tj
+0 -14.00 Td
+( 20_vasp_inputs/Na3SbS4_8H2O) Tj
+0 -14.00 Td
+(2\) Relax -> Static for each structure and products \(Na2S, Na3Sb, NaH, Na2O, Na\)) Tj
+0 -14.00 Td
+(3\) Collect energies into 30_thermo/energies.yaml \(see energies.example.yaml\)) Tj
+0 -14.00 Td
+(4\) Compute dE/dG and RHT trends) Tj
+0 -14.00 Td
+(   - python3 30_thermo/compute_reaction_energies.py --energies 30_thermo/energies.yaml ) Tj
+0 -14.00 Td
+(--reactions 30_thermo/reactions.yaml --T 298 --RH 0.68) Tj
+0 -14.00 Td
+(5\) NEB for Na migration in hydrates) Tj
+0 -14.00 Td
+(   - python3 40_transport/make_neb.py --out 40_transport/neb_Na3SbS4_8H2O --images 5) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## Notes & Assumptions) Tj
+0 -14.00 Td
+(- CIF->POSCAR parser is minimal but tailored to provided CIFs) Tj
+0 -14.00 Td
+(- POTCARs are user-supplied \(not included\)) Tj
+0 -14.00 Td
+(- Gas mu uses 2981000 K Shomate fits; sufficient for room-temperature to moderate anneal ) Tj
+0 -14.00 Td
+(regimes) Tj
+0 -14.00 Td
+(- For interface-specific modeling \(Na/H2O at slab\), extend with surface slab builders ) Tj
+0 -14.00 Td
+(\(pymatgen/ase\) if available) Tj
+0 -14.00 Td
+() Tj
+0 -14.00 Td
+(## References) Tj
+0 -14.00 Td
+(- Y. Tian et al., Joule 3, 10371050 \(2019\)) Tj
+0 -14.00 Td
+(- Y.-T. Chen et al., J. Electrochem. Soc. 170, 080521 \(2023\)) Tj
+0 -14.00 Td
+(- Y. Zhu & Y. Mo, Angew. Chem. Int. Ed. 59, 1747217476 \(2020\)) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612.00 792.00] /Contents 5 0 R /Resources << /Font << /F1 1 0 R >> >> >>
+endobj
+7 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000148 00000 n 
+0000003174 00000 n 
+0000003306 00000 n 
+0000005170 00000 n 
+0000005302 00000 n 
+trailer
+<< /Size 8 /Root 7 0 R >>
+startxref
+5351
+%%EOF

@@ -1,0 +1,47 @@
+reactions:
+  # Na metal reduction of unhydrated Na3SbS4 (Joule 2019, Reaction 1)
+  - name: Na + Na3SbS4 -> Na2S + Na3Sb
+    stoichiometry:
+      Na: 8
+      Na3SbS4: 1
+      Na2S: -4
+      Na3Sb: -1
+    type: solid_solid
+
+  # Na metal reduction of fully hydrated Na3SbS4·9H2O (Joule 2019, Reaction 2)
+  - name: Na + Na3SbS4·9H2O -> Na2S + Na3Sb + NaH + Na2O
+    stoichiometry:
+      Na: 44
+      Na3SbS4_9H2O: 1
+      Na2S: -4
+      Na3Sb: -1
+      NaH: -18
+      Na2O: -9
+    type: solid_solid
+
+  # Na metal reduction of observed Na3SbS4·8H2O (Joule 2019, Reaction 3)
+  - name: Na + Na3SbS4·8H2O -> Na2S + Na3Sb + NaH + Na2O
+    stoichiometry:
+      Na: 40
+      Na3SbS4_8H2O: 1
+      Na2S: -4
+      Na3Sb: -1
+      NaH: -16
+      Na2O: -8
+    type: solid_solid
+
+  # Hydration (gas uptake) generic: Na3SbS4 + n H2O(g) -> hydrate
+  - name: Hydration 8H2O
+    stoichiometry:
+      Na3SbS4: 1
+      H2O_g: 8
+      Na3SbS4_8H2O: -1
+    type: hydration
+
+  - name: Hydration 9H2O
+    stoichiometry:
+      Na3SbS4: 1
+      H2O_g: 9
+      Na3SbS4_9H2O: -1
+    type: hydration
+

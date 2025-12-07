@@ -1,0 +1,18 @@
+SYSTEM = NEB
+ISTART = 0
+ICHARG = 2
+ENCUT  = 520
+PREC   = Accurate
+EDIFF  = 1E-5
+EDIFFG = -0.02
+ISMEAR = 0
+SIGMA  = 0.05
+IBRION = 3
+POTIM  = 0
+SPRING = -5
+IMAGES = 5
+IOPT   = 1
+LCLIMB = .TRUE.
+LREAL  = Auto
+ALGO   = Normal
+

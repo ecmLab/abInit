@@ -1,0 +1,15 @@
+SYSTEM = static
+ISTART = 1
+ICHARG = 1
+ENCUT  = 520
+PREC   = Accurate
+EDIFF  = 1E-6
+ISMEAR = 0
+SIGMA  = 0.05
+NSW    = 0
+LREAL  = Auto
+ALGO   = Normal
+LASPH  = .TRUE.
+LORBIT = 11
+NEDOS  = 2000
+

@@ -1,0 +1,15 @@
+# Fill this with your DFT total energies (eV) per formula unit as defined by the labels below.
+# Use static (NSW=0) energies after relaxation.
+
+solids:
+  Na3SbS4: -XXX.XXXX
+  Na3SbS4_8H2O: -XXX.XXXX
+  Na3SbS4_9H2O: -XXX.XXXX
+  Na2S: -XXX.XXXX
+  Na3Sb: -XXX.XXXX
+  NaH: -XXX.XXXX
+  Na2O: -XXX.XXXX
+  Na: -XXX.XXXX   # bulk Na metal (per atom)
+
+# If you computed supercells, supply energies normalized per formula unit matching the key name.
+
