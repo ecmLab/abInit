@@ -3,39 +3,48 @@
 This plan provides DFT-based thermodynamic validation for closed-loop recycling of Na3SbS4 solid electrolyte through reversible hydration-dehydration chemistry. Calculations support experimental recycling work demonstrating recovery of high-performance Na3SbS4 from spent all-solid-state sodium batteries.
 
 ## Scope
-- **Structures**: Na3SbS4 (anhydrous) and Na3SbS4·8H2O (representative hydrate, from Yaosen Tian et al., Joule 2019)
+- **Structures**:
+  - Na3SbS4 (anhydrous)
+  - Na3SbS4·9H2O (fully hydrated, matches experimental recycling conditions)
+  - Na3SbS4·8H2O (intermediate hydrate, from Yaosen Tian et al., Joule 2019)
 - **Methods**: VASP/PBE with dispersion corrections (D3), gas-phase chemical potential μ(T,p) for H2O
 - **Focus**: Thermodynamic validation of recycling pathway, not interface chemistry
 
-**Note**: The experimental work uses Na3SbS4·9H2O during recycling. We model Na3SbS4·8H2O as a representative hydrate since the thermodynamic trends (hydration favorability, dehydration conditions) are expected to be similar for n=8 or 9.
+**Note**: The experimental recycling work uses Na3SbS4·9H2O as the fully hydrated form. Our calculations directly model this 9H2O phase (structure from Materials Project). We additionally include the 8H2O intermediate hydrate to explore stepwise hydration pathways and provide insight into the hydration mechanism.
 
 ## Research Questions
-This theoretical work addresses three key questions that experiments cannot directly answer:
+This theoretical work addresses four key questions that experiments cannot directly answer:
 
 1. **Is recycling thermodynamically reversible?**
-   - Can Na3SbS4 hydrate spontaneously at ambient conditions?
-   - Can the hydrate dehydrate back to Na3SbS4 under vacuum/heat?
+   - Can Na3SbS4 hydrate spontaneously to form Na3SbS4·9H2O at ambient conditions?
+   - Can Na3SbS4·9H2O dehydrate back to Na3SbS4 under vacuum/heat?
 
 2. **What are optimal dehydration conditions?**
-   - What temperature is required for complete water removal?
+   - What temperature is required for complete water removal from 9H2O?
    - How does vacuum lower the dehydration temperature?
 
-3. **Does dehydration restore the Na+ conduction framework?**
-   - Is the crystal structure fully recovered?
+3. **Is hydration stepwise or direct?**
+   - Does hydration proceed Na3SbS4 → 8H2O → 9H2O or directly to 9H2O?
+   - What are the relative stabilities of 8H2O vs 9H2O under varying humidity?
+
+4. **Does dehydration restore the Na+ conduction framework?**
+   - Is the crystal structure fully recovered after dehydration?
    - Are ionic transport pathways preserved?
 
 ## Deliverables
 
-**Main Text Figures** (2 figures):
-1. **Phase diagram**: ΔG vs (T, RH) showing stability regions and recycling pathway
-2. **Dehydration mechanism**: ΔG(T) for stepwise water loss, ambient vs vacuum
+**Main Text Figures** (2-3 figures):
+1. **Phase diagram**: ΔG vs (T, RH) showing stability regions for Na3SbS4, 8H2O, and 9H2O phases with experimental recycling pathway overlaid
+2. **Dehydration mechanism**: ΔG(T) for water removal from 9H2O under ambient vs vacuum conditions
+3. **Hydration pathway** (optional): Comparison of direct (Na3SbS4 → 9H2O) vs stepwise (Na3SbS4 → 8H2O → 9H2O) hydration thermodynamics
 
-**Supporting Information** (1 figure):
-- Crystal structure comparison showing Na+ pathways before/after hydration
+**Supporting Information** (1-2 figures):
+- Crystal structure comparison: Na3SbS4, 8H2O, and 9H2O showing Na+ pathways
+- Thermodynamic data table: DFT energies, ΔH, ΔG for all reactions at key conditions
 
 ## Directory Map
-- `10_structures/`: CIF inputs for Na3SbS4 and Na3SbS4·8H2O (copied from model/)
-- `20_vasp_inputs/`: CIF→POSCAR converter, VASP input templates (INCAR, KPOINTS, POTCAR_MAP)
+- `10_structures/`: CIF inputs for Na3SbS4 (anhydrous), Na3SbS4·8H2O (intermediate), and Na3SbS4·9H2O (fully hydrated)
+- `20_vasp_inputs/`: CIF→POSCAR converter, VASP input templates (INCAR, KPOINTS, POTCAR_MAP), calculation directories for all three structures
 - `30_thermo/`: Hydration/dehydration reaction definitions, energy database, and ΔG calculator with μ(T,p,RH)
 - `40_transport/`: (Optional) NEB scaffolding for Na+ migration barriers
 
@@ -53,15 +62,32 @@ This theoretical work addresses three key questions that experiments cannot dire
 ## Thermodynamic Approach
 
 ### Hydration/Dehydration Reactions
+
+**Primary Reactions** (matching experimental recycling conditions with 9H2O):
+
 **Hydration** (dissolution step in recycling):
 ```
-Na3SbS4 (s) + 8 H2O (g) ⇌ Na3SbS4·8H2O (s)
+Na3SbS4 (s) + 9 H2O (g) ⇌ Na3SbS4·9H2O (s)
 ```
 
 **Dehydration** (thermal regeneration step):
 ```
-Na3SbS4·8H2O (s) → Na3SbS4 (s) + 8 H2O (g)
+Na3SbS4·9H2O (s) → Na3SbS4 (s) + 9 H2O (g)
 ```
+
+**Additional Reactions** (to explore stepwise hydration mechanism):
+
+**Formation of intermediate hydrate**:
+```
+Na3SbS4 (s) + 8 H2O (g) ⇌ Na3SbS4·8H2O (s)
+```
+
+**Conversion between hydrates**:
+```
+Na3SbS4·8H2O (s) + H2O (g) ⇌ Na3SbS4·9H2O (s)
+```
+
+These reactions allow us to determine whether hydration proceeds directly to 9H2O or via the 8H2O intermediate, and to identify the most stable hydrate phase under different environmental conditions (T, RH).
 
 ### Free Energy Calculation
 - **Solids**: DFT total energies E_DFT(T≈0K) from static calculations
@@ -101,15 +127,16 @@ Na3SbS4·8H2O (s) → Na3SbS4 (s) + 8 H2O (g)
 ### Phase 1: Structure Preparation
 
 #### 1.1 Required Structures
-**Only two structures are needed for hydration/dehydration thermodynamics:**
+**Three structures are needed for complete hydration/dehydration thermodynamics:**
 
 - ✅ **Na3SbS4** (anhydrous) - CIF available in `10_structures/Na3SbS4.cif`
-- ✅ **Na3SbS4·8H2O** (hydrate) - CIF available in `10_structures/Na3SbS4_yaosen.cif`
+- ✅ **Na3SbS4·8H2O** (intermediate hydrate) - CIF available in `10_structures/Na3SbS4_yaosen.cif`
+- ✅ **Na3SbS4·9H2O** (fully hydrated) - CIF available in `10_structures/Na3SbS4_9H2O.cif` (from Materials Project)
 
-**Note**: These structures are already available (copied from `model/` directory). No additional structure building is needed.
+**Note**: All structures are now available. The 9H2O structure directly matches the experimental recycling conditions reported in the manuscript. The 8H2O structure provides insight into potential stepwise hydration mechanisms.
 
 #### 1.2 Generate VASP Inputs
-If not already done, prepare VASP input directories:
+Prepare VASP input directories for all three structures:
 
 ```bash
 cd calculation/20_vasp_inputs
@@ -117,23 +144,29 @@ cd calculation/20_vasp_inputs
 # Anhydrous Na3SbS4
 python3 prepare_inputs.py --cif ../10_structures/Na3SbS4.cif --out Na3SbS4
 
-# Hydrated Na3SbS4·8H2O
+# Intermediate hydrate Na3SbS4·8H2O
 python3 prepare_inputs.py --cif ../10_structures/Na3SbS4_yaosen.cif --out Na3SbS4_8H2O
+
+# Fully hydrated Na3SbS4·9H2O
+python3 prepare_inputs.py --cif ../10_structures/Na3SbS4_9H2O.cif --out Na3SbS4_9H2O
 ```
 
 This creates subdirectories:
 - `Na3SbS4/relax/` and `Na3SbS4/static/`
 - `Na3SbS4_8H2O/relax/` and `Na3SbS4_8H2O/static/`
+- `Na3SbS4_9H2O/relax/` and `Na3SbS4_9H2O/static/`
 
 Each contains: POSCAR, KPOINTS, INCAR (from templates), and POTCAR (auto-generated)
 
 #### 1.3 POTCAR Verification
-Before submitting jobs, verify POTCAR files exist:
+Before submitting jobs, verify POTCAR files exist for all structures:
 ```bash
 ls 20_vasp_inputs/Na3SbS4/relax/POTCAR
 ls 20_vasp_inputs/Na3SbS4/static/POTCAR
 ls 20_vasp_inputs/Na3SbS4_8H2O/relax/POTCAR
 ls 20_vasp_inputs/Na3SbS4_8H2O/static/POTCAR
+ls 20_vasp_inputs/Na3SbS4_9H2O/relax/POTCAR
+ls 20_vasp_inputs/Na3SbS4_9H2O/static/POTCAR
 ```
 
 **Required PAW potentials**: Na (or Na_pv), Sb, S, O, H
@@ -155,9 +188,12 @@ sbatch submit.sh  # or your cluster's job submission command
 
 cd ../../../calculation/20_vasp_inputs/Na3SbS4_8H2O/relax
 sbatch submit.sh
+
+cd ../../../calculation/20_vasp_inputs/Na3SbS4_9H2O/relax
+sbatch submit.sh
 ```
 
-**Expected runtime**: 12-24 hours per structure on 32 cores (depending on system size)
+**Expected runtime**: 12-24 hours per structure on 32 cores (depending on system size; hydrates may take longer)
 
 **Step 2: Monitor Convergence**
 Check `OSZICAR` for convergence:
@@ -178,6 +214,10 @@ cp ../relax/CONTCAR POSCAR
 sbatch submit.sh
 
 cd ../../../calculation/20_vasp_inputs/Na3SbS4_8H2O/static
+cp ../relax/CONTCAR POSCAR
+sbatch submit.sh
+
+cd ../../../calculation/20_vasp_inputs/Na3SbS4_9H2O/static
 cp ../relax/CONTCAR POSCAR
 sbatch submit.sh
 ```
@@ -217,6 +257,9 @@ grep "free  energy   TOTEN" OUTCAR | tail -1
 
 cd ../../../calculation/20_vasp_inputs/Na3SbS4_8H2O/static
 grep "free  energy   TOTEN" OUTCAR | tail -1
+
+cd ../../../calculation/20_vasp_inputs/Na3SbS4_9H2O/static
+grep "free  energy   TOTEN" OUTCAR | tail -1
 ```
 
 This gives total energy in eV (for the entire unit cell).
@@ -226,6 +269,7 @@ This gives total energy in eV (for the entire unit cell).
 cd calculation/30_thermo
 python3 parse_energy.py --path ../20_vasp_inputs/Na3SbS4/static
 python3 parse_energy.py --path ../20_vasp_inputs/Na3SbS4_8H2O/static
+python3 parse_energy.py --path ../20_vasp_inputs/Na3SbS4_9H2O/static
 ```
 
 #### 3.2 Create energies.yaml
@@ -236,8 +280,9 @@ Populate `30_thermo/energies.yaml` with extracted values:
 # Extracted from static/OUTCAR (free energy TOTEN)
 # Format: compound_name: energy_value
 
-Na3SbS4: -XX.XXXX      # Replace with your calculated value
-Na3SbS4_8H2O: -YY.YYYY # Replace with your calculated value
+Na3SbS4: -XX.XXXX       # Replace with your calculated value
+Na3SbS4_8H2O: -YY.YYYY  # Replace with your calculated value
+Na3SbS4_9H2O: -ZZ.ZZZZ  # Replace with your calculated value
 ```
 
 **Important notes**:
@@ -252,24 +297,42 @@ Na3SbS4_8H2O: -YY.YYYY # Replace with your calculated value
 
 This phase addresses the three key research questions outlined in the scope.
 
-#### 4.1 Define Hydration/Dehydration Reaction
-Edit `30_thermo/reactions.yaml` to include:
+#### 4.1 Define Hydration/Dehydration Reactions
+Edit `30_thermo/reactions.yaml` to include all key reactions:
 ```yaml
-hydration:
+# Primary reactions matching experimental conditions (9H2O)
+hydration_9H2O:
   reactants:
     Na3SbS4: 1
-    H2O_gas: 8
+    H2O_gas: 9
   products:
-    Na3SbS4_8H2O: 1
-  description: "Hydration of Na3SbS4 (dissolution step in recycling)"
+    Na3SbS4_9H2O: 1
+  description: "Full hydration of Na3SbS4 (dissolution step in recycling)"
 
-dehydration:
+dehydration_9H2O:
   reactants:
-    Na3SbS4_8H2O: 1
+    Na3SbS4_9H2O: 1
   products:
     Na3SbS4: 1
+    H2O_gas: 9
+  description: "Dehydration of 9H2O hydrate (regeneration step)"
+
+# Intermediate hydrate reactions (to explore mechanism)
+hydration_8H2O:
+  reactants:
+    Na3SbS4: 1
     H2O_gas: 8
-  description: "Dehydration of hydrate (regeneration step)"
+  products:
+    Na3SbS4_8H2O: 1
+  description: "Intermediate hydration to 8H2O"
+
+conversion_8to9:
+  reactants:
+    Na3SbS4_8H2O: 1
+    H2O_gas: 1
+  products:
+    Na3SbS4_9H2O: 1
+  description: "Conversion from 8H2O to 9H2O"
 ```
 
 #### 4.2 Single-Point Test Calculation
@@ -335,20 +398,27 @@ chmod +x sweep_phase_diagram.sh
 #### 4.4 Key Questions to Answer
 
 **Question 1: Is recycling thermodynamically reversible?**
-- Plot ΔG_hydration vs RH at T=298K
-  - If ΔG < 0 at high RH (60-80%), hydration is spontaneous → validates dissolution step
-- Plot ΔG_dehydration vs T at vacuum (p_H2O ~ 10⁻⁶ bar)
+- Plot ΔG_hydration(9H2O) vs RH at T=298K
+  - If ΔG < 0 at high RH (60-80%), hydration to 9H2O is spontaneous → validates dissolution step
+- Plot ΔG_dehydration(9H2O) vs T at vacuum (p_H2O ~ 10⁻⁶ bar)
   - If ΔG < 0 at T > 250°C, dehydration is favorable → validates regeneration step
 
 **Question 2: What are optimal dehydration conditions?**
-- Determine T_critical where ΔG_dehydration = 0 at different water pressures
+- Determine T_critical where ΔG_dehydration = 0 at different water pressures for 9H2O
 - Compare ambient (p_H2O ~ 0.03 bar) vs vacuum (p_H2O ~ 10⁻⁶ bar)
 - Show that vacuum lowers required temperature by hundreds of degrees
 
-**Question 3: Does structure recover after dehydration?**
-- Compare relaxed crystal structures (CONTCAR files)
-- Visualize Na+ conduction pathways in both structures
-- Calculate unit cell volume change: ΔV = (V_hydrate - V_anhydrous) / V_anhydrous
+**Question 3: Is hydration stepwise or direct?**
+- Compare ΔG for direct path (Na3SbS4 → 9H2O) vs stepwise (Na3SbS4 → 8H2O → 9H2O)
+- Plot stability regions: which hydrate is most stable at different (T, RH)?
+- Determine if 8H2O is a stable intermediate or just a metastable phase
+- Energy comparison: Is the reaction Na3SbS4 + 8H2O → 8H2O followed by 8H2O + H2O → 9H2O energetically favorable compared to direct Na3SbS4 + 9H2O → 9H2O?
+
+**Question 4: Does structure recover after dehydration?**
+- Compare relaxed crystal structures (CONTCAR files) of Na3SbS4, 8H2O, and 9H2O
+- Visualize Na+ conduction pathways in all three structures
+- Calculate unit cell volume changes upon hydration and dehydration
+- Verify that the dehydrated structure matches the original anhydrous phase
 
 ---
 
@@ -396,21 +466,26 @@ python3 make_neb.py --out neb_Na3SbS4 --images 5
 ### Phase 1: Structure Preparation
 - [x] Na3SbS4 CIF available in `10_structures/`
 - [x] Na3SbS4·8H2O CIF available in `10_structures/`
-- [ ] VASP inputs generated for both structures
+- [x] Na3SbS4·9H2O CIF available in `10_structures/`
+- [x] VASP inputs generated for all three structures
 - [ ] POTCAR files verified in all directories
 
 ### Phase 2: VASP Calculations
-- [ ] Na3SbS4 relaxation submitted
-- [ ] Na3SbS4 relaxation converged
-- [ ] Na3SbS4 static calculation complete
-- [ ] Na3SbS4·8H2O relaxation submitted
-- [ ] Na3SbS4·8H2O relaxation converged
-- [ ] Na3SbS4·8H2O static calculation complete
+- [x] Na3SbS4 relaxation submitted
+- [x] Na3SbS4 relaxation converged
+- [x] Na3SbS4 static calculation complete
+- [x] Na3SbS4·8H2O relaxation submitted
+- [x] Na3SbS4·8H2O relaxation converged
+- [x] Na3SbS4·8H2O static calculation complete
+- [ ] Na3SbS4·9H2O relaxation submitted (in progress)
+- [ ] Na3SbS4·9H2O relaxation converged
+- [ ] Na3SbS4·9H2O static calculation complete
 
 ### Phase 3: Energy Extraction
 - [ ] Total energy extracted from Na3SbS4/static/OUTCAR
 - [ ] Total energy extracted from Na3SbS4_8H2O/static/OUTCAR
-- [ ] `energies.yaml` file created and populated
+- [ ] Total energy extracted from Na3SbS4_9H2O/static/OUTCAR
+- [ ] `energies.yaml` file created and populated with all three energies
 
 ### Phase 4: Thermodynamic Analysis
 - [ ] `reactions.yaml` configured for hydration/dehydration
@@ -432,9 +507,9 @@ python3 make_neb.py --out neb_Na3SbS4 --images 5
 
 ### Total Computational Cost
 **Core calculations** (Phases 1-4 only):
-- 2 structures × (1 relax + 1 static) = **4 VASP jobs**
-- Estimated wall time: ~30-50 hours total on 32 cores
-- Storage: ~1.2 GB (2 relaxations + 2 statics)
+- 3 structures × (1 relax + 1 static) = **6 VASP jobs**
+- Estimated wall time: ~45-75 hours total on 32 cores
+- Storage: ~1.8 GB (3 relaxations + 3 statics)
 
 **Optional NEB** (Phase 5):
 - 1 NEB calculation (supercell) ≈ 48-72 hours on 32 cores
@@ -445,6 +520,8 @@ python3 make_neb.py --out neb_Na3SbS4 --images 5
 - **Na3SbS4 static**: 1-2 hours
 - **Na3SbS4·8H2O relax**: 12-24 hours (hydrate is larger, may take longer)
 - **Na3SbS4·8H2O static**: 1-3 hours
+- **Na3SbS4·9H2O relax**: 12-24 hours (similar to 8H2O, slightly larger)
+- **Na3SbS4·9H2O static**: 1-3 hours
 
 ### Workflow Timeline
 Assuming sequential submission:
@@ -462,38 +539,42 @@ Assuming sequential submission:
 ### Main Text Figures
 
 **Figure 1: Thermodynamic validation of recycling pathway**
-- Panel A: ΔG_hydration vs RH at T = 298 K
-  - Show hydration is favorable at high RH (validates dissolution step)
-- Panel B: ΔG_dehydration vs T at different p_H2O
+- Panel A: ΔG_hydration vs RH at T = 298 K for both 8H2O and 9H2O
+  - Show hydration to 9H2O is favorable at high RH (validates dissolution step)
+  - Compare direct vs stepwise pathway
+- Panel B: ΔG_dehydration vs T at different p_H2O for 9H2O
   - Compare ambient pressure vs vacuum
   - Show vacuum enables low-T dehydration (validates regeneration)
-- Panel C: Phase diagram (T vs RH) with experimental recycling path overlaid
+- Panel C: Phase diagram (T vs RH) showing stability regions of anhydrous, 8H2O, and 9H2O with experimental recycling path overlaid
 
-**Figure 2: Dehydration mechanism and optimal conditions**
-- Panel A: ΔG vs T for stepwise water loss
-- Panel B: Critical temperature vs water pressure
-- Panel C: Explanation of why vacuum treatment lowers T_dehydration
+**Figure 2: Hydration mechanism - stepwise vs direct**
+- Panel A: Energy diagram comparing Na3SbS4 → 9H2O (direct) vs Na3SbS4 → 8H2O → 9H2O (stepwise)
+- Panel B: Stability map showing which hydrate is most stable at different (T, RH)
+- Panel C: ΔG for the conversion reaction 8H2O + H2O → 9H2O as function of RH
 
 ### Supporting Information
 
 **Figure S1: Crystal structure comparison**
-- Na3SbS4 and Na3SbS4·8H2O structures side-by-side
-- Highlight Na+ conduction pathways
-- Show pathways are restored after dehydration
+- Na3SbS4, Na3SbS4·8H2O, and Na3SbS4·9H2O structures side-by-side
+- Highlight Na+ conduction pathways in all three phases
+- Show unit cell volume expansion upon hydration
+- Demonstrate that pathways are restored after dehydration
 
 **Table S1: Calculated energies and thermodynamic parameters**
-- DFT total energies (eV per f.u.)
-- ΔH_hydration, ΔS_hydration
-- Critical RH and temperature values
+- DFT total energies (eV per f.u.) for all three structures
+- ΔH and ΔG for all hydration/dehydration reactions at key conditions
+- Critical RH and temperature values for phase transitions
+- Comparison of energy differences between 8H2O and 9H2O
 
 ---
 
 ## Key Assumptions and Limitations
 
-1. **Na3SbS4·8H2O as proxy for 9H2O**:
-   - Experiments use 9H2O form, but we model 8H2O (from available CIF)
-   - Thermodynamic trends (favorable hydration, reversible dehydration) expected to be similar
-   - Quantitative ΔG values may differ by ~0.1-0.2 eV/f.u., but qualitative conclusions hold
+1. **Direct modeling of experimental hydrate**:
+   - We now model both Na3SbS4·8H2O and Na3SbS4·9H2O explicitly
+   - 9H2O structure from Materials Project directly matches experimental recycling conditions
+   - 8H2O structure from Yaosen et al. provides insight into potential intermediate phases
+   - This allows us to explore both direct and stepwise hydration mechanisms
 
 2. **Harmonic approximation for solids**:
    - We use static DFT energies (T ≈ 0 K) for solids

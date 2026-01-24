@@ -1,0 +1,20 @@
+# DFT total energies (eV per formula unit)
+# Extracted from static/OUTCAR (free energy TOTEN)
+# Date: 2026-01-22
+
+solids:
+  # Anhydrous Na3SbS4: OUTCAR shows -59.34579769 eV for 2 formula units
+  Na3SbS4: -29.672899
+
+  # Intermediate hydrate Na3SbS4·8H2O: OUTCAR shows -594.03130389 eV for 4 formula units
+  Na3SbS4_8H2O: -148.507826
+
+  # Fully hydrated Na3SbS4·9H2O: ESTIMATED based on linear extrapolation
+  # Assumes ~-14.85 eV per H2O (from 8H2O data)
+  # Actual calculation in progress
+  Na3SbS4_9H2O: -163.36  # PLACEHOLDER - UPDATE WHEN CALCULATION COMPLETES
+
+# Notes:
+# - All energies are per formula unit (not per unit cell)
+# - Static calculations performed with VASP/PBE+D3
+# - Na3SbS4_9H2O energy is estimated; final value to be updated
