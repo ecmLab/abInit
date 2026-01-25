@@ -10,8 +10,21 @@ SIGMA  = 0.05
 IBRION = 2
 ISIF   = 3
 NSW    = 200
+NELM   = 100     # Max electronic steps (from MP - good for convergence)
 LREAL  = Auto
 ALGO   = Normal
 LASPH  = .TRUE.
-IVDW   = 12   # D3(BJ) dispersion correction
+LMAXMIX = 4      # Better charge mixing for d-elements (from MP)
+IVDW   = 12      # D3(BJ) dispersion correction - CRITICAL for H2O!
+
+# Spin polarization (from MP - safety check, system likely non-magnetic)
+ISPIN  = 2
+LORBIT = 11
+
+# Memory optimization - don't write large files
+LWAVE  = .FALSE.  # Don't write WAVECAR (saves GB of disk/memory)
+LCHARG = .FALSE.  # Don't write CHGCAR (saves GB of disk/memory)
+
+# Parallelization for better memory distribution
+NCORE  = 4        # Adjust based on cores/node (try 4, 8, or 16)
 
