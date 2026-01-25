@@ -10,6 +10,7 @@ NSW    = 0
 LREAL  = Auto
 ALGO   = Normal
 LASPH  = .TRUE.
+IVDW   = 12   # D3(BJ) dispersion correction
 LORBIT = 11
 NEDOS  = 2000
 

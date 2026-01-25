@@ -17,7 +17,7 @@ EDIFFG = -0.02      # Force convergence 0.02 eV/Å
 
 # Exchange-correlation
 GGA    = PE         # PBE functional
-IVDW   = 12         # DFT-D3 with BJ damping (same as solids)
+IVDW   = 12         # DFT-D3 with BJ damping - ENABLED!
 
 # Electronic structure
 ISMEAR = 0          # Gaussian smearing for molecules
