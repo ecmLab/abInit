@@ -9,12 +9,10 @@ solids:
   # Intermediate hydrate Na3SbS4·8H2O: OUTCAR shows -594.03130389 eV for 4 formula units
   Na3SbS4_8H2O: -148.507826
 
-  # Fully hydrated Na3SbS4·9H2O: ESTIMATED based on linear extrapolation
-  # Assumes ~-14.85 eV per H2O (from 8H2O data)
-  # Actual calculation in progress
-  Na3SbS4_9H2O: -163.36  # PLACEHOLDER - UPDATE WHEN CALCULATION COMPLETES
+  # Fully hydrated Na3SbS4·9H2O: OUTCAR shows -529.23638512 eV for 4 formula units
+  Na3SbS4_9H2O: -132.309096
 
 # Notes:
 # - All energies are per formula unit (not per unit cell)
 # - Static calculations performed with VASP/PBE+D3
-# - Na3SbS4_9H2O energy is estimated; final value to be updated
+# - All calculations completed as of 2026-01-24

@@ -73,9 +73,9 @@ for RH in RH_range:
     DG_9_list.append(DG_9)
 
 ax1.plot(RH_range * 100, DG_8_list, 'o-', color='#2E86AB',
-         linewidth=2, markersize=0, label='Na₃SbS₄·8H₂O')
+         linewidth=2, markersize=0, label='$\mathregular{Na_3SbS_4{\cdot}8H_2O}$')
 ax1.plot(RH_range * 100, DG_9_list, 's-', color='#A23B72',
-         linewidth=2, markersize=0, label='Na₃SbS₄·9H₂O')
+         linewidth=2, markersize=0, label='$\mathregular{Na_3SbS_4{\cdot}9H_2O}$')
 
 # Highlight experimental RH region (60-80%)
 ax1.axvspan(60, 80, alpha=0.15, color='gray', label='Typical ambient RH')
@@ -84,15 +84,16 @@ ax1.axvspan(60, 80, alpha=0.15, color='gray', label='Typical ambient RH')
 ax1.axvline(68, color='red', linestyle='--', linewidth=1, alpha=0.6, label='Experimental condition')
 
 ax1.set_xlabel('Relative Humidity (%)', fontsize=12, fontweight='bold')
-ax1.set_ylabel('ΔG$_{hydration}$ (eV)', fontsize=12, fontweight='bold')
+ax1.set_ylabel('$\mathregular{\Delta G_{hydration}}$ (eV)', fontsize=12, fontweight='bold')
 ax1.set_title('Hydration Thermodynamics at 298 K', fontsize=13, fontweight='bold')
 ax1.legend(frameon=True, fontsize=9, loc='best')
 ax1.grid(True, alpha=0.3, linestyle=':')
 ax1.set_xlim(10, 100)
+ax1.set_ylim(-125, -50)
 
 plt.tight_layout()
-plt.savefig('../00_docs/figure1_hydration_vs_RH.png', dpi=300, bbox_inches='tight')
-plt.savefig('../00_docs/figure1_hydration_vs_RH.pdf', bbox_inches='tight')
+plt.savefig('../../docs/figure1_hydration_vs_RH.png', dpi=300, bbox_inches='tight')
+plt.savefig('../../docs/figure1_hydration_vs_RH.pdf', bbox_inches='tight')
 print("  Saved: figure1_hydration_vs_RH.png/pdf")
 plt.close()
 
@@ -122,24 +123,16 @@ for p_vac, color, label in zip(p_vacuum_levels, colors_vac, labels_vac):
     ax2.plot(T_range_C, DG_dehyd_9_list, '-', color=color,
              linewidth=2, label=label)
 
-# Mark experimental condition (250°C, vacuum)
-ax2.axvline(250, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
-ax2.text(255, ax2.get_ylim()[0] + 0.1 * (ax2.get_ylim()[1] - ax2.get_ylim()[0]),
-         'Experimental\n250°C', fontsize=9, color='red', fontweight='bold')
-
-ax2.axhline(0, color='black', linestyle='-', linewidth=0.8, alpha=0.5)
-ax2.text(350, 2, 'ΔG = 0 (equilibrium)', fontsize=9, style='italic', alpha=0.7)
-
 ax2.set_xlabel('Temperature (°C)', fontsize=12, fontweight='bold')
-ax2.set_ylabel('ΔG$_{dehydration}$ (eV)', fontsize=12, fontweight='bold')
-ax2.set_title('Dehydration Thermodynamics: Na₃SbS₄·9H₂O → Na₃SbS₄ + 9H₂O',
-              fontsize=12, fontweight='bold')
+ax2.set_ylabel('$\mathregular{\Delta G_{dehydration}}$ (eV)', fontsize=12, fontweight='bold')
+ax2.set_title('Dehydration Thermodynamics', fontsize=12, fontweight='bold')
+ax2.set_ylim(50, 125)
 ax2.legend(frameon=True, fontsize=8, loc='best')
 ax2.grid(True, alpha=0.3, linestyle=':')
 
 plt.tight_layout()
-plt.savefig('../00_docs/figure2_dehydration_vs_T.png', dpi=300, bbox_inches='tight')
-plt.savefig('../00_docs/figure2_dehydration_vs_T.pdf', bbox_inches='tight')
+plt.savefig('../../docs/figure2_dehydration_vs_T.png', dpi=300, bbox_inches='tight')
+plt.savefig('../../docs/figure2_dehydration_vs_T.pdf', bbox_inches='tight')
 print("  Saved: figure2_dehydration_vs_T.png/pdf")
 plt.close()
 
@@ -198,7 +191,7 @@ ax3.plot(25, 70, 'o', color='red', markersize=10, markeredgecolor='darkred', mar
 ax3.text(27, 72, 'Hydration\n(ambient)', fontsize=9, color='red', fontweight='bold')
 
 ax3.plot(80, 20, 's', color='darkred', markersize=10, markeredgecolor='black', markeredgewidth=2)
-ax3.text(82, 22, 'Dehydration\n(250°C, vacuum)', fontsize=9,
+ax3.text(82, 22, 'Dehydration\n(vacuum)', fontsize=9,
          color='darkred', fontweight='bold')
 
 # Arrow showing recycling pathway
@@ -211,9 +204,9 @@ ax3.set_title('Phase Stability Diagram', fontsize=13, fontweight='bold')
 
 # Add legend
 from matplotlib.patches import Patch
-legend_elements = [Patch(facecolor=colors[0], label='Na₃SbS₄ (anhydrous)'),
-                   Patch(facecolor=colors[1], label='Na₃SbS₄·8H₂O'),
-                   Patch(facecolor=colors[2], label='Na₃SbS₄·9H₂O')]
+legend_elements = [Patch(facecolor=colors[0], label='$\mathregular{Na_3SbS_4}$ (anhydrous)'),
+                   Patch(facecolor=colors[1], label='$\mathregular{Na_3SbS_4{\cdot}8H_2O}$'),
+                   Patch(facecolor=colors[2], label='$\mathregular{Na_3SbS_4{\cdot}9H_2O}$')]
 ax3.legend(handles=legend_elements, loc='upper right', frameon=True, fontsize=9)
 
 ax3.set_xlim(20, 100)
@@ -221,8 +214,8 @@ ax3.set_ylim(10, 95)
 ax3.grid(True, alpha=0.2, linestyle=':')
 
 plt.tight_layout()
-plt.savefig('../00_docs/figure3_phase_diagram.png', dpi=300, bbox_inches='tight')
-plt.savefig('../00_docs/figure3_phase_diagram.pdf', bbox_inches='tight')
+plt.savefig('../../docs/figure3_phase_diagram.png', dpi=300, bbox_inches='tight')
+plt.savefig('../../docs/figure3_phase_diagram.pdf', bbox_inches='tight')
 print("  Saved: figure3_phase_diagram.png/pdf")
 plt.close()
 
@@ -273,8 +266,8 @@ ax4.text(0.5, E_8H2O_rel/2, f'{E_8H2O_rel:.1f} eV',
          fontsize=9, ha='center', bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
 
 plt.tight_layout()
-plt.savefig('../00_docs/figure4_energy_levels.png', dpi=300, bbox_inches='tight')
-plt.savefig('../00_docs/figure4_energy_levels.pdf', bbox_inches='tight')
+plt.savefig('../../docs/figure4_energy_levels.png', dpi=300, bbox_inches='tight')
+plt.savefig('../../docs/figure4_energy_levels.pdf', bbox_inches='tight')
 print("  Saved: figure4_energy_levels.png/pdf")
 plt.close()
 
@@ -311,8 +304,8 @@ ax5.legend(frameon=True, fontsize=8, loc='lower left')
 ax5.grid(True, alpha=0.3, linestyle=':')
 
 plt.tight_layout()
-plt.savefig('../00_docs/figure5_water_chemical_potential.png', dpi=300, bbox_inches='tight')
-plt.savefig('../00_docs/figure5_water_chemical_potential.pdf', bbox_inches='tight')
+plt.savefig('../../docs/figure5_water_chemical_potential.png', dpi=300, bbox_inches='tight')
+plt.savefig('../../docs/figure5_water_chemical_potential.pdf', bbox_inches='tight')
 print("  Saved: figure5_water_chemical_potential.png/pdf")
 plt.close()
 
@@ -329,5 +322,5 @@ print("  2. figure2_dehydration_vs_T.png/pdf")
 print("  3. figure3_phase_diagram.png/pdf")
 print("  4. figure4_energy_levels.png/pdf")
 print("  5. figure5_water_chemical_potential.png/pdf")
-print("\nAll figures saved to: calculation/00_docs/")
+print("\nAll figures saved to: calculati../../docs/")
 print("="*70)

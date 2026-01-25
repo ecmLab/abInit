@@ -1,0 +1,29 @@
+# INCAR for H2O gas-phase molecule
+# Use same functional as solids: PBE+D3
+
+SYSTEM = H2O gas phase
+
+# Electronic optimization
+ENCUT  = 520        # Same as solids
+EDIFF  = 1E-6       # Electronic convergence
+PREC   = Accurate
+LREAL  = .FALSE.
+
+# Ionic relaxation
+IBRION = 2          # Conjugate gradient
+NSW    = 100        # Max ionic steps
+ISIF   = 2          # Relax atoms only (NOT cell for molecule)
+EDIFFG = -0.02      # Force convergence 0.02 eV/Å
+
+# Exchange-correlation
+GGA    = PE         # PBE functional
+IVDW   = 12         # DFT-D3 with BJ damping (same as solids)
+
+# Electronic structure
+ISMEAR = 0          # Gaussian smearing for molecules
+SIGMA  = 0.05       # Small smearing
+
+# Output
+LORBIT = 11
+LWAVE  = .FALSE.
+LCHARG = .FALSE.
