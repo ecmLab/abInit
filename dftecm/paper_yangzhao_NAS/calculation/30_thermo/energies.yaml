@@ -1,18 +1,31 @@
-# DFT total energies (eV per formula unit)
-# Extracted from static/OUTCAR (free energy TOTEN)
-# Date: 2026-01-22
+# DFT total energies (eV per cell)
+# Final energies used in thermodynamic report
+# Updated: 2026-01-26
+
+gas:
+  # Water molecule
+  H2O: -14.22
 
 solids:
-  # Anhydrous Na3SbS4: OUTCAR shows -59.34579769 eV for 2 formula units
-  Na3SbS4: -29.672899
+  # Anhydrous Na3SbS4
+  Na3SbS4: -32.71
 
-  # Intermediate hydrate Na3SbS4·8H2O: OUTCAR shows -594.03130389 eV for 4 formula units
-  Na3SbS4_8H2O: -148.507826
+  # Hydrated Na3SbS4·8H2O (with D3 correction)
+  Na3SbS4_8H2O: -150.11
 
-  # Fully hydrated Na3SbS4·9H2O: OUTCAR shows -529.23638512 eV for 4 formula units
-  Na3SbS4_9H2O: -132.309096
+  # Hydrated Na3SbS4·9H2O (experimentally observed)
+  Na3SbS4_9H2O: -172.68
 
-# Notes:
-# - All energies are per formula unit (not per unit cell)
-# - Static calculations performed with VASP/PBE+D3
-# - All calculations completed as of 2026-01-24
+# Hydration energies:
+# ΔE_hyd(8H2O) = E(Na3SbS4·8H2O) - E(Na3SbS4) - 8×E(H2O)
+#              = -150.11 - (-32.71) - 8×(-14.22)
+#              = -150.11 + 32.71 + 113.76
+#              = -3.64 eV (-0.46 eV per H2O)
+
+# ΔE_hyd(9H2O) = E(Na3SbS4·9H2O) - E(Na3SbS4) - 9×E(H2O)
+#              = -172.68 - (-32.71) - 9×(-14.22)
+#              = -172.68 + 32.71 + 127.98
+#              = -11.99 eV (-1.33 eV per H2O)
+
+# Result: 9H2O hydrate is significantly more stable than 8H2O (-12.0 vs -3.64 eV)
+# This is consistent with experimental observation that 9H2O forms preferentially

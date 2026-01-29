@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
-"""Combine three figures into a single row (1x3 layout)."""
+"""Combine two dehydration-related figures into a single row (1x2 layout)."""
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.gridspec import GridSpec
 
-# Set up the figure with 1 row x 3 columns
-fig = plt.figure(figsize=(18, 5))
-gs = GridSpec(1, 3, figure=fig, hspace=0.10, wspace=0.15,
+# Set up the figure with 1 row x 2 columns
+fig = plt.figure(figsize=(14, 5.5))
+gs = GridSpec(1, 2, figure=fig, hspace=0.10, wspace=0.20,
               left=0.05, right=0.95, top=0.95, bottom=0.05)
 
-# Load images (only 3 figures: hydration, dehydration, phase diagram)
-img1 = mpimg.imread('../../docs/figure1_hydration_vs_RH.png')
-img2 = mpimg.imread('../../docs/figure2_dehydration_vs_T.png')
-img3 = mpimg.imread('../../docs/figure3_phase_diagram.png')
+# Load images (only 2 figures: dehydration thermodynamics and phase diagram)
+# Figure 1 (hydration vs RH) removed - not relevant for solution-phase synthesis
+img1 = mpimg.imread('../../docs/figure2_dehydration_vs_T.png')
+img2 = mpimg.imread('../../docs/figure3_phase_diagram.png')
 
-# Create 1x3 subplots
+# Create 1x2 subplots
 ax1 = fig.add_subplot(gs[0, 0])
 ax2 = fig.add_subplot(gs[0, 1])
-ax3 = fig.add_subplot(gs[0, 2])
 
 # Display images
 ax1.imshow(img1)
@@ -30,13 +29,10 @@ ax2.axis('off')
 ax2.text(0.02, 0.98, '(b)', transform=ax2.transAxes,
          fontsize=16, fontweight='bold', va='top')
 
-ax3.imshow(img3)
-ax3.axis('off')
-ax3.text(0.02, 0.98, '(c)', transform=ax3.transAxes,
-         fontsize=16, fontweight='bold', va='top')
-
 # Save combined figure
 plt.savefig('../../docs/figure_combined.png', dpi=300, bbox_inches='tight')
 plt.savefig('../../docs/figure_combined.pdf', bbox_inches='tight')
-print("Combined figure saved: figure_combined.png/pdf (1x3 layout)")
+print("Combined figure saved: figure_combined.png/pdf (1x2 layout)")
+print("  Panel (a): Dehydration free energy vs temperature")
+print("  Panel (b): Temperature-pressure phase diagram")
 plt.close()
