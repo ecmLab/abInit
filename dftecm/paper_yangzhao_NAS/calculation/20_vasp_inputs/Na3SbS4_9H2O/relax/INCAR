@@ -26,5 +26,5 @@ LWAVE  = .FALSE.  # Don't write WAVECAR (saves GB of disk/memory)
 LCHARG = .FALSE.  # Don't write CHGCAR (saves GB of disk/memory)
 
 # Parallelization for better memory distribution
-NCORE  = 4        # Adjust based on cores/node (try 4, 8, or 16)
+NCORE  = 32       # Adjust based on cores/node (try 4, 8, or 16)
 
