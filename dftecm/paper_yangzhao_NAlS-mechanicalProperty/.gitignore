@@ -1,0 +1,13 @@
+/docs
+/model
+/reference
+
+# VASP large binaries
+WAVECAR
+CHGCAR
+CHG
+PROCAR
+TMPCAR
+AECCAR0
+AECCAR1
+AECCAR2

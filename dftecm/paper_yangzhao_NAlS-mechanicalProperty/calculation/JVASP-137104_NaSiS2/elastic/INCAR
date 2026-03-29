@@ -1,0 +1,12 @@
+EDIFF = 1e-06
+ENCUT = 400.0
+IBRION = 6
+ISIF = 3
+ISMEAR = 0
+LCHARG = False
+LREAL = Auto
+LWAVE = False
+NFREE = 4
+NSW = 1
+POTIM = 0.015
+SIGMA = 0.05

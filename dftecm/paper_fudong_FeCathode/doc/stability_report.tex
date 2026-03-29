@@ -1,0 +1,462 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!10},
+}
+
+\title{Chemical and Electrochemical Stability Analysis\\
+       of Fe-Halide Cathodes with Halide Solid Electrolytes\\[0.5em]
+       \large Computational Methodology and Results Summary}
+\author{Howard Tu}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Project Overview}
+% ============================================================
+
+This report documents the computational analysis of chemical and electrochemical
+stability at the interface between iron-halide cathode materials and halide solid
+electrolytes (SEs). The study targets three cathode compositions:
+
+\begin{itemize}
+  \item \textbf{Row 3}: FeF$_3$ cathode vs.\ five halide SEs
+  \item \textbf{Row 4}: FeCl$_3$ cathode vs.\ five halide SEs
+  \item \textbf{Row 2}: FeF$_3$+FeCl$_3$ (1:1 molar) cathode vs.\ five halide SEs
+\end{itemize}
+
+The five halide solid electrolytes studied are:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Label & Formula \\
+\midrule
+Li$_3$YCl$_6$                                   & Li$_3$YCl$_6$ \\
+Li$_{2.4}$Y$_{0.4}$Zr$_{0.6}$Cl$_6$               & Li$_{2.4}$Y$_{0.4}$Zr$_{0.6}$Cl$_6$ \\
+Li$_3$ScCl$_6$                                  & Li$_3$ScCl$_6$ \\
+Li$_{2.375}$Sc$_{0.375}$Zr$_{0.625}$Cl$_6$        & Li$_{2.375}$Sc$_{0.375}$Zr$_{0.625}$Cl$_6$ \\
+Li$_3$InCl$_6$                                  & Li$_3$InCl$_6$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+All thermodynamic data are retrieved from the Materials Project (MP) database
+via the \texttt{mp-api} client and processed using \texttt{pymatgen}.
+
+% ============================================================
+\section{Theoretical Framework}
+% ============================================================
+
+\subsection{Chemical Stability (Closed System)}
+
+The chemical reaction energy at a mixing ratio $x$ (molar fraction of cathode)
+in the closed system is:
+\begin{equation}
+  \Delta E_{\rm rxn}(x) = E_{\rm hull}^{\rm PD}\!\left[c(x)\right]
+    - \left[ x \cdot E_{\rm hull}^{\rm PD}(C) + (1-x) \cdot E_{\rm hull}^{\rm PD}(SE) \right]
+  \label{eq:chem}
+\end{equation}
+where $c(x) = x\,C + (1-x)\,SE$ is the mixed composition, and
+$E_{\rm hull}^{\rm PD}$ denotes the energy on the convex hull of the standard
+\texttt{PhaseDiagram} (per atom, relative to the stable phases in the
+relevant chemical subsystem). A negative $\Delta E_{\rm rxn}$ means the
+interface is thermodynamically unstable and will spontaneously react.
+
+\subsection{Electrochemical Stability (Open Li System)}
+
+In a battery, lithium can flow into or out of the interface region.
+This is modeled using the \emph{grand potential} phase diagram (GPCD),
+in which Li is treated as an open element with chemical potential
+\begin{equation}
+  \mu_{\rm Li}(V) = \mu_{\rm Li}^{\rm ref} - V
+  \label{eq:muli}
+\end{equation}
+where $V$ is the electrode voltage (V vs.\ Li/Li$^+$) and
+$\mu_{\rm Li}^{\rm ref}$ is the Li chemical potential at the most
+Li-rich transition point on the phase diagram:
+\begin{lstlisting}[language=Python]
+mu_li_ref = pd_obj.get_transition_chempots(Element("Li"))[0]
+chempots = {"Li": -voltage + mu_li_ref}
+gpd = GrandPotentialPhaseDiagram(entries, chempots)
+\end{lstlisting}
+The grand-potential energy of a composition $c$ is:
+\begin{equation}
+  \Phi(c) = E_{\rm DFT}(c) - n_{\rm Li}(c)\,\mu_{\rm Li}
+\end{equation}
+The electrochemical reaction energy is then computed analogously to
+Eq.~\eqref{eq:chem} but using $\Phi$ evaluated on the GPCD hull instead
+of $E$ on the PD hull.
+
+\paragraph{Physical interpretation.}
+At \emph{high voltage} (oxidizing conditions), the Li chemical potential is
+very negative ($\mu_{\rm Li} \ll 0$), so it costs energy to reduce Li from
+the interface; the cathode and SE are more stable (less negative
+$\Delta E_{\rm rxn}$). At \emph{low voltage} (reducing conditions),
+Li is readily inserted, driving strong reduction reactions and more negative
+$\Delta E_{\rm rxn}$. This is why the low-voltage (blue) curves in the
+plots sit at the most negative energies.
+
+\subsection{Voltage Range and Normalization}
+
+\begin{itemize}
+  \item Voltage sweep: 1.0--4.2\,V vs.\ Li/Li$^+$, step 0.01\,V (321 steps)
+  \item Energy normalization: eV per atom of the reactant \emph{mixture}
+        (not per formula unit); this is ``\texttt{norm=True}'' in
+        \texttt{InterfacialReactivity}.
+  \item $x$ axis: molar fraction of cathode, $x = \frac{n_C/N_C}{n_C/N_C + n_{SE}/N_{SE}}$,
+        where $n_C$, $n_{SE}$ are the molar amounts and $N_C$, $N_{SE}$
+        are the number of atoms per formula unit.
+\end{itemize}
+
+% ============================================================
+\section{Rows 3 and 4: Binary Interface Calculations}
+% ============================================================
+
+\subsection{Method: \texttt{InterfacialReactivity}}
+
+For the single-cathode cases (FeF$_3$ or FeCl$_3$ vs.\ each SE),
+pymatgen's built-in \texttt{InterfacialReactivity} and
+\texttt{GrandPotentialInterfacialReactivity} classes are used directly.
+These classes scan the tie-line between two compositions in the (grand
+potential) phase diagram, locate the ``kink'' points where the set of
+stable decomposition products changes, and return the reaction energy
+at each kink.
+
+\begin{lstlisting}[language=Python]
+# Chemical stability (closed system):
+iface = InterfacialReactivity(
+    comp1, comp2, pd_obj,
+    norm=True, use_hull_energy=False)
+
+# Electrochemical stability (open Li, voltage V):
+chempots = {"Li": -voltage + mu_li_ref}
+gpd = GrandPotentialPhaseDiagram(entries, chempots)
+iface = GrandPotentialInterfacialReactivity(
+    comp1, comp2, gpd,
+    pd_non_grand=pd_obj,
+    include_no_mixing_energy=True,
+    norm=True, use_hull_energy=False)
+
+for _, x_atom, energy, rxn, _kJ in iface.get_kinks():
+    x_molar = atom_to_molar(x_atom, n1, n2)
+    ...
+\end{lstlisting}
+
+The atom-fraction output from \texttt{get\_kinks()} is converted to
+molar fraction via:
+\begin{equation}
+  x_{\rm mol} = \frac{x_{\rm atom}/N_C}{x_{\rm atom}/N_C + (1-x_{\rm atom})/N_{SE}}
+\end{equation}
+
+\subsection{Results: FeF$_3$ vs.\ Halide SEs (Row 3)}
+
+Outputs: \texttt{chemical\_stability\_FeF3.png},
+\texttt{electrochemical\_stability\_FeF3.png},
+\texttt{stability\_table\_FeF3.csv} (652 non-zero-energy rows).
+
+Key observations:
+\begin{itemize}
+  \item FeF$_3$ shows a clear phase boundary at approximately
+        $x \approx 0.57$ for the Cl-based SEs, corresponding to a
+        mixed Fe--F--Cl--Li product (LiYF$_4$ + LiCl + Fe metal).
+  \item Reaction energies at $V=1$\,V range from $-0.65$ to $-1.36$\,eV/atom
+        depending on the SE, indicating significant thermodynamic
+        instability at low voltages.
+  \item At $V=4.2$\,V the energies approach $\sim -0.1$ to $-0.3$\,eV/atom,
+        showing improved but non-negligible instability even at high voltage.
+  \item The Zr-substituted electrolytes (Li$_{2.4}$Y$_{0.4}$Zr$_{0.6}$Cl$_6$,
+        Li$_{2.375}$Sc$_{0.375}$Zr$_{0.625}$Cl$_6$) show additional intermediate
+        kinks due to the larger element space (F, Cl, Zr present).
+\end{itemize}
+
+\subsection{Results: FeCl$_3$ vs.\ Halide SEs (Row 4)}
+
+Outputs: \texttt{chemical\_stability\_FeCl3.png},
+\texttt{electrochemical\_stability\_FeCl3.png},
+\texttt{stability\_table\_FeCl3.csv} (282 non-zero-energy rows).
+
+Key observations:
+\begin{itemize}
+  \item FeCl$_3$ shows a simpler reaction landscape than FeF$_3$:
+        in most cases only a single interior kink exists (at $x=1$,
+        i.e., pure cathode), corresponding to FeCl$_3$ + 3\,Li $\to$ Fe + 3\,LiCl.
+  \item At $V=1$\,V, $\Delta E_{\rm rxn} \approx -1.29$\,eV/atom,
+        substantially negative.
+  \item The energy decreases nearly linearly with increasing voltage,
+        reaching $\approx -0.07$\,eV/atom near 4.2\,V,
+        indicating FeCl$_3$ is relatively stable at high operating voltages.
+  \item Because F is absent in the FeCl$_3$ system, no LiF or mixed
+        fluoride products form, leading to fewer reaction channels.
+\end{itemize}
+
+\subsection{Database Note: Li$_3$YCl$_6$}
+
+Li$_3$YCl$_6$ is not stable on the convex hull in the current MP
+database (version 2025.09.25). Pymatgen issues a warning and falls
+back to the hull energy, which corresponds to the decomposition
+$3\,\text{LiCl} + \text{YCl}_3$. This is physically reasonable and
+was accepted as-is. Results for the Y-containing SEs therefore reflect
+this projected hull energy rather than the energy of a single
+Li$_3$YCl$_6$ phase.
+
+% ============================================================
+\section{Row 2: Mixed Cathode FeF$_3$+FeCl$_3$ (1:1 Molar)}
+% ============================================================
+
+Two approaches were implemented for the mixed cathode.
+
+\subsection{Option A: Pseudo-Compound Approximation}
+
+\subsubsection{Method}
+
+The 1:1 molar mixture of FeF$_3$ and FeCl$_3$ is combined into a
+single pseudo-compound:
+\begin{equation}
+  1\,\text{mol FeF}_3 + 1\,\text{mol FeCl}_3 \;\longrightarrow\; \text{Fe}_2\text{F}_3\text{Cl}_3
+\end{equation}
+This composition Fe$_2$F$_3$Cl$_3$ is then used as \texttt{comp1} in the
+same \texttt{GrandPotentialInterfacialReactivity} pipeline as Rows 3 and 4.
+Fe$_2$F$_3$Cl$_3$ is not a stable MP entry; pymatgen projects it onto the
+convex hull of the relevant chemical system (Fe, F, Cl, + SE elements + Li).
+In the reaction strings it appears as Fe$_2$(ClF)$_3$.
+
+\subsubsection{Results}
+
+Outputs: \texttt{chemical\_stability\_FeF3-FeCl3.png},
+\texttt{electrochemical\_stability\_FeF3-FeCl3.png},
+\texttt{stability\_table\_FeF3-FeCl3.csv} (687 rows).
+
+\begin{itemize}
+  \item A single dominant kink at $x \approx 0.57$ across all SEs,
+        similar to the FeF$_3$ case (same element space, same phase
+        space projection).
+  \item At $V=1$\,V vs.\ Li$_3$YCl$_6$:
+        $\Delta E_{\rm rxn} \approx -0.84$\,eV/atom at $x=0.57$
+        and $-1.33$\,eV/atom at $x=1$ (pure cathode boundary),
+        intermediate between the pure FeF$_3$ ($-0.65$, $-1.36$)
+        and FeCl$_3$ ($-1.29$) values.
+  \item The mixing of F and Cl in the pseudo-compound leads to
+        LiYF$_4$ + LiCl + Fe as the primary products at the
+        intermediate kink.
+\end{itemize}
+
+\subsubsection{Limitations}
+
+Because Fe$_2$F$_3$Cl$_3$ is treated as a \emph{single entity}, the
+reference energy on the cathode side is the hull energy of Fe$_2$F$_3$Cl$_3$
+(projected). If FeF$_3$ and FeCl$_3$ can independently and separately
+react with the SE (different products at different spatial locations),
+Option A does not capture this. Nor does it capture any intrinsic
+chemical reactivity \emph{between} FeF$_3$ and FeCl$_3$ themselves.
+
+% -------------------------------------------------------
+\subsection{Option C: Ternary Grand-Potential Approach}
+% -------------------------------------------------------
+
+\subsubsection{Motivation}
+
+In reality the cathode is a \emph{physical mixture} of two separate
+phases, not a single compound. Option C treats FeF$_3$ and FeCl$_3$
+as independent reactants, so all three species---FeF$_3$, FeCl$_3$,
+and SE---can participate simultaneously in the reaction at any mixing ratio.
+
+\subsubsection{Composition Parameterization}
+
+The interface is parameterized by the cathode molar fraction $x$:
+\begin{equation}
+  c(x) = x\!\cdot\!\tfrac{1}{2}\,\text{FeF}_3
+        + x\!\cdot\!\tfrac{1}{2}\,\text{FeCl}_3
+        + (1-x)\!\cdot\!\text{SE}
+  \label{eq:ternary_comp}
+\end{equation}
+which traces a line in the ternary (or higher-dimensional) composition
+space from pure SE at $x=0$ to the 1:1 cathode mixture at $x=1$.
+
+\subsubsection{Reaction Energy Formula}
+
+The grand-potential reaction energy per total atom of the mixture is:
+\begin{equation}
+  \Delta E_{\rm rxn}(x) =
+    \Phi_{\rm hull}\!\left[c(x)\right]
+    - \left[
+        \alpha_A\,\Phi_{\rm hull}(\text{FeF}_3)
+      + \alpha_B\,\Phi_{\rm hull}(\text{FeCl}_3)
+      + \alpha_{SE}\,\Phi_{\rm hull}(\text{SE})
+      \right]
+  \label{eq:ternary_erxn}
+\end{equation}
+where $\alpha_i = N_{\rm atoms}^{(i)} / N_{\rm atoms}^{\rm total}$ is
+the atom fraction of component $i$ in the mixture (counting all atoms
+including Li).
+
+\subsubsection{Grand-Potential Phase Diagram and the Li Projection}
+
+The GPCD is built in the \emph{Li-free} composition subspace: Li is the
+open element, so pymatgen removes it from all entries and builds the hull
+over the remaining elements (e.g., \{Fe, F, Cl, Y\} for the
+FeF$_3$/Li$_3$YCl$_6$ system). This means:
+
+\begin{enumerate}
+  \item The GPCD's \texttt{get\_hull\_energy\_per\_atom(comp)} method
+        \emph{does not accept Li-containing compositions directly}.
+        Passing Li$_3$YCl$_6$ raises a \texttt{ValueError} because Li
+        is not in the diagram's element list.
+  \item All compositions must have Li stripped before querying the GPCD.
+  \item The hull energy returned is \emph{per non-Li atom}.
+\end{enumerate}
+
+\paragraph{Normalization fix.}
+To keep all energies on a consistent ``per total atom (including Li)''
+basis, the following rescaling is applied:
+\begin{equation}
+  \Phi_{\rm hull}^{\rm per\,total}(c)
+  = \Phi_{\rm hull}^{\rm per\,non\text{-}Li}(\tilde{c})
+    \cdot \frac{N_{\rm non\text{-}Li}}{N_{\rm total}}
+  \label{eq:rescale}
+\end{equation}
+where $\tilde{c}$ is the composition with Li removed and $N_{\rm non\text{-}Li}$,
+$N_{\rm total}$ are the corresponding atom counts.
+
+\paragraph{Why this is self-consistent.}
+Consider Li$_3$YCl$_6$ ($N_{\rm total}=10$, $N_{\rm non\text{-}Li}=7$,
+$\tilde{c}=\text{YCl}_6$):
+\begin{equation*}
+  \Phi_{\rm hull}^{\rm per\,total}(\text{Li}_3\text{YCl}_6)
+  = \Phi_{\rm hull}^{\rm per\,non\text{-}Li}(\text{YCl}_6) \cdot \tfrac{7}{10}
+  = \frac{E(\text{Li}_3\text{YCl}_6) - 3\mu_{\rm Li}}{10}
+\end{equation*}
+which is exactly the grand-potential energy per total formula-unit atom.
+At $x=0$ (pure SE): $\Phi_{\rm hull}^{\rm per\,total}(c_{\rm SE}) = \Phi_{\rm hull}^{\rm per\,total}(\text{SE})$,
+so the reference and product energies cancel and $\Delta E_{\rm rxn}(0)=0$ as required.
+For FeF$_3$ and FeCl$_3$ (no Li): $N_{\rm non\text{-}Li}=N_{\rm total}$,
+so Eq.~\eqref{eq:rescale} reduces to the standard GPCD query.
+
+\subsubsection{Dense Scan and Kink Detection}
+
+Because there is no built-in ternary \texttt{InterfacialReactivity} class,
+the reaction energy is computed by a dense scan:
+\begin{lstlisting}[language=Python]
+xs = np.linspace(0, 1, N_SCAN=300)  # molar fraction grid
+for x in xs:
+    comp_mix = x/2*FeF3 + x/2*FeCl3 + (1-x)*SE  # element-wise
+    e_hull   = gpd_hull_per_total_atom(comp_mix, gpd)
+    e_ref    = (a_A*e_A + a_B*e_B + a_SE*e_SE) / total_atoms
+    E_rxn[x] = e_hull - e_ref
+\end{lstlisting}
+Kink positions (phase boundaries) are then detected by finding points
+where the slope $|dE_{\rm rxn}/dx|$ changes abruptly
+(threshold \texttt{SLOPE\_TOL}=$10^{-3}$\,eV/atom per molar fraction unit).
+
+\subsubsection{Results}
+
+Outputs: \texttt{chemical\_ternary\_all.png},
+\texttt{electrochemical\_ternary\_all.png},
+\texttt{ternary\_table.csv} (1346 rows).
+
+Key differences from Option A:
+\begin{itemize}
+  \item \textbf{Multiple kinks} appear between $x \approx 0.73$ and
+        $x = 1.0$ that are absent in Option A. These reflect a richer
+        ternary phase boundary structure when FeF$_3$ and FeCl$_3$ are
+        allowed to react independently and with each other.
+  \item \textbf{Smaller magnitude} near the cathode-rich end
+        ($\Delta E_{\rm rxn} \approx -0.03$ to $-0.04$\,eV/atom at
+        $x \approx 0.73$, $V=1$\,V for Li$_3$YCl$_6$) compared to
+        Option A's single kink value of $-0.84$\,eV/atom at $x=0.57$.
+        This is because at large $x$ (little SE present) the reaction
+        is mainly between the small amount of SE and the large excess
+        of cathode---a dilute perturbation.
+  \item The dense scan produces continuous curves with visible slope
+        changes (kinks), whereas Option A produces a piecewise-linear
+        curve with exactly the kink points returned by
+        \texttt{get\_kinks()}.
+  \item At $x=1$ (pure cathode, no SE), $\Delta E_{\rm rxn}$ may be
+        slightly non-zero, reflecting any thermodynamic driving force
+        for FeF$_3$ and FeCl$_3$ to react with each other (form mixed
+        Fe--F--Cl phases). This quantity is absent in Option A by
+        construction.
+\end{itemize}
+
+\subsubsection{Comparison of Option A vs.\ Option C}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+                         & \textbf{Option A}             & \textbf{Option C} \\
+\midrule
+Cathode representation   & Single pseudo-compound        & Two separate phases \\
+                         & Fe$_2$F$_3$Cl$_3$                 & FeF$_3$ + FeCl$_3$ \\
+Reference energy (cathode) & Hull energy of Fe$_2$F$_3$Cl$_3$ & $\frac{1}{2}E_{\rm hull}(\text{FeF}_3)
+                                                            +\frac{1}{2}E_{\rm hull}(\text{FeCl}_3)$ \\
+Composition space        & Binary (cathode vs.\ SE)      & Ternary (FeF$_3$, FeCl$_3$, SE) \\
+Kinks found              & 1--2 per voltage              & Multiple per voltage \\
+FeF$_3\leftrightarrow$FeCl$_3$ reaction & Absorbed & Explicitly captured \\
+Method used              & \texttt{GrandPotentialInterfacialReactivity} & Dense scan + GPCD hull \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{Output Files Summary}
+% ============================================================
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+File & Row & Description \\
+\midrule
+\texttt{chemical\_stability\_FeF3.png}         & 3 & Chemical, all 5 SEs \\
+\texttt{electrochemical\_stability\_FeF3.png}  & 3 & Electrochemical, 5 subplots \\
+\texttt{stability\_table\_FeF3.csv}            & 3 & 652 rows, 0.1\,V steps \\
+\texttt{chemical\_stability\_FeCl3.png}        & 4 & Chemical, all 5 SEs \\
+\texttt{electrochemical\_stability\_FeCl3.png} & 4 & Electrochemical, 5 subplots \\
+\texttt{stability\_table\_FeCl3.csv}           & 4 & 282 rows, 0.1\,V steps \\
+\texttt{chemical\_stability\_FeF3-FeCl3.png}        & 2A & Chemical, pseudo-compound \\
+\texttt{electrochemical\_stability\_FeF3-FeCl3.png} & 2A & Electrochemical, pseudo-compound \\
+\texttt{stability\_table\_FeF3-FeCl3.csv}           & 2A & 687 rows, 0.1\,V steps \\
+\texttt{chemical\_ternary\_all.png}            & 2C & Chemical, ternary method \\
+\texttt{electrochemical\_ternary\_all.png}     & 2C & Electrochemical, ternary method \\
+\texttt{ternary\_table.csv}                    & 2C & 1346 rows, 0.1\,V steps \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{Software and Data Sources}
+% ============================================================
+
+\begin{itemize}
+  \item \textbf{Database}: Materials Project (MP), accessed via \texttt{mp-api}
+        client; database version 2025.09.25.
+  \item \textbf{pymatgen} version: 2025.10.7 (updated API; \texttt{pd\_non\_grand}
+        is now a required positional argument in
+        \texttt{GrandPotentialInterfacialReactivity}).
+  \item \textbf{DFT functional}: GGA (PBE) for all Fe-halide entries.
+        No GGA+U correction is applied to Fe in halide environments
+        within the current MP database.
+  \item \textbf{Main scripts}:
+    \begin{itemize}
+      \item \texttt{electrochemical\_stability.py} --- Rows 2A, 3, 4 via
+            \texttt{InterfacialReactivity}
+      \item \texttt{ternary\_stability.py} --- Row 2C via dense GPCD scan
+    \end{itemize}
+\end{itemize}
+
+\end{document}
