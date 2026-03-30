@@ -3,6 +3,7 @@ ENCUT = 400.0
 IBRION = 6
 ISIF = 3
 ISMEAR = 0
+ISYM = 0
 LCHARG = False
 LREAL = Auto
 LWAVE = False
