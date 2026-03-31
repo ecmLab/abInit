@@ -1,0 +1,28 @@
+SYSTEM = NVT-AIMD user_Na5AlS4_Na5AlS4 800K
+
+! Electronic structure
+ENCUT  = 400
+EDIFF  = 1E-05
+NELMIN = 4
+PREC   = Normal
+ALGO   = Fast
+LREAL  = Auto
+
+! Molecular dynamics (NVT, Nose-Hoover)
+IBRION = 0
+MDALGO = 2
+NSW    = 10000
+POTIM  = 2.0
+TEBEG  = 800
+TEEND  = 800
+SMASS  = 0
+
+! Symmetry & output
+ISYM   = 0
+LWAVE  = .FALSE.
+LCHARG = .FALSE.
+NBLOCK = 1
+KBLOCK = 100
+
+! Parallelisation
+NPAR   = 4
