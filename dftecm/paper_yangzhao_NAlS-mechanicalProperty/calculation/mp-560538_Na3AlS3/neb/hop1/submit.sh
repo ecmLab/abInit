@@ -7,8 +7,8 @@
 
 #SBATCH -t 10:00:00
 
-#SBATCH --ntasks=40
-#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks=30
+#SBATCH --ntasks-per-node=30
 #SBATCH --mem-per-cpu=500M
 
 spack load vasp@6.3.2
