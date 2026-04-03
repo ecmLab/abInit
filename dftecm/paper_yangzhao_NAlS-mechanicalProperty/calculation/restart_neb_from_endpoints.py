@@ -27,7 +27,7 @@ NEB_INCAR = """\
 SYSTEM = NEB_refined
 
 ! Electronic structure
-ENCUT  = 400
+ENCUT  = 500
 EDIFF  = 1E-05
 PREC   = Normal
 ALGO   = Fast
