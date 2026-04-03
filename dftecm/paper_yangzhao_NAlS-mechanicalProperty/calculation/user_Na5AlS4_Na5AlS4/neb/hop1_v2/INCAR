@@ -1,0 +1,26 @@
+SYSTEM = NEB_refined
+
+! Electronic structure
+ENCUT  = 400
+EDIFF  = 1E-05
+PREC   = Normal
+ALGO   = Fast
+LREAL  = Auto
+ISYM   = 0
+
+! NEB settings
+IBRION = 3
+POTIM  = 0
+NSW    = 500
+EDIFFG = -0.05
+IMAGES = 9
+SPRING = -5
+LCLIMB = .TRUE.
+
+! Read wavefunctions from endpoint relaxations for faster convergence
+ISTART = 0
+LWAVE  = .FALSE.
+LCHARG = .FALSE.
+
+! Parallelisation
+NPAR   = 9

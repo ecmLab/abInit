@@ -26,7 +26,7 @@ INCAR_ENDPOINT = """\
 SYSTEM = endpoint_relax
 
 ! Electronic structure
-ENCUT  = 400
+ENCUT  = 500
 EDIFF  = 1E-05
 PREC   = Normal
 ALGO   = Fast
