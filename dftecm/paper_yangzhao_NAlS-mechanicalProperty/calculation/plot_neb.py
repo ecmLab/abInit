@@ -1,15 +1,15 @@
 """
-Two-figure NEB analysis:
+NEB analysis for hop1_v2 (9 intermediate images, pre-relaxed endpoints):
   (1) NaXS_neb_profiles.png  — all three energy profiles in one panel
   (2) NaXS_neb_structures.png — ASE structure views of initial and saddle images
 
 Run from calculation/:  python plot_neb.py
 """
 
+import re
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.patches import FancyArrowPatch
 from scipy.interpolate import CubicSpline
 from pathlib import Path
 
@@ -23,11 +23,9 @@ PHASES = [
     {
         "dir":      "mp-560538_Na3AlS3",
         "label":    r"Na$_3$AlS$_3$",
-        "hop":      (0, 17),          # (idx_i, idx_j) from setup_neb output
+        "hop":      (0, 17),
         "hop_dist": 3.225,
         "color":    "#E8A000",
-        "energies": [-222.09223164, -221.93623434, -221.85916256,
-                     -221.98028192, -222.11056638],
     },
     {
         "dir":      "user_Na5AlS4_Na5AlS4",
@@ -35,8 +33,6 @@ PHASES = [
         "hop":      (16, 21),
         "hop_dist": 3.295,
         "color":    "#C07000",
-        "energies": [-303.84804865, -303.50731989, -303.29618751,
-                     -303.50731989, -303.84804865],
     },
     {
         "dir":      "JVASP-12818_Na5InS4",
@@ -44,55 +40,114 @@ PHASES = [
         "hop":      (0, 7),
         "hop_dist": 3.328,
         "color":    "#00BCD4",
-        "energies": [-139.19245161, -138.77453993, -138.54302647,
-                     -138.80038807, -139.18313359],
     },
 ]
 
-# ── Figure 1: Energy profiles (single panel, all three overlaid) ──────────
+N_IMAGES = 9   # intermediate images in hop1_v2
+
+
+# ── Energy & force reader ─────────────────────────────────────────────────
+def read_outcar(path):
+    """Return (last_energy_eV, max_force_eV_per_A) from an OUTCAR."""
+    text = Path(path).read_text()
+    energies = re.findall(r"energy\s+without\s+entropy=\s+([\S]+)", text)
+    E = float(energies[-1]) if energies else None
+
+    sections = text.split(
+        "POSITION                                       TOTAL-FORCE (eV/Angst)"
+    )
+    max_f = None
+    if len(sections) > 1:
+        forces = []
+        for line in sections[-1].splitlines()[2:]:
+            parts = line.split()
+            if len(parts) == 6:
+                try:
+                    fx, fy, fz = float(parts[3]), float(parts[4]), float(parts[5])
+                    forces.append((fx**2 + fy**2 + fz**2) ** 0.5)
+                except Exception:
+                    break
+            else:
+                break
+        max_f = max(forces) if forces else None
+    return E, max_f
+
+
+def load_phase(phase):
+    """Load all energies and max forces for a phase from hop1_v2 + endpoint relaxes."""
+    base = CALC_DIR / phase["dir"]
+    ep0  = base / "neb" / "hop1" / "00_relax" / "OUTCAR"
+    ep10 = base / "neb" / "hop1" / "06_relax" / "OUTCAR"
+    neb  = base / "neb" / "hop1_v2"
+
+    E0,  _ = read_outcar(ep0)
+    E10, _ = read_outcar(ep10)
+
+    img_E, img_maxF = [], []
+    for i in range(1, N_IMAGES + 1):
+        E, mf = read_outcar(neb / f"{i:02d}" / "OUTCAR")
+        img_E.append(E)
+        img_maxF.append(mf)
+
+    all_E   = [E0] + img_E + [E10]
+    E_ref   = min(E0, E10)
+    dE      = [e - E_ref for e in all_E]
+    max_f   = max(img_maxF)
+    return dE, max_f
+
+
+# ── Figure 1: Energy profiles ─────────────────────────────────────────────
 fig, ax = plt.subplots(figsize=(6, 4.5))
 
 for p in PHASES:
-    E     = np.array(p["energies"])
-    E_ref = min(E[0], E[-1])
-    dE    = E - E_ref
+    dE, max_f = load_phase(p)
+    converged = max_f < 0.05
 
-    # 7-point path (normalised x: 0→1)
-    x7  = np.linspace(0, 1, 7)
-    dE7 = np.array([E[0]-E_ref, dE[0], dE[1], dE[2], dE[3], dE[4], E[-1]-E_ref])
+    n_total = N_IMAGES + 2          # 11 points including endpoints
+    x = np.linspace(0, 1, n_total)
 
-    # Clamped spline: zero first derivative at endpoints → no spurious oscillation
-    cs     = CubicSpline(x7, dE7, bc_type="clamped")
+    cs     = CubicSpline(x, dE, bc_type="clamped")
     x_fine = np.linspace(0, 1, 500)
     y_fine = cs(x_fine)
 
-    # Ea from discrete images: saddle (img03) minus lower endpoint — physically correct
-    Ea     = dE[2]          # E_img03 - min(E_img01, E_img05)
-    y_min  = min(dE7[0], dE7[-1])   # lower endpoint energy in relative coords
-    x_peak = x7[3]          # img03 position
+    saddle_idx = int(np.argmax(dE))
+    Ea         = dE[saddle_idx]
+    y_min      = min(dE[0], dE[-1])   # lower endpoint
 
     clr = p["color"]
-    ax.plot(x_fine, y_fine, color=clr, lw=2.5, zorder=3, label=p["label"])
-    ax.scatter(x7[1:6], dE7[1:6], color=clr, s=55, zorder=5,
+    lbl = p["label"]
+
+    # Line style: solid if converged, dashed if not
+    ls = "-" if converged else "--"
+    ax.plot(x_fine, y_fine, color=clr, lw=2.5, ls=ls, zorder=3, label=lbl)
+
+    # Image dots (exclude endpoints)
+    ax.scatter(x[1:-1], dE[1:-1], color=clr, s=45, zorder=5,
                edgecolors="white", linewidths=0.8)
-    ax.scatter([x7[0], x7[-1]], [dE7[0], dE7[-1]], color=clr, s=55,
+    ax.scatter([x[0], x[-1]], [dE[0], dE[-1]], color=clr, s=45,
                marker="s", zorder=5, edgecolors="white", linewidths=0.8)
 
-    # Arrow from saddle (max) down to the lower endpoint (min)
-    ax.annotate("", xy=(x_peak, y_min), xytext=(x_peak, Ea),
+    # Ea annotation arrow
+    ax.annotate("", xy=(x[saddle_idx], y_min), xytext=(x[saddle_idx], Ea),
                 arrowprops=dict(arrowstyle="<->", color=clr, lw=1.2))
-    ax.text(x_peak + 0.025, (Ea + y_min) / 2,
-            f"{Ea:.3f} eV", fontsize=8.5, color=clr, fontweight="bold", va="center")
+    suffix = "" if converged else "*"
+    ax.text(x[saddle_idx] + 0.025, (Ea + y_min) / 2,
+            f"{Ea:.3f} eV{suffix}", fontsize=8.5, color=clr,
+            fontweight="bold", va="center")
+
+    print(f"{lbl}  Ea={Ea:.4f} eV  max_F={max_f:.4f} eV/Å  converged={converged}")
 
 ax.axhline(0, color="gray", lw=0.6, ls=":", alpha=0.6)
 ax.set_xlabel("Reaction coordinate (normalised)", fontsize=11)
 ax.set_ylabel("Relative energy (eV)", fontsize=11)
 ax.set_xlim(-0.04, 1.04)
-ax.set_ylim(bottom=-0.06)
+ax.set_ylim(bottom=-0.02)
 ax.grid(True, linestyle="--", alpha=0.3)
 ax.legend(fontsize=10, framealpha=0.9, loc="upper right")
-ax.text(0.01, 0.98, "preliminary (NSW = 300)", transform=ax.transAxes,
-        fontsize=7.5, color="gray", va="top", style="italic")
+ax.text(0.01, 0.98,
+        "Dashed: forces not fully converged (*)",
+        transform=ax.transAxes, fontsize=7.5, color="gray",
+        va="top", style="italic")
 
 plt.tight_layout()
 out1 = DOCS_DIR / "NaXS_neb_profiles.png"
@@ -100,21 +155,30 @@ plt.savefig(out1, dpi=200, bbox_inches="tight")
 print(f"Saved → {out1.name}")
 plt.close()
 
-# ── Figure 2: Structure snapshots (initial + saddle per phase) ────────────
-# Element colours matching the paper scheme
-ase_colors = {"Na": "#FFD700", "Al": "#F4A900", "In": "#00BCD4", "S": "#FFFF00"}
 
+# ── Figure 2: Structure snapshots (initial + saddle per phase) ────────────
 fig2, axes2 = plt.subplots(2, 3, figsize=(12, 7))
 
 for col, p in enumerate(PHASES):
-    neb_dir = CALC_DIR / p["dir"] / "neb" / "hop1"
+    neb_dir = CALC_DIR / p["dir"] / "neb" / "hop1_v2"
     idx_i, idx_j = p["hop"]
 
-    for row, (img_id, title_sfx) in enumerate([("00", "Initial state"),
-                                                ("03", "Saddle point")]):
-        poscar = neb_dir / img_id / "POSCAR"
-        ax = axes2[row][col]
+    # Saddle: middle image (img05 for 9 images, or peak image)
+    dE, _ = load_phase(p)
+    saddle_img = int(np.argmax(dE))   # 0-indexed over all 11; endpoints are 0 and 10
 
+    for row, (img_id, title_sfx) in enumerate([
+        (f"{1:02d}", "Initial state"),
+        (f"{saddle_img:02d}", "Saddle point"),
+    ]):
+        # img_id 00 and 10 live in endpoint relax dirs; 01-09 in hop1_v2
+        if img_id in ("00", "10"):
+            ep_label = "00_relax" if img_id == "00" else "06_relax"
+            poscar = CALC_DIR / p["dir"] / "neb" / "hop1" / ep_label / "CONTCAR"
+        else:
+            poscar = neb_dir / img_id / "POSCAR"
+
+        ax = axes2[row][col]
         if not poscar.exists():
             ax.text(0.5, 0.5, f"{img_id}/POSCAR\nnot found",
                     ha="center", va="center", transform=ax.transAxes)
@@ -122,14 +186,11 @@ for col, p in enumerate(PHASES):
             continue
 
         atoms = ase.io.read(str(poscar), format="vasp")
-
-        # Colour atoms by species, highlight hopping Na in red
         natoms = len(atoms)
-        colors = []
-        radii  = []
+        colors, radii = [], []
         for i, a in enumerate(atoms):
             if a.symbol == "Na":
-                if row == 0 and i == idx_i:   # hopping Na in initial image
+                if row == 0 and i == idx_i:
                     colors.append("#FF3333"); radii.append(0.55)
                 else:
                     colors.append("#FFD700"); radii.append(0.45)
@@ -142,10 +203,7 @@ for col, p in enumerate(PHASES):
             else:
                 colors.append("gray"); radii.append(0.40)
 
-        # Saddle: highlight the hopping Na (it has moved relative to initial)
         if row == 1:
-            # hopping atom index in vacancy structure = hop_in_base
-            # after removing idx_j, the new index of idx_i:
             base_idx = [i for i in range(natoms + 1) if i != idx_j]
             if idx_i in base_idx:
                 new_idx = base_idx.index(idx_i)
@@ -153,17 +211,13 @@ for col, p in enumerate(PHASES):
                     colors[new_idx] = "#FF3333"
                     radii[new_idx]  = 0.55
 
-        plot_atoms(atoms, ax, radii=radii, colors=colors,
-                   rotation=("10x,10y,0z"))
-
+        plot_atoms(atoms, ax, radii=radii, colors=colors, rotation="10x,10y,0z")
         ax.set_title(f"{p['label']}  —  {title_sfx}", fontsize=9.5)
         ax.axis("off")
 
-# Row labels
 axes2[0][0].set_ylabel("Initial", fontsize=10)
 axes2[1][0].set_ylabel("Saddle", fontsize=10)
 
-# Legend
 legend_items = [
     mpatches.Patch(color="#FF3333", label="Hopping Na"),
     mpatches.Patch(color="#FFD700", label="Na"),
@@ -173,8 +227,7 @@ legend_items = [
 ]
 fig2.legend(handles=legend_items, loc="lower center", ncol=5,
             fontsize=9, framealpha=0.9, bbox_to_anchor=(0.5, 0.01))
-
-plt.suptitle("Na$^+$ migration path — initial and saddle-point structures",
+plt.suptitle(r"Na$^+$ migration path — initial and saddle-point structures",
              fontsize=11, y=1.00)
 plt.tight_layout(rect=[0, 0.06, 1, 1])
 out2 = DOCS_DIR / "NaXS_neb_structures.png"

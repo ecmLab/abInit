@@ -1,0 +1,17 @@
+SYSTEM = endpoint_relax_bottleneck
+
+ENCUT  = 500
+EDIFF  = 1E-06
+PREC   = Accurate
+ALGO   = Fast
+LREAL  = .FALSE.
+ADDGRID = .TRUE.
+ISYM   = 0
+
+IBRION = 2
+ISIF   = 2
+NSW    = 300
+EDIFFG = -0.02
+
+LWAVE  = .TRUE.
+LCHARG = .FALSE.
