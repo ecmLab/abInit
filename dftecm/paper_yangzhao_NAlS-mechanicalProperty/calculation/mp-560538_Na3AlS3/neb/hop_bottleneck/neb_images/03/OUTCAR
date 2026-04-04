@@ -1,0 +1,762 @@
+ vasp.6.3.2 27Jun22 (build Jun 14 2024 17:29:11) complex                         
+ executed on             LinuxGNU date 2026.04.03  21:34:47
+ running on   27 total cores
+ each image running on    3 cores
+ distrk:  each k-point on    3 cores,    1 groups
+ distr:  one band on NCORE=   1 cores,    3 groups
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+ INCAR:
+   SYSTEM = NEB_bottleneck
+   ENCUT = 500
+   EDIFF = 1E-06
+   PREC = Accurate
+   ALGO = Fast
+   LREAL = .FALSE.
+   ADDGRID = .TRUE.
+   ISYM = 0
+   IBRION = 3
+   POTIM = 0
+   NSW = 1000
+   EDIFFG = -0.05
+   IMAGES = 9
+   SPRING = -5
+   LCLIMB = .TRUE.
+   ISTART = 0
+   LWAVE = .FALSE.
+   LCHARG = .FALSE.
+   NPAR = 9
+
+ POTCAR:    PAW_PBE Na_pv 19Sep2006               
+ POTCAR:    PAW_PBE Al 04Jan2001                  
+ POTCAR:    PAW_PBE S 06Sep2000                   
+ -----------------------------------------------------------------------------
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|     The value NPAR = 9 specified in the INCAR file was overwritten,         |
+|     because it was not compatible with the 3 processes available:           |
+|     NPAR = 3                                                                |
+|     was used instead, please check that this makes sense for your           |
+|     machine.                                                                |
+|                                                                             |
+ -----------------------------------------------------------------------------
+
+ POTCAR:    PAW_PBE Na_pv 19Sep2006               
+   SHA256 =  6a2f546d9e11350984debacf3dc457d8cffc0868e817d445faca461816a32b94 Na_pv/POTCAR          
+   COPYR  = (c) Copyright 19Sep2006 Georg Kresse                                                    
+   COPYR  = This file is part of the software VASP. Any use, copying, and all other rights are regul
+   COPYR  = If you do not have a valid VASP license, you may not use, copy or distribute this file. 
+   VRHFIN =Na: p6s1                                                                                 
+   LEXCH  = PE                                                                                      
+   EATOM  =   766.0439 eV,   56.3026 Ry                                                             
+                                                                                                    
+   TITEL  = PAW_PBE Na_pv 19Sep2006                                                                 
+   LULTRA =        F    use ultrasoft PP ?                                                          
+   IUNSCR =        1    unscreen: 0-lin 1-nonlin 2-no                                               
+   RPACOR =    1.800    partial core radius                                                         
+   POMASS =   22.990; ZVAL   =    7.000    mass and valenz                                          
+   RCORE  =    2.200    outmost cutoff radius                                                       
+   RWIGS  =    2.200; RWIGS  =    1.164    wigner-seitz radius (au A)                               
+   ENMAX  =  259.561; ENMIN  =  194.671 eV                                                          
+   ICORE  =        2    local potential                                                             
+   LCOR   =        T    correct aug charges                                                         
+   LPAW   =        T    paw PP                                                                      
+   EAUG   =  368.056                                                                                
+   DEXC   =    0.000                                                                                
+   RMAX   =    2.245    core radius for proj-oper                                                   
+   RAUG   =    1.300    factor for augmentation sphere                                              
+   RDEP   =    2.259    radius for radial grids                                                     
+   RDEPT  =    1.738    core radius for aug-charge                                                  
+                                                                                                    
+   Atomic configuration                                                                             
+    5 entries                                                                                       
+     n  l   j            E        occ.                                                              
+     1  0  0.50     -1033.6933   2.0000                                                             
+     2  0  0.50       -56.7526   2.0000                                                             
+     2  1  1.50       -28.6721   6.0000                                                             
+     3  0  0.50        -2.7440   1.0000                                                             
+     3  2  1.50        -1.3606   0.0000                                                             
+   Description                                                                                      
+     l       E           TYP  RCUT    TYP  RCUT                                                     
+     1    -28.6720912     23  2.000                                                                 
+     1      6.8029130     23  2.000                                                                 
+     0     -2.7439560     23  2.200                                                                 
+     0     34.0145650     23  2.200                                                                 
+     2     -1.3605826     23  2.200                                                                 
+  local pseudopotential read in
+  partial core-charges read in
+  partial kinetic energy density read in
+  atomic valenz-charges read in
+  non local Contribution for L=           1  read in
+    real space projection operators read in
+  non local Contribution for L=           1  read in
+    real space projection operators read in
+  non local Contribution for L=           0  read in
+    real space projection operators read in
+  non local Contribution for L=           0  read in
+    real space projection operators read in
+    PAW grid and wavefunctions read in
+
+   number of l-projection  operators is LMAX  =           4
+   number of lm-projection operators is LMMAX =           8
+
+ POTCAR:    PAW_PBE Al 04Jan2001                  
+   SHA256 =  17880443556af62b473fe41b62a467bd001ad55d2cabe504a3f22e34d4e9db96 Al/POTCAR             
+   COPYR  = (c) Copyright 04Jan2001 Georg Kresse                                                    
+   COPYR  = This file is part of the software VASP. Any use, copying, and all other rights are regul
+   COPYR  = If you do not have a valid VASP license, you may not use, copy or distribute this file. 
+   VRHFIN =Al: s2p1                                                                                 
+   LEXCH  = PE                                                                                      
+   EATOM  =    53.5387 eV,    3.9350 Ry                                                             
+                                                                                                    
+   TITEL  = PAW_PBE Al 04Jan2001                                                                    
+   LULTRA =        F    use ultrasoft PP ?                                                          
+   IUNSCR =        1    unscreen: 0-lin 1-nonlin 2-no                                               
+   RPACOR =    1.500    partial core radius                                                         
+   POMASS =   26.981; ZVAL   =    3.000    mass and valenz                                          
+   RCORE  =    1.900    outmost cutoff radius                                                       
+   RWIGS  =    2.650; RWIGS  =    1.402    wigner-seitz radius (au A)                               
+   ENMAX  =  240.300; ENMIN  =  180.225 eV                                                          
+   ICORE  =        2    local potential                                                             
+   LCOR   =        T    correct aug charges                                                         
+   LPAW   =        T    paw PP                                                                      
+   EAUG   =  291.052                                                                                
+   DEXC   =    0.000                                                                                
+   RMAX   =    1.939    core radius for proj-oper                                                   
+   RAUG   =    1.300    factor for augmentation sphere                                              
+   RDEP   =    1.966    radius for radial grids                                                     
+   RDEPT  =    1.856    core radius for aug-charge                                                  
+                                                                                                    
+   Atomic configuration                                                                             
+    6 entries                                                                                       
+     n  l   j            E        occ.                                                              
+     1  0  0.50     -1511.1048   2.0000                                                             
+     2  0  0.50      -108.1629   2.0000                                                             
+     2  1  1.50       -69.6402   6.0000                                                             
+     3  0  0.50        -7.7528   2.0000                                                             
+     3  1  1.50        -2.7121   1.0000                                                             
+     3  2  2.50        -2.7212   0.0000                                                             
+   Description                                                                                      
+     l       E           TYP  RCUT    TYP  RCUT                                                     
+     0     -7.7528455     23  1.900                                                                 
+     0     -3.3096929     23  1.900                                                                 
+     1     -2.7120682     23  1.900                                                                 
+     1     13.6058260     23  1.900                                                                 
+     2     -2.7211652      7  1.900                                                                 
+  local pseudopotential read in
+  partial core-charges read in
+  partial kinetic energy density read in
+  atomic valenz-charges read in
+  non local Contribution for L=           0  read in
+    real space projection operators read in
+  non local Contribution for L=           0  read in
+    real space projection operators read in
+  non local Contribution for L=           1  read in
+    real space projection operators read in
+  non local Contribution for L=           1  read in
+    real space projection operators read in
+    PAW grid and wavefunctions read in
+
+   number of l-projection  operators is LMAX  =           4
+   number of lm-projection operators is LMMAX =           8
+
+ POTCAR:    PAW_PBE S 06Sep2000                   
+   SHA256 =  0fc7481fb0695f01bdc6462160264c5c84044ae9ec85a907d398b887a2bc3132 S/POTCAR              
+   COPYR  = (c) Copyright 06Sep2000 Georg Kresse                                                    
+   COPYR  = This file is part of the software VASP. Any use, copying, and all other rights are regul
+   COPYR  = If you do not have a valid VASP license, you may not use, copy or distribute this file. 
+   VRHFIN =S : s2p4                                                                                 
+   LEXCH  = PE                                                                                      
+   EATOM  =   276.8230 eV,   20.3459 Ry                                                             
+                                                                                                    
+   TITEL  = PAW_PBE S 06Sep2000                                                                     
+   LULTRA =        F    use ultrasoft PP ?                                                          
+   IUNSCR =        1    unscreen: 0-lin 1-nonlin 2-no                                               
+   RPACOR =    1.500    partial core radius                                                         
+   POMASS =   32.066; ZVAL   =    6.000    mass and valenz                                          
+   RCORE  =    1.900    outmost cutoff radius                                                       
+   RWIGS  =    2.200; RWIGS  =    1.164    wigner-seitz radius (au A)                               
+   ENMAX  =  258.689; ENMIN  =  194.016 eV                                                          
+   ICORE  =        2    local potential                                                             
+   LCOR   =        T    correct aug charges                                                         
+   LPAW   =        T    paw PP                                                                      
+   EAUG   =  335.092                                                                                
+   DEXC   =    0.000                                                                                
+   RMAX   =    1.942    core radius for proj-oper                                                   
+   RAUG   =    1.300    factor for augmentation sphere                                              
+   RDEP   =    1.954    radius for radial grids                                                     
+   RDEPT  =    1.744    core radius for aug-charge                                                  
+                                                                                                    
+   Atomic configuration                                                                             
+    6 entries                                                                                       
+     n  l   j            E        occ.                                                              
+     1  0  0.50     -2405.8406   2.0000                                                             
+     2  0  0.50      -211.7007   2.0000                                                             
+     2  1  1.50      -156.4958   6.0000                                                             
+     3  0  0.50       -17.2562   2.0000                                                             
+     3  1  0.50        -7.0085   4.0000                                                             
+     3  2  1.50        -6.8029   0.0000                                                             
+   Description                                                                                      
+     l       E           TYP  RCUT    TYP  RCUT                                                     
+     0    -17.2561641     23  1.900                                                                 
+     0    -15.8743224     23  1.900                                                                 
+     1     -7.0085400     23  1.900                                                                 
+     1     -2.7779785     23  1.900                                                                 
+     2     -6.8029130     23  1.900                                                                 
+  local pseudopotential read in
+  partial core-charges read in
+  partial kinetic energy density read in
+  atomic valenz-charges read in
+  non local Contribution for L=           0  read in
+    real space projection operators read in
+  non local Contribution for L=           0  read in
+    real space projection operators read in
+  non local Contribution for L=           1  read in
+    real space projection operators read in
+  non local Contribution for L=           1  read in
+    real space projection operators read in
+    PAW grid and wavefunctions read in
+
+   number of l-projection  operators is LMAX  =           4
+   number of lm-projection operators is LMMAX =           8
+
+ -----------------------------------------------------------------------------
+|                                                                             |
+|               ----> ADVICE to this user running VASP <----                  |
+|                                                                             |
+|     You have a (more or less) 'large supercell' and for larger cells it     |
+|     might be more efficient to use real-space projection operators.         |
+|     Therefore, try LREAL= Auto in the INCAR file.                           |
+|     Mind: For very accurate calculation, you might also keep the            |
+|     reciprocal projection scheme (i.e. LREAL=.FALSE.).                      |
+|                                                                             |
+ -----------------------------------------------------------------------------
+
+  PAW_PBE Na_pv 19Sep2006               :
+ energy of atom  1       EATOM= -766.0439
+ kinetic energy error for atom=    0.0021 (will be added to EATOM!!)
+  PAW_PBE Al 04Jan2001                  :
+ energy of atom  2       EATOM=  -53.5387
+ kinetic energy error for atom=    0.0003 (will be added to EATOM!!)
+  PAW_PBE S 06Sep2000                   :
+ energy of atom  3       EATOM= -276.8230
+ kinetic energy error for atom=    0.0020 (will be added to EATOM!!)
+
+
+ POSCAR: Na3AlS3 bottleneck NEB image 03
+  positions in direct lattice
+  No initial velocities read in
+ exchange correlation table for  LEXCH =        8
+   RHO(1)=    0.500       N(1)  =     2000
+   RHO(2)=  100.500       N(2)  =     4000
+
+ POSCAR: Na3AlS3 bottleneck NEB image 00
+  positions in direct lattice
+  No initial velocities read in
+
+ POSCAR: Na3AlS3 bottleneck NEB image 10
+  positions in direct lattice
+  No initial velocities read in
+
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+ ion  position               nearest neighbor table
+   1  0.931  0.084  0.853-   2 2.29  52 2.46  51 2.55
+   2  0.772  0.160  0.924-  42 1.87   1 2.29
+   3  0.792  0.650  0.683-  46 2.02  50 2.70
+   4  0.790  0.018  0.456-  38 2.45  48 2.65
+   5  0.036  0.220  0.379-  45 1.38   7 1.70   6 2.67  25 2.85
+   6  0.124  0.524  0.413-  45 1.79  30 2.03  39 2.31  13 2.47   5 2.67  25 2.82
+   7  0.947  0.355  0.307-  45 1.51   5 1.70
+   8  0.402  0.180  0.338-  34 1.31  26 1.74  18 2.30  55 2.46  20 2.71
+   9  0.468  0.424  0.694-  32 2.74
+  10  0.256  0.510  0.986-
+  11  0.242  0.007  0.985-
+  12  0.754  0.458  0.514-
+  13  0.180  0.490  0.244-   6 2.47
+  14  0.030  0.911  0.178-  36 2.72
+  15  0.583  0.616  0.342-  55 2.66  48 2.74
+  16  0.323  0.993  0.749-
+  17  0.055  0.899  0.672-  50 2.75  35 2.75  44 2.76
+  18  0.316  0.995  0.245-   8 2.30
+  19  0.178  0.486  0.750-
+  20  0.472  0.419  0.184-   8 2.71  47 2.77  34 2.79
+  21  0.679  0.004  0.747-
+  22  0.628  0.578  0.915-  42 2.44  41 2.73
+  23  0.676  0.015  0.236-
+  24  0.004  0.328  0.070-  33 2.22  43 2.22  36 2.29  51 2.30  31 3.03
+  25  0.007  0.322  0.568-  44 2.21  49 2.23  50 2.29  45 2.31   6 2.82   5 2.85  30 3.06
+  26  0.505  0.177  0.426-   8 1.74  34 2.23  48 2.23  55 2.29  53 2.30  27 3.06
+  27  0.489  0.830  0.570-  40 2.22  46 2.23  53 2.30  55 2.31  26 3.06
+  28  0.503  0.167  0.923-  42 2.22  32 2.22  41 2.30  47 2.30  29 3.02
+  29  0.491  0.833  0.073-  54 2.22  37 2.23  47 2.29  41 2.29  28 3.02
+  30  0.988  0.671  0.425-   6 2.03  38 2.23  39 2.23  45 2.28  50 2.30  25 3.06
+  31  0.991  0.667  0.923-  52 2.22  35 2.23  51 2.30  36 2.30  24 3.03
+  32  0.349  0.291  0.858-  28 2.22   9 2.74
+  33  0.165  0.213  0.123-  24 2.22
+  34  0.359  0.325  0.361-   8 1.31  26 2.23  20 2.79
+  35  0.143  0.797  0.856-  31 2.23  17 2.75
+  36  0.998  0.618  0.093-  24 2.29  31 2.30  14 2.72
+  37  0.638  0.690  0.142-  29 2.23
+  38  0.827  0.775  0.365-  30 2.23   4 2.45
+  39  0.133  0.826  0.363-  30 2.23   6 2.31
+  40  0.330  0.719  0.629-  27 2.22
+  41  0.501  0.875  0.904-  29 2.29  28 2.30  22 2.73
+  42  0.656  0.294  0.861-   2 1.87  28 2.22  22 2.44
+  43  0.862  0.180  0.143-  24 2.22
+  44  0.166  0.215  0.628-  25 2.21  17 2.76
+  45  0.009  0.386  0.398-   5 1.38   7 1.51   6 1.79  30 2.28  25 2.31
+  46  0.639  0.681  0.626-   3 2.02  27 2.23
+  47  0.500  0.124  0.093-  29 2.29  28 2.30  20 2.77
+  48  0.667  0.280  0.366-  26 2.23   4 2.65  15 2.74
+  49  0.860  0.168  0.627-  25 2.23
+  50  0.986  0.609  0.594-  25 2.29  30 2.30   3 2.70  17 2.75
+  51  0.995  0.377  0.901-  31 2.30  24 2.30   1 2.55
+  52  0.837  0.797  0.866-  31 2.22   1 2.46
+  53  0.505  0.119  0.595-  27 2.30  26 2.30
+  54  0.331  0.716  0.125-  29 2.22
+  55  0.484  0.891  0.400-  26 2.29  27 2.31   8 2.46  15 2.66
+
+ -----------------------------------------------------------------------------
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|     The distance between some ions is very small. Please check the          |
+|     nearest-neighbor list in the OUTCAR file.                               |
+|     I HOPE YOU KNOW WHAT YOU ARE DOING!                                     |
+|                                                                             |
+ -----------------------------------------------------------------------------
+
+
+IMPORTANT INFORMATION: All symmetrisations will be switched off!
+NOSYMM: (Re-)initialisation of all symmetry stuff for point group C_1.
+
+
+----------------------------------------------------------------------------------------
+
+                                     Primitive cell                                     
+
+  volume of cell :    1265.6883
+
+  direct lattice vectors                    reciprocal lattice vectors
+    12.182820328  0.000000000  0.000000000     0.082082800  0.000000000 -0.000000000
+    -0.000000000  7.567469321  1.197063940     0.000000000  0.132161791 -0.000108847
+     0.000000000  0.011308293 13.730452437    -0.000000000 -0.011522280  0.072840302
+
+  length of vectors
+    12.182820328  7.661563417 13.730457094     0.082082800  0.132161836  0.073746000
+
+  position of ions in fractional coordinates (direct lattice)
+     0.931286701  0.083742223  0.853129781
+     0.771810066  0.159983491  0.924179292
+     0.791701732  0.650191028  0.682582887
+     0.790002558  0.017796504  0.456211722
+     0.036393673  0.219658758  0.379186553
+     0.124398027  0.524233108  0.412634894
+     0.947427973  0.354821759  0.307053121
+     0.401579033  0.179590308  0.337761961
+     0.468063536  0.423896176  0.694371997
+     0.256110780  0.509834157  0.985548938
+     0.241778757  0.006574208  0.985446996
+     0.754410597  0.458361679  0.513969201
+     0.180348264  0.489950062  0.244110415
+     0.030286180  0.911462614  0.177913109
+     0.582957954  0.615738842  0.342153000
+     0.323297555  0.992981027  0.749401772
+     0.055015699  0.899177450  0.671628983
+     0.315754738  0.994782146  0.244637624
+     0.177682850  0.485903932  0.749893519
+     0.471515894  0.418957973  0.183901203
+     0.678577919  0.004230967  0.746793510
+     0.627541512  0.577845478  0.915027870
+     0.676181484  0.014590729  0.236469753
+     0.004236613  0.328100259  0.070051365
+     0.006522242  0.322460731  0.567919558
+     0.505263162  0.176909266  0.425596969
+     0.488996859  0.830355790  0.569788826
+     0.502599294  0.167387080  0.923378268
+     0.491411002  0.833394563  0.072516335
+     0.987651457  0.670561826  0.424697589
+     0.991203849  0.667218041  0.923287400
+     0.348612951  0.291261463  0.858418237
+     0.164993511  0.212623121  0.122723522
+     0.358581751  0.324857703  0.360764259
+     0.143111139  0.797140561  0.855836286
+     0.998421849  0.617585287  0.092663977
+     0.637664705  0.690494242  0.142330070
+     0.826521141  0.774525422  0.364516745
+     0.133285508  0.826154369  0.363116508
+     0.330109008  0.718658825  0.629430349
+     0.501218803  0.874744530  0.903619219
+     0.656344434  0.293674709  0.860681839
+     0.861556610  0.180162145  0.142613830
+     0.165678221  0.215460548  0.628063731
+     0.009309457  0.386141374  0.398092674
+     0.639002623  0.680568023  0.625651442
+     0.500076168  0.124373049  0.093078771
+     0.666669131  0.279656002  0.365684211
+     0.859910330  0.167960273  0.627366996
+     0.985603566  0.608783143  0.594285773
+     0.994781394  0.376696691  0.900794334
+     0.836657710  0.797346226  0.865530971
+     0.505423971  0.118854664  0.595108210
+     0.331353037  0.715557532  0.125082860
+     0.484001208  0.890948253  0.399803673
+
+  ion indices of the primitive-cell ions
+   primitive index   ion index
+                 1           1
+                 2           2
+                 3           3
+                 4           4
+                 5           5
+                 6           6
+                 7           7
+                 8           8
+                 9           9
+                10          10
+                11          11
+                12          12
+                13          13
+                14          14
+                15          15
+                16          16
+                17          17
+                18          18
+                19          19
+                20          20
+                21          21
+                22          22
+                23          23
+                24          24
+                25          25
+                26          26
+                27          27
+                28          28
+                29          29
+                30          30
+                31          31
+                32          32
+                33          33
+                34          34
+                35          35
+                36          36
+                37          37
+                38          38
+                39          39
+                40          40
+                41          41
+                42          42
+                43          43
+                44          44
+                45          45
+                46          46
+                47          47
+                48          48
+                49          49
+                50          50
+                51          51
+                52          52
+                53          53
+                54          54
+                55          55
+
+----------------------------------------------------------------------------------------
+
+
+
+ KPOINTS: Gamma-point only                        
+
+Automatic generation of k-mesh.
+ Grid dimensions read from file:
+ generate k-points for:    1    1    1
+
+ Generating k-lattice:
+
+  Cartesian coordinates                     Fractional coordinates (reciprocal lattice)
+     0.082082800  0.000000000 -0.000000000     1.000000000  0.000000000 -0.000000000
+     0.000000000  0.132161791 -0.000108847    -0.000000000  1.000000000 -0.000000000
+    -0.000000000 -0.011522280  0.072840302    -0.000000000 -0.000000000  1.000000000
+
+  Length of vectors
+     0.082082800  0.132161836  0.073746000
+
+  Shift w.r.t. Gamma in fractional coordinates (k-lattice)
+     0.000000000  0.000000000  0.000000000
+
+ 
+ Subroutine IBZKPT returns following result:
+ ===========================================
+ 
+ Found      1 irreducible k-points:
+ 
+ Following reciprocal coordinates:
+            Coordinates               Weight
+  0.000000  0.000000  0.000000      1.000000
+ 
+ Following cartesian coordinates:
+            Coordinates               Weight
+  0.000000  0.000000  0.000000      1.000000
+ 
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+
+
+ Dimension of arrays:
+   k-points           NKPTS =      1   k-points in BZ     NKDIM =      1   number of bands    NBANDS=    198
+   number of dos      NEDOS =    301   number of ions     NIONS =     55
+   non local maximal  LDIM  =      4   non local SUM 2l+1 LMDIM =      8
+   total plane-waves  NPLWV = 504000
+   max r-space proj   IRMAX =      1   max aug-charges    IRDMAX= 124168
+   dimension x,y,z NGX =    90 NGY =   56 NGZ =  100
+   dimension x,y,z NGXF=   180 NGYF=  112 NGZF=  200
+   support grid    NGXF=   360 NGYF=  224 NGZF=  400
+   ions per type =              23   8  24
+   NGX,Y,Z   is equivalent  to a cutoff of  12.28, 12.15, 12.11 a.u.
+   NGXF,Y,Z  is equivalent  to a cutoff of  24.56, 24.30, 24.22 a.u.
+
+ SYSTEM =  NEB_bottleneck                          
+ POSCAR =  Na3AlS3 bottleneck NEB image 03         
+
+ Startparameter for this run:
+   NWRITE =      2    write-flag & timer
+   PREC   = accura    normal or accurate (medium, high low for compatibility)
+   ISTART =      0    job   : 0-new  1-cont  2-samecut
+   ICHARG =      2    charge: 1-file 2-atom 10-const
+   ISPIN  =      1    spin polarized calculation?
+   LNONCOLLINEAR =      F non collinear calculations
+   LSORBIT =      F    spin-orbit coupling
+   INIWAV =      1    electr: 0-lowe 1-rand  2-diag
+   LASPH  =      F    aspherical Exc in radial PAW
+ Electronic Relaxation 1
+   ENCUT  =  500.0 eV  36.75 Ry    6.06 a.u.  22.21 13.97 25.03*2*pi/ulx,y,z
+   ENINI  =  500.0     initial cutoff
+   ENAUG  =  368.1 eV  augmentation charge cutoff
+   NELM   =     60;   NELMIN=  2; NELMDL= -5     # of ELM steps 
+   EDIFF  = 0.1E-05   stopping-criterion for ELM
+   LREAL  =      F    real-space projection
+   NLSPLINE    = F    spline interpolate recip. space projectors
+   LCOMPAT=      F    compatible to vasp.4.4
+   GGA_COMPAT  = T    GGA compatible to vasp.4.4-vasp.4.6
+   LMAXPAW     = -100 max onsite density
+   LMAXMIX     =    2 max onsite mixed and CHGCAR
+   VOSKOWN=      0    Vosko Wilk Nusair interpolation
+   ROPT   =    0.00000   0.00000   0.00000
+ Ionic relaxation
+   EDIFFG = -.5E-01   stopping-criterion for IOM
+   NSW    =   1000    number of steps for IOM
+   NBLOCK =      1;   KBLOCK =   1000    inner block; outer block 
+   IBRION =      3    ionic relax: 0-MD 1-quasi-New 2-CG
+   NFREE  =      0    steps in history (QN), initial steepest desc. (CG)
+   ISIF   =      2    stress and relaxation
+   IWAVPR =     11    prediction:  0-non 1-charg 2-wave 3-comb
+   ISYM   =      0    0-nonsym 1-usesym 2-fastsym
+   LCORR  =      T    Harris-Foulkes like correction to forces
+
+   POTIM  = 0.0000    time-step for ionic-motion
+   TEIN   =    0.0    initial temperature
+   TEBEG  =    0.0;   TEEND  =   0.0 temperature during run
+   SMASS  =  -3.00    Nose mass-parameter (am)
+   estimated Nose-frequenzy (Omega)   =  0.10E-29 period in steps = 0.00E+00 mass=  -0.339E-26a.u.
+   SCALEE = 1.0000    scale energy and forces
+   NPACO  =    256;   APACO  = 10.0  distance and # of slots for P.C.
+   PSTRESS=    0.0 pullay stress
+
+  Mass of Ions in am
+   POMASS =  22.99 26.98 32.07
+  Ionic Valenz
+   ZVAL   =   7.00  3.00  6.00
+  Atomic Wigner-Seitz radii
+   RWIGS  =  -1.00 -1.00 -1.00
+  virtual crystal weights 
+   VCA    =   1.00  1.00  1.00
+   NELECT =     329.0000    total number of electrons
+   NUPDOWN=      -1.0000    fix difference up-down
+
+ DOS related values:
+   EMIN   =  10.00;   EMAX   =-10.00  energy-range for DOS
+   EFERMI =   0.00
+   ISMEAR =     1;   SIGMA  =   0.20  broadening in eV -4-tet -1-fermi 0-gaus
+
+ Electronic relaxation 2 (details)
+   IALGO  =     68    algorithm
+   LDIAG  =      T    sub-space diagonalisation (order eigenvalues)
+   LSUBROT=      F    optimize rotation matrix (better conditioning)
+   TURBO    =      0    0=normal 1=particle mesh
+   IRESTART =      0    0=no restart 2=restart with 2 vectors
+   NREBOOT  =      0    no. of reboots
+   NMIN     =      0    reboot dimension
+   EREF     =   0.00    reference energy to select bands
+   IMIX   =      4    mixing-type and parameters
+     AMIX     =   0.40;   BMIX     =  1.00
+     AMIX_MAG =   1.60;   BMIX_MAG =  1.00
+     AMIN     =   0.10
+     WC   =   100.;   INIMIX=   1;  MIXPRE=   1;  MAXMIX= -45
+
+ Intra band minimization:
+   WEIMIN = 0.0010     energy-eigenvalue tresh-hold
+   EBREAK =  0.13E-08  absolut break condition
+   DEPER  =   0.30     relativ break condition  
+
+   TIME   =   0.40     timestep for ELM
+
+  volume/ion in A,a.u.               =      23.01       155.30
+  Fermi-wavevector in a.u.,A,eV,Ry     =   1.044795  1.974377 14.852082  1.091597
+  Thomas-Fermi vector in A             =   2.179563
+
+ Write flags
+   LWAVE        =      F    write WAVECAR
+   LDOWNSAMPLE  =      F    k-point downsampling of WAVECAR
+   LCHARG       =      F    write CHGCAR
+   LVTOT        =      F    write LOCPOT, total local potential
+   LVHAR        =      F    write LOCPOT, Hartree potential only
+   LELF         =      F    write electronic localiz. function (ELF)
+   LORBIT       =      0    0 simple, 1 ext, 2 COOP (PROOUT), +10 PAW based schemes
+
+
+ Dipole corrections
+   LMONO  =      F    monopole corrections only (constant potential shift)
+   LDIPOL =      F    correct potential (dipole corrections)
+   IDIPOL =      0    1-x, 2-y, 3-z, 4-all directions 
+   EPSILON=  1.0000000 bulk dielectric constant
+
+ Exchange correlation treatment:
+   GGA     =    --    GGA type
+   LEXCH   =     8    internal setting for exchange type
+   LIBXC   =     F    Libxc                    
+   VOSKOWN =     0    Vosko Wilk Nusair interpolation
+   LHFCALC =     F    Hartree Fock is set to
+   LHFONE  =     F    Hartree Fock one center treatment
+   AEXX    =    0.0000 exact exchange contribution
+
+ Linear response parameters
+   LEPSILON=     F    determine dielectric tensor
+   LRPA    =     F    only Hartree local field effects (RPA)
+   LNABLA  =     F    use nabla operator in PAW spheres
+   LVEL    =     F    velocity operator in full k-point grid
+   CSHIFT  =0.1000    complex shift for real part using Kramers Kronig
+   OMEGAMAX=  -1.0    maximum frequency
+   DEG_THRESHOLD= 0.2000000E-02 threshold for treating states as degnerate
+   RTIME   =   -0.100 relaxation time in fs
+  (WPLASMAI=    0.000 imaginary part of plasma frequency in eV, 0.658/RTIME)
+   DFIELD  = 0.0000000 0.0000000 0.0000000 field for delta impulse in time
+
+  Optional k-point grid parameters
+   LKPOINTS_OPT  =     F    use optional k-point grid
+   KPOINTS_OPT_MODE=     1    mode for optional k-point grid
+
+ Orbital magnetization related:
+   ORBITALMAG=     F  switch on orbital magnetization
+   LCHIMAG   =     F  perturbation theory with respect to B field
+   DQ        =  0.001000  dq finite difference perturbation B field
+   LLRAUG    =     F  two centre corrections for induced B field
+
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+ quickmin algorithm: (dynamic with friction)
+ charge density and potential will be updated during run
+ non-spin polarized calculation
+ RMM-DIIS sequential band-by-band and
+  variant of blocked Davidson during initial phase
+ perform sub-space diagonalisation
+    before iterative eigenvector-optimisation
+ modified Broyden-mixing scheme, WC =      100.0
+ initial mixing is a Kerker type mixing with AMIX =  0.4000 and BMIX =      1.0000
+ Hartree-type preconditioning will be used
+ using additional bands           33
+ reciprocal scheme for non local part
+ use partial core corrections
+ calculate Harris-corrections to forces   (improved forces if not selfconsistent)
+ use gradient corrections 
+ use of overlap-Matrix (Vanderbilt PP)
+ Methfessel and Paxton  Order N= 1 SIGMA  =   0.20
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+  energy-cutoff  :      500.00
+  volume of cell :     1265.69
+      direct lattice vectors                 reciprocal lattice vectors
+    12.182820328  0.000000000  0.000000000     0.082082800  0.000000000 -0.000000000
+    -0.000000000  7.567469321  1.197063940     0.000000000  0.132161791 -0.000108847
+     0.000000000  0.011308293 13.730452437    -0.000000000 -0.011522280  0.072840302
+
+  length of vectors
+    12.182820328  7.661563417 13.730457094     0.082082800  0.132161836  0.073746000
+
+
+
+ k-points in units of 2pi/SCALE and weight: Gamma-point only                        
+   0.00000000  0.00000000  0.00000000       1.000
+
+ k-points in reciprocal lattice and weights: Gamma-point only                        
+   0.00000000  0.00000000  0.00000000       1.000
+
+ position of ions in fractional coordinates (direct lattice) 
+   0.93128670  0.08374222  0.85312978
+   0.77181007  0.15998349  0.92417929
+   0.79170173  0.65019103  0.68258289
+   0.79000256  0.01779650  0.45621172
+   0.03639367  0.21965876  0.37918655
+   0.12439803  0.52423311  0.41263489
+   0.94742797  0.35482176  0.30705312
+   0.40157903  0.17959031  0.33776196
+   0.46806354  0.42389618  0.69437200
+   0.25611078  0.50983416  0.98554894
+   0.24177876  0.00657421  0.98544700
+   0.75441060  0.45836168  0.51396920
+   0.18034826  0.48995006  0.24411042
+   0.03028618  0.91146261  0.17791311
+   0.58295795  0.61573884  0.34215300
+   0.32329756  0.99298103  0.74940177
+   0.05501570  0.89917745  0.67162898
+   0.31575474  0.99478215  0.24463762
+   0.17768285  0.48590393  0.74989352
+   0.47151589  0.41895797  0.18390120
+   0.67857792  0.00423097  0.74679351
+   0.62754151  0.57784548  0.91502787
+   0.67618148  0.01459073  0.23646975
+   0.00423661  0.32810026  0.07005136
+   0.00652224  0.32246073  0.56791956
+   0.50526316  0.17690927  0.42559697
+   0.48899686  0.83035579  0.56978883
+   0.50259929  0.16738708  0.92337827
+   0.49141100  0.83339456  0.07251634
+   0.98765146  0.67056183  0.42469759
+   0.99120385  0.66721804  0.92328740
+   0.34861295  0.29126146  0.85841824
+   0.16499351  0.21262312  0.12272352
+   0.35858175  0.32485770  0.36076426
+   0.14311114  0.79714056  0.85583629
+   0.99842185  0.61758529  0.09266398
+   0.63766470  0.69049424  0.14233007
+   0.82652114  0.77452542  0.36451675
+   0.13328551  0.82615437  0.36311651
+   0.33010901  0.71865882  0.62943035
+   0.50121880  0.87474453  0.90361922
+   0.65634443  0.29367471  0.86068184
+   0.86155661  0.18016215  0.14261383
