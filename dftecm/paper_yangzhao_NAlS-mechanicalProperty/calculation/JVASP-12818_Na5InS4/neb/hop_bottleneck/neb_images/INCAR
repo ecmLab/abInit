@@ -1,0 +1,23 @@
+SYSTEM = NEB_bottleneck
+
+ENCUT  = 500
+EDIFF  = 1E-06
+PREC   = Accurate
+ALGO   = Fast
+LREAL  = .FALSE.
+ADDGRID = .TRUE.
+ISYM   = 0
+
+IBRION = 3
+POTIM  = 0
+NSW    = 1000
+EDIFFG = -0.05
+IMAGES = 9
+SPRING = -5
+LCLIMB = .TRUE.
+
+ISTART = 0
+LWAVE  = .FALSE.
+LCHARG = .FALSE.
+
+NPAR   = 9
