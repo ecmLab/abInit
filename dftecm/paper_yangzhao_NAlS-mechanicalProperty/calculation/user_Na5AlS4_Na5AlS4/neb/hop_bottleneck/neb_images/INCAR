@@ -4,8 +4,7 @@ ENCUT  = 500
 EDIFF  = 1E-06
 PREC   = Accurate
 ALGO   = Fast
-LREAL  = .FALSE.
-ADDGRID = .TRUE.
+LREAL  = Auto
 ISYM   = 0
 
 IBRION = 3
@@ -20,4 +19,4 @@ ISTART = 0
 LWAVE  = .FALSE.
 LCHARG = .FALSE.
 
-NPAR   = 9
+NPAR   = 3

@@ -1,6 +1,10 @@
 """
-Step 2: after hop_bottleneck endpoint relaxations finish, interpolate images
-and write NEB inputs for all three phases.
+Step 2: after hop_bottleneck endpoint relaxations finish, generate NEB images
+using IDPP interpolation (avoids atomic clashes from linear interpolation).
+
+IDPP = Image Dependent Pair Potential — optimises the initial path so that
+interatomic distances change smoothly, preventing atoms from passing through
+each other.  This is critical for longer hops (≥ 3.5 Å).
 
 Run from calculation/:  python setup_neb_bottleneck_images.py
 Then:  python batch_submit_neb_bottleneck.py
@@ -10,13 +14,16 @@ import shutil
 import numpy as np
 from pathlib import Path
 
+import ase.io
+from ase.mep import NEB
+
 CALC_DIR = Path(__file__).parent
 N_IMAGES = 9
 
 PHASES = [
-    {"dir": "mp-560538_Na3AlS3",    "name": "Na3AlS3"},
-    {"dir": "user_Na5AlS4_Na5AlS4", "name": "Na5AlS4"},
-    {"dir": "JVASP-12818_Na5InS4",  "name": "Na5InS4"},
+    {"dir": "mp-560538_Na3AlS3",    "name": "Na3AlS3",  "idx_hop": 14, "idx_vac": 18},
+    {"dir": "user_Na5AlS4_Na5AlS4", "name": "Na5AlS4",  "idx_hop": 10, "idx_vac": 12},
+    {"dir": "JVASP-12818_Na5InS4",  "name": "Na5InS4",  "idx_hop": 1,  "idx_vac": 8},
 ]
 
 NEB_INCAR = """\
@@ -26,8 +33,7 @@ ENCUT  = 500
 EDIFF  = 1E-06
 PREC   = Accurate
 ALGO   = Fast
-LREAL  = .FALSE.
-ADDGRID = .TRUE.
+LREAL  = Auto
 ISYM   = 0
 
 IBRION = 3
@@ -75,32 +81,6 @@ srun vasp_std
 """
 
 
-def read_poscar(path):
-    lines = Path(path).read_text().splitlines()
-    scale   = float(lines[1])
-    lattice = np.array([l.split() for l in lines[2:5]], dtype=float) * scale
-    elements = lines[5].split()
-    counts   = list(map(int, lines[6].split()))
-    ctype    = lines[7].strip()
-    n = sum(counts)
-    pos = np.array([l.split()[:3] for l in lines[8:8+n]], dtype=float)
-    if ctype.lower().startswith("c"):
-        pos = np.linalg.solve(lattice.T, pos.T).T
-    return dict(lattice=lattice, elements=elements, counts=counts, positions=pos)
-
-
-def write_poscar(p, path, comment="NEB image"):
-    lines = [comment, "  1.0"]
-    for row in p["lattice"]:
-        lines.append("  " + "  ".join(f"{v:22.16f}" for v in row))
-    lines.append("  " + "  ".join(p["elements"]))
-    lines.append("  " + "  ".join(map(str, p["counts"])))
-    lines.append("Direct")
-    for pos in p["positions"]:
-        lines.append("  " + "  ".join(f"{v:.16f}" for v in pos))
-    Path(path).write_text("\n".join(lines) + "\n")
-
-
 for phase in PHASES:
     phase_dir = CALC_DIR / phase["dir"]
     hop_dir   = phase_dir / "neb" / "hop_bottleneck"
@@ -110,28 +90,46 @@ for phase in PHASES:
 
     missing = [p for p in [ep0_con, ep10_con] if not p.exists()]
     if missing:
-        print(f"SKIP {phase['name']}: missing {[m.name for m in missing]} "
-              f"— run endpoint relaxations first")
+        print(f"SKIP {phase['name']}: missing {[m.name for m in missing]}")
         continue
 
-    p0  = read_poscar(ep0_con)
-    p10 = read_poscar(ep10_con)
+    # Read endpoints with ASE
+    start = ase.io.read(str(ep0_con),  format="vasp")
+    end   = ase.io.read(str(ep10_con), format="vasp")
 
+    # Fix atom ordering in end so the hopping atom is at the same index as in start.
+    # In start (idx_vac removed): hopper sits at local index idx_hop.
+    # In end   (idx_hop removed): hopper (formerly idx_vac) sits at local index idx_vac-1.
+    # IDPP requires atom i in start ↔ atom i in end; without this fix it interpolates
+    # the wrong atoms and the hop never occurs.
+    assert phase["idx_hop"] < phase["idx_vac"], "assume idx_hop < idx_vac"
+    hop_in_end   = phase["idx_vac"] - 1   # current local index of hopper in end
+    hop_in_start = phase["idx_hop"]        # target local index (must match start)
+    n = len(end)
+    src = list(range(n))
+    src.pop(hop_in_end)
+    src.insert(hop_in_start, hop_in_end)
+    end = end[src]
+
+    # Build NEB image list: endpoint copies + N_IMAGES intermediates
+    images = [start.copy() for _ in range(N_IMAGES + 2)]
+    images[-1] = end.copy()
+
+    # IDPP interpolation — avoids atomic clashes
+    neb = NEB(images, method="improvedtangent")
+    neb.interpolate(method="idpp")
+    print(f"{phase['name']}: IDPP interpolation done")
+
+    # Write image POSCARs
     neb_dir = hop_dir / "neb_images"
     neb_dir.mkdir(exist_ok=True)
 
-    for k in range(N_IMAGES + 2):
-        t = k / (N_IMAGES + 1)
-        diff = p10["positions"] - p0["positions"]
-        diff -= np.round(diff)
-        pos = (p0["positions"] + t * diff) % 1.0
-        img = dict(lattice=p0["lattice"], elements=p0["elements"],
-                   counts=p0["counts"], positions=pos)
+    for k, img in enumerate(images):
         img_dir = neb_dir / f"{k:02d}"
         img_dir.mkdir(exist_ok=True)
-        write_poscar(img, img_dir / "POSCAR",
-                     comment=f"{phase['name']} bottleneck NEB image {k:02d}")
+        ase.io.write(str(img_dir / "POSCAR"), img, format="vasp", direct=True)
 
+    # Write VASP inputs
     (neb_dir / "INCAR").write_text(NEB_INCAR.format(n_images=N_IMAGES))
     (neb_dir / "KPOINTS").write_text(KPOINTS)
     (neb_dir / "submit.sh").write_text(
@@ -139,7 +137,21 @@ for phase in PHASES:
     if potcar.exists():
         shutil.copy(potcar, neb_dir / "POTCAR")
 
-    print(f"{phase['name']}: written {N_IMAGES+2} images → "
-          f"{neb_dir.relative_to(CALC_DIR)}")
+    # Check min interatomic distance in saddle image to verify no clashes
+    saddle = images[N_IMAGES // 2 + 1]
+    pos    = saddle.get_positions()
+    cell   = saddle.get_cell()
+    min_d  = np.inf
+    for i in range(len(pos)):
+        for j in range(i+1, len(pos)):
+            d = pos[j] - pos[i]
+            # Apply MIC
+            d -= cell.T @ np.round(np.linalg.solve(cell.T, d))
+            dist = np.linalg.norm(d)
+            if dist < min_d:
+                min_d = dist
+    print(f"  Min interatomic distance at saddle image: {min_d:.3f} Å "
+          f"({'OK' if min_d > 1.5 else 'WARNING: possible clash'})")
+    print(f"  → {neb_dir.relative_to(CALC_DIR)}  ({N_IMAGES+2} images)")
 
 print("\nSubmit with: python batch_submit_neb_bottleneck.py")

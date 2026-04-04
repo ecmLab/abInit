@@ -29,9 +29,9 @@ PHASES = [
     {
         "dir":     "mp-560538_Na3AlS3",
         "name":    "Na3AlS3",
-        "idx_hop": 1,    # Na atom index (0-based among Na atoms = global atom index here)
-        "idx_vac": 8,    # Na atom that becomes vacancy (destination)
-        "hop_dist": 3.831,
+        "idx_hop": 14,   # Na atom index (global), percolation bottleneck hop
+        "idx_vac": 18,   # Na atom that becomes vacancy (destination)
+        "hop_dist": 3.616,
     },
     {
         "dir":     "user_Na5AlS4_Na5AlS4",
