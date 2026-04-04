@@ -22,8 +22,7 @@ N_IMAGES = 9
 
 PHASES = [
     {"dir": "mp-560538_Na3AlS3",    "name": "Na3AlS3",  "idx_hop": 14, "idx_vac": 18},
-    {"dir": "user_Na5AlS4_Na5AlS4", "name": "Na5AlS4",  "idx_hop": 10, "idx_vac": 12},
-    {"dir": "JVASP-12818_Na5InS4",  "name": "Na5InS4",  "idx_hop": 1,  "idx_vac": 8},
+    # Na5AlS4 and Na5InS4 images already generated — do not re-run
 ]
 
 NEB_INCAR = """\

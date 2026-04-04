@@ -19,4 +19,4 @@ ISTART = 0
 LWAVE  = .FALSE.
 LCHARG = .FALSE.
 
-NPAR   = 3
+NPAR   = 9

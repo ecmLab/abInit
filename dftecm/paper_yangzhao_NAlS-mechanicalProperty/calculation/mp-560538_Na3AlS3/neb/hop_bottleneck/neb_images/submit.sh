@@ -7,7 +7,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=27
 #SBATCH --ntasks-per-node=27
-#SBATCH --mem-per-cpu=2000M
+#SBATCH --mem-per-cpu=500M
 
 spack load vasp@6.3.2
 srun vasp_std
